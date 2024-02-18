@@ -1,0 +1,17 @@
+﻿<div class="row">
+    <div *ngFor="let p of store.products" class="col-md-4">
+        <div class="border bg-light rounded p-1">
+            <div class=" border bg-light rounded p-1">
+                <img src="/img/{{p.artId}}.jpg" class="img-fluid product-image" alt="{{p.title}}" />
+                <h5>{{p.category}}</h5>
+                <ul class="product-props">
+                    <li>Price: {{p.price | currency}}</li>
+                    <li>Title: {{p.title}}</li>
+                    <li>{{p.Description}}</li>
+                </ul>
+                <a [routerLink]="['/product', p.id]">View Detail</a>
+                <button id="buyButton" class="btn btn-success" (click)="store.addToOrder(p)">Buy</button>
+            </div>
+        </div>
+    </div>
+</div>

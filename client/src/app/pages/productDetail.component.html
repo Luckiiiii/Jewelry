@@ -1,0 +1,26 @@
+﻿<div class="row">
+    <div class="col-3">
+        <div class="border bg-light rounded p-1">
+            <img [src]="'/img/' + product.artId + '.jpg'" class="img-fluid product-image" [alt]="product.title" />
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="border bg-light rounded p-1">
+            <h2>{{ product.title }}</h2>
+            <p>{{ product.artDescription }}</p>
+            <ul class="product-props">
+                <li>Price: {{ product.price | currency }}</li>
+                <li>Category: {{ product.category }}</li>
+                <!-- Thêm các thông tin khác của sản phẩm -->
+            </ul>
+            <div class="d-flex align-items-center">
+                <!--<button class="btn btn-sm btn-primary mr-2" (click)="store.decreaseQuantityDetail(product)">-</button>
+                <button class="btn btn-sm btn-primary ml-2" (click)="store.increaseQuantityDetail(product)">+</button>-->
+                <button class="btn btn-success ml-2" (click)="store.addToOrder(product)">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <cart></cart>
+    </div>
+</div>

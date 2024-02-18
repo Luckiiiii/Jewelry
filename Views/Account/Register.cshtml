@@ -1,0 +1,62 @@
+﻿@model RegisterViewModel
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
+        <div class="col-md-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="text-center custom-login">
+                <h3>Registration</h3>
+                <p>Admin template with very clean and aesthetic style prepared for your next app. </p>
+            </div>
+            <div class="hpanel">
+                <div class="panel-body">
+                    <form id="loginForm" method="post">
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <div class="row">
+                            <div class="form-group col-lg-12">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-warning"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="FirstName"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-warning"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="LastName"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-warning"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="PhoneNumber"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-warning"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Address"></label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-warning"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-warning"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="ConfirmPassword"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-warning"></span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn-primary">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
+    </div>
+</div>
