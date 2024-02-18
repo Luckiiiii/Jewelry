@@ -84,13 +84,13 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="App" asp-action="Shop">Shop</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="AdminPage" asp-action="AccountManagement">adminmanagement</a>
-                    </li>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
                         </li>
                     }
                     else
@@ -102,6 +102,9 @@
                             <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
                         </li>
                     }
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="AdminPage" asp-action="AccountManagement">adminmanagement</a>
+                    </li>
                 </ul>
             </div>
         </nav>

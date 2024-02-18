@@ -45,7 +45,7 @@ builder.Services.AddTransient<IMailService, NullMailService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IJewelryRepository, JewelryRepository>();
 //builder.Services.AddIdentity<StoreUser, IdentityRole>()
-        //.AddEntityFrameworkStores<JewelryContext>();
+//        .AddEntityFrameworkStores<JewelryContext>();
 //Can cho biet database nao dbcontext can su dung
 
 var app = builder.Build();
