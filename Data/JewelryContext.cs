@@ -9,12 +9,26 @@ namespace Jewelry.Data
         private readonly IConfiguration _config;
 
         //public JewelryContext(DbContextOptions<JewelryContext> options):base(options)
-        public JewelryContext(IConfiguration config) 
+        public JewelryContext(IConfiguration config)
         {
             _config = config;
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<ProductItem> ProductItems { get; set; }
+
+        public DbSet<InventoryReceipt> InventoryReceipt { get; set; }
+
+        public DbSet<InventoryReceiptDetails> InventoryReceiptDetails { get; set; }
+
+        public DbSet<Warranty> Warranties { get; set; }
+        public DbSet<Supplier> Supplier { get; set; }
+        public DbSet<ProductCategory> ProductCategory { get; set; }
+        public DbSet<Material> Material { get; set; }
+        public DbSet<Size> Size { get; set; }
+        public DbSet<PurchasePrice> PurchasePrice { get; set; }
+        public DbSet<SalesPrice> SalesPrice { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -22,17 +36,42 @@ namespace Jewelry.Data
             optionsBuilder.UseSqlServer(_config["ConnectionStrings:JewelryContextDb"]);
 
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            //modelBuilder.Entity<Order>().HasData(new Order()
-            //{
-            //    Id = 1,
-            //    OrderDate = DateTime.UtcNow,
-            //    OrderNumber = "12345"
-            //});
-        }
-        
-        
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    var size = Size.FirstOrDefault(s => s.Id == 1);
+        //    var material = Material.FirstOrDefault(s => s.Id == 1);
+        //    var product = Products.Where(p => p.Id == 9).FirstOrDefault();
+        //    base.OnModelCreating(modelBuilder);
+
+        //    modelBuilder.Entity<SalesPrice>().HasData(
+        //        new SalesPrice { Id = 1, Price = 20.0m, EffectiveDate = DateTime.UtcNow },
+        //        new SalesPrice { Id = 2, Price = 25.0m, EffectiveDate = DateTime.UtcNow }
+        //    );
+
+        //    modelBuilder.Entity<PurchasePrice>().HasData(
+        //        new PurchasePrice { Id = 1, Price = 10.0m, EffectiveDate = DateTime.UtcNow },
+        //        new PurchasePrice { Id = 2, Price = 15.0m, EffectiveDate = DateTime.UtcNow }
+        //    );
+        //    modelBuilder.Entity<ProductItem>().HasData(
+        //    new ProductItem
+        //    {
+        //        Product = product,
+        //        Sizes = size,
+        //        Materials = material,
+        //        PurchasePrice = null,
+        //        SalesPrice = null,
+        //        Quantity = 100
+        //    },
+        //    new ProductItem
+        //    {
+        //        Product = product,
+        //        Sizes = size,
+        //        Materials = material,
+        //        PurchasePrice = null,
+        //        SalesPrice = null,
+        //        Quantity = 150
+        //    }
+        //    );
+        //}
     }
 }

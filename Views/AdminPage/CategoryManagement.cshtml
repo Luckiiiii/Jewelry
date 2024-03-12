@@ -1,0 +1,141 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<ProductCategory>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Quản lý danh mục</h2>
+                                    <p>Welcome to Jewelry <span class="bread-ntd">Supplier Management</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Category List</h4>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="CategoryTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="hidden">ID</th>
+                                    <th>Tên</th>
+                                    <th class="hidden"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model)
+                                {
+                                    <tr asp-validation-summary="ModelOnly">
+                                        <td class="hidden" data-field="id">@p.Id</td>
+                                        <td class="editable" contenteditable="false" data-field="name">@p.Name</td>
+                                        <td>
+                                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.edit-btn').click(function () {
+            var $row = $(this).closest('tr');
+            $row.find('.editable').prop('contenteditable', true).addClass('editing');
+            $row.find('.edit-btn').hide();
+            $row.find('.save-btn').show();
+        });
+
+        $('.save-btn').click(function () {
+            var $row = $(this).closest('tr');
+            var categoryId = $row.find('.hidden[data-field="id"]').text();
+            var name = $row.find('.editable[data-field="name"]').text();
+            var errorMessage = "";
+
+            // Kiểm tra các trường thông tin có hợp lệ không
+            if (!name) {
+                errorMessage = "Name is required.";
+            }
+            if (errorMessage) {
+                alert(errorMessage);
+                return; // Dừng quá trình lưu nếu có trường nào đó không hợp lệ
+            }
+            $.ajax({
+                url: '/AdminPage/SaveCategory',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    categoryId: categoryId,
+                    name: name
+                },
+                success: function (response) {
+                    console.log('Data saved successfully!');
+                    $row.find('.editable').prop('contenteditable', false).removeClass('editing');
+                    $row.find('.edit-btn').show();
+                    $row.find('.save-btn').hide();
+                },
+                error: function (error) {
+                    console.error('Error saving data:', error);
+                }
+            });
+        });
+
+        $('.trash-btn').click(function () {
+            var $row = $(this).closest('tr');
+            var categoryId = $row.find('.hidden[data-field="id"]').text();
+
+            $.ajax({
+                url: '/AdminPage/DeleteCategory',
+                type: 'POST',
+                dataType: 'json',
+                data: { categoryId: categoryId },
+                success: function (response) {
+                    if (response.success) {
+                        $row.remove();
+                    } else {
+                        alert('Failed to delete category.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error deleting category:', error);
+                }
+            });
+        });
+    });
+</script>

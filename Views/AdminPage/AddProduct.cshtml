@@ -1,0 +1,110 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model Product
+
+<div class="single-product-tab-area mg-b-30">
+    <!-- Single pro tab review Start-->
+    <div class="single-pro-review-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="review-tab-pro-inner">
+                        <ul id="myTab3" class="tab-review-design">
+                            <li class="active"><a href="#description"><i class="icon nalika-edit" aria-hidden="true"></i> Thêm sản phẩm</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content custom-product-edit">
+                            <form class="product-tab-list tab-pane active in" id="description" method="post" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="review-content-section">
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                <div asp-for="Category">
+                                                    @Html.DropDownListFor(model => model.Category.Id,(IEnumerable<SelectListItem>)ViewBag.categories,new {@class="form-controller selectpicker", @name = "ProductCategory", @id = "ProductCategory", data_live_search="true", title="Chọn danh mục"})
+                                                    @Html.HiddenFor(model => model.Category.Name, new { @id = "Category_Name" })
+                                                </div>
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                <input asp-for="Name" type="text" class="form-control" placeholder="Ten san pham">
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                <input asp-for="Description" type="text" class="form-control" placeholder="Description" >
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                <input asp-for="WarrantyInformation" type="text" class="form-control" placeholder="Warranty Information">
+                                            </div>
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                <input asp-for="Img" type="file" class="form-control" multiple>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="review-content-section">
+                                            @if (!ViewData.ModelState.IsValid)
+                                            {
+                                                <div class="alert alert-danger" role="alert">
+                                                    @foreach (var key in ViewData.ModelState.Keys)
+                                                    {
+                                                        foreach (var error in ViewData.ModelState[key].Errors)
+                                                        {
+                                                            <span>@error.ErrorMessage</span>
+                                                            <br />
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="text-center custom-pro-edt-ds">
+                                                <button type="submit" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
+                                                    Save
+                                                </button>
+                                                <button type="button" class="btn btn-ctl-bt waves-effect waves-light" id="discardButton">
+                                                    Discard
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        document.getElementById("discardButton").addEventListener("click", function () {
+            
+            var inputFields = document.querySelectorAll(".form-control");
+            inputFields.forEach(function (input) {
+                input.value = ""; 
+            });
+        });
+
+        $("#ProductCategory").change(function () {
+            var selectedCategoryId = $(this).val();
+            $.ajax({
+                url: '@Url.Action("GetCategoryName", "AdminPage")',
+                data: { id: selectedCategoryId },
+                type: 'GET',
+                success: function (data) {
+                    $("#Category_Name").val(data);
+                }
+            });
+        });
+        $('.selectpicker').selectpicker();
+    });
+</script>
+
+

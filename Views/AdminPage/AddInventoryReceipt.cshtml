@@ -1,0 +1,199 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+
+@model IEnumerable<AddInventoryReceiptViewModel>
+
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Thêm phiếu nhập kho</h2>
+                                    <p>Cửa hàng vàng bạc<span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                
+
+                <div class="product-status-wrap">
+                    <h4>Thêm phiếu nhập</h4>
+                    <div>
+                        @Html.DropDownList("SupplierId", (IEnumerable<SelectListItem>)ViewBag.suppliers, new { @class = "form-controller selectpicker", data_live_search = "true", title = "Chọn nhà cung cấp" })
+                    </div>
+                    <div>
+                        <table id="inventoryReceipt" class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Sản Phẩm</th>
+                                    <th>Size</th>
+                                    <th>Chất liệu</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá nhập</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="productRows">
+                                @foreach (var productItem in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DropDownList("ProductId", (IEnumerable<SelectListItem>)ViewBag.products, new { @class = "form-controller selectpicker", data_live_search = "true", title = "Chọn sản phẩm" })
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("SizeId", (IEnumerable<SelectListItem>)ViewBag.sizes, new { @class = "form-control selectpicker size-dropdown", data_live_search = "true", title = "Chọn Size" })
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("MaterialId", (IEnumerable<SelectListItem>)ViewBag.materials, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn Material" })
+                                        </td>
+                                        <td>
+                                            <input type="text" name="Quantity" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="PurchasePrice" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="button" value="Remove" onclick="Remove(this)" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>
+                                        @Html.DropDownList("ProductId", (IEnumerable<SelectListItem>)ViewBag.products, new { @class = "form-controller selectpicker product-dropdown", data_live_search = "true", title = "Chọn sản phẩm" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("SizeId", (IEnumerable<SelectListItem>)ViewBag.sizes, new { @class = "form-control selectpicker size-dropdown", data_live_search = "true", title = "Chọn Size" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("MaterialId", (IEnumerable<SelectListItem>)ViewBag.materials, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn Material" })
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Quantity" id="QuantityId" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="PurchasePrice" id="PurchasePriceId" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="button" id="btnAdd" value="Add" />
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="add-product">
+                        <button type="submit" id="btnSave" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
+                            Save
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+
+<script type="text/javascript">
+    function Remove(button) {
+        var row = $(button).closest("tr");
+        var name = $("td", row).eq(0).html();
+        if (confirm("Do you want to delete: " + name)) {
+            var table = $("#inventoryReceipt")[0];
+            table.deleteRow(row[0].rowIndex);
+        }
+    }
+
+    $(document).ready(function () {
+        $("table").on("click", "#btnAdd", function () {
+            var productName = $("#ProductId option:selected").text();
+            var sizeName = $("#SizeId option:selected").text();
+            var materialName = $("#MaterialId option:selected").text();
+            var productNames = $("#ProductId option:selected").val();
+            var sizeNames = $("#SizeId option:selected").val();
+            var materialNames = $("#MaterialId option:selected").val();
+            var quantity = $("#QuantityId").val();
+            var purchasePrice = $("#PurchasePriceId").val();
+
+            var tBody = $("#inventoryReceipt > TBODY")[0];
+            var row = tBody.insertRow(-1);
+
+            var cell = $(row.insertCell(-1));
+            cell.html(productName + '<input type="hidden" value="' + productNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(sizeName + '<input type="hidden" value="' + sizeNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(materialName + '<input type="hidden" value="' + materialNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(quantity);
+
+            cell = $(row.insertCell(-1));
+            cell.html(purchasePrice);
+
+            cell = $(row.insertCell(-1));
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "Remove(this);");
+            btnRemove.val("Remove");
+            cell.append(btnRemove);
+        });
+
+        $("body").on("click", "#btnSave", function () {
+            var inventoryReceipts = new Array();
+            $("#inventoryReceipt TBODY TR").each(function () {
+                var row = $(this);
+                var inventoryReceipt = {};
+                inventoryReceipt.SupplierId = $("#SupplierId").val();
+                inventoryReceipt.ProductId = row.find("TD").eq(0).find("input").val();
+                inventoryReceipt.SizeId = row.find("TD").eq(1).find("input").val();
+                inventoryReceipt.MaterialId = row.find("TD").eq(2).find("input").val();
+                inventoryReceipt.Quantity = row.find("TD").eq(3).text(); 
+                inventoryReceipt.PurchasePrice = row.find("TD").eq(4).text();
+                inventoryReceipts.push(inventoryReceipt);   
+                
+            });
+            console.log(inventoryReceipts);
+
+            $.ajax({
+                async: true,
+                type: "POST",
+                url: "/AdminPage/AddInventoryReceipt",
+                data: JSON.stringify(inventoryReceipts),
+                contentType: "application/json; charset=utf-8",
+                dataType: "JSON",
+                success: function (response) {
+                    alert(response + " record(s) inserted.");
+                },
+                error: function () {
+                    alert("There is some problem");
+                }
+            });
+        });
+
+        $('.selectpicker').selectpicker();
+    });
+</script>

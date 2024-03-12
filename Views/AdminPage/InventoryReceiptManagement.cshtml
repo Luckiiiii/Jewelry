@@ -1,0 +1,168 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<InventoryReceiptDetails>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Quản lý phiếu nhập</h2>
+                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Suppliers List</h4>
+                    <div class="add-supplier">
+                        <a title="Thêm phiếu nhập" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
+                    </div>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="InventoryReceiptTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="hidden">Id</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Chất liệu</th>
+                                    <th>Size</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá</th>
+                                    <th>Nhà cung cấp</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Ngày xác nhận</th>
+                                    <th>Ghi chú</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inventory in Model)
+                                {
+                                    <tr asp-validation-summary="ModelOnly">
+                                        <td class="hidden" data-field="id">@inventory.Id</td>
+                                        <td>@(inventory.ProductItem?.Product?.Name ?? "")</td>
+                                        <td>@(inventory.ProductItem?.Materials?.Name ?? "")</td>
+                                        <td>@(inventory.ProductItem?.Sizes?.Name ?? "")</td>
+                                        <td>@(inventory.Quantity)</td>
+                                        <td>@(inventory.ProductItem?.PurchasePrice?.Price ?? 0)</td>
+                                        <td>@(inventory.InventoryReceipt?.Supplier?.Name ?? "")</td>
+                                        <td>@(inventory.InventoryReceipt?.CreationDate.ToString() ?? "")</td>
+                                        <td>@(inventory.InventoryReceipt?.ConfirmationDate?.ToString() ?? "")</td>
+                                        <td class="editable" contenteditable="false" data-field="note">@(inventory.InventoryReceipt?.Note ?? "")</td>
+                                        <td>
+                                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.edit-btn').click(function () {
+            var $row = $(this).closest('tr');
+            $row.find('.editable').prop('contenteditable', true).addClass('editing');
+            $row.find('.edit-btn').hide();
+            $row.find('.save-btn').show();
+        });
+
+        $('.save-btn').click(function () {
+            var $row = $(this).closest('tr');
+            var inventoryReceiptDetailsId = $row.find('.hidden[data-field="id"]').text();
+            var note = $row.find('.editable[data-field="note"]').text();
+            
+            
+            $.ajax({
+                url: '/AdminPage/SaveInventoryReceipt',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    inventoryReceiptDetailsId = inventoryReceiptDetailsId,
+                    note = note
+                },
+                success: function (response) {
+                    console.log('Data saved successfully!');
+                    $row.find('.editable').prop('contenteditable', false).removeClass('editing');
+                    $row.find('.edit-btn').show();
+                    $row.find('.save-btn').hide();
+                },
+                error: function (error) {
+                    console.error('Error saving data:', error);
+                }
+            });
+        });
+
+        $('.trash-btn').click(function () {
+            var $row = $(this).closest('tr');
+            var inventoryId = $row.find('.hidden[data-field="id"]').text();
+
+            $.ajax({
+                url: '/AdminPage/DeleteSupplier',
+                type: 'POST',
+                dataType: 'json',
+                data: { inventoryId: inventoryId },
+                success: function (response) {
+                    if (response.success) {
+                        $row.remove(); // Xóa hàng khỏi bảng nếu xóa thành công
+                    } else {
+                        alert('Failed to delete inventory.'); // Hiển thị thông báo nếu xóa không thành công
+                    }
+                },
+                error: function (error) {
+                    console.error('Error deleting inventory:', error);
+                }
+            });
+        });
+        // $(document).ready(function () {
+        //     $('#searchButton').click(function () {
+        //         var searchText = $('#searchInput').val();
+        //         $.ajax({
+        //             url: '/AdminPage/SearchSupplier',
+        //             type: 'GET',
+        //             data: { searchText: searchText },
+        //             success: function (response) {
+        //                 Cập nhật nội dung của bảng với kết quả tìm kiếm
+        //                 $('.product-status-wrap table tbody').html(response);
+        //             },
+        //             error: function (error) {
+        //                 console.error('Error searching supplier:', error);
+        //             }
+        //         });
+        //     });
+        // });
+    });
+</script>

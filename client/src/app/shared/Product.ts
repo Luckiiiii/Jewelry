@@ -1,9 +1,33 @@
+export class ProductItem {
+    id: number;
+    product: Product;
+    size: Size;
+    price: number;
+    quantity: number;
+}
+
+export class ProductPortfolio {
+    id: number;
+    name: string;
+}
+
+export class Size {
+    id: number;
+    name: string;
+}
+
 export class Product {
     id: number;
     category: string;
-    price: number;
     title: string;
-    artDescription: string;
+    description: string;
     artId: string;
-    quantity: number;
+    img: ProductImage[];
+    portfolio: ProductPortfolio;
+}
+
+export class ProductImage {
+    id: string;
+    name: string;
+    urlImage: string;
 }

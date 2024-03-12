@@ -19,11 +19,34 @@
 /*----------------------------------------*/
 /*  1.  Theme default CSS
 /*----------------------------------------*/
+.bootstrap-select {
+    width: 220px;
+}
+::placeholder { /* chạy tốt trên Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #495057 !important;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* chạy trên Internet Explorer 10-11 */
+    color: #495057 !important;
+}
+
+::-ms-input-placeholder { /* chạy trên Microsoft Edge */
+    color: #495057 !important;
+}
+.position{
+    position: relative;
+}
+.account {
+    position: absolute;
+    top: 11px;
+    right: 11px;
+}
 html, body {
     height: 100%;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
-    background: #152036;
+    background: white;
 }
 
 .floatleft {
@@ -1183,7 +1206,7 @@ ul.breadcome-menu {
 
 .product-sales-chart, .analytics-info-cs, .tranffic-als-inner, .analytics-rounded, .single-new-trend, .personal-info-wrap, .author-widgets-single, .calender-inner, .product-status-wrap, .review-tab-pro-inner, .income-dashone-total, .analytics-nalika-wrap, .analytics-sparkle-line, .analysis-progrebar, .sparkline8-list, .sparkline9-list, .sparkline7-list, .sparkline10-list, .sparkline12-list, .sparkline13-list, .sparkline14-list, .sparkline13-list, .sparkline11-list, .x-editable-list, .code-editor-single, .blog-details-inner, .charts-single-pro, .about-sparkline, .sparkline-list, .button-ad-wrap, .tab-content-details, .sparkline16-list, .sparkline15-list, .tinymce-single {
     padding: 20px;
-    background: #1b2a47;
+    background: w;
 }
 
 .graph-rp {
@@ -1528,7 +1551,7 @@ ul.two-part-sp li {
     .product-status-wrap table th {
         vertical-align: bottom;
         border-bottom: 2px solid #152036;
-        color: #fff;
+        color: black;
     }
 
 .product-status-wrap th, .product-status-wrap td {
@@ -1540,7 +1563,7 @@ ul.two-part-sp li {
 .product-status-wrap table td {
     padding: 9px 7px;
     border-top: 1px solid #152036;
-    color: #fff;
+    color: black;
     font-size: 14px;
 }
 
@@ -1590,7 +1613,7 @@ ul.two-part-sp li {
     font-size: 14px;
     border-radius: 3px;
     border: 1px solid rgba(0,0,0,.12);
-    background: #152036;
+    background: white;
 }
 
 button.pd-setting-ed {
@@ -2180,9 +2203,8 @@ ul.tab-custon-design li.active a, ul.tab-review-design li.active a {
     #myTab3.tab-review-design li i {
         margin-right: 5px;
     }
-
 .custom-product-edit {
-    background: #1b2a47;
+/*    background: #1b2a47;*/
 }
 
 .input-group-addon {
@@ -2989,7 +3011,7 @@ ul.tab-custon-design li.active a, ul.tab-review-design li.active a {
     font-size: 14px;
     font-weight: 400;
     line-height: 1;
-    padding: 6px 12px;
+    padding: 12px 18px;
     text-align: center;
     color: #fff;
 }
@@ -3009,7 +3031,7 @@ ul.tab-custon-design li.active a, ul.tab-review-design li.active a {
 }
 
 .form-control {
-    background-color: #152036;
+/*    background-color: #152036;*/
     background-image: none;
     border: 1px solid #152036;
     border-radius: 1px;

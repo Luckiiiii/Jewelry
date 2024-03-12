@@ -17,17 +17,9 @@
                                     <i class="icon nalika-home"></i>
                                 </div>
                                 <div class="breadcomb-ctn">
-                                    <h2>Account Management</h2>
-                                    <p>Welcome to Jewelry <span class="bread-ntd">Account Management</span></p>
+                                    <h2>Quản lý tài khoản</h2>
+                                    <p>Cửa hàng vàng bạc<span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
-                                <input type="text" id="searchInput" placeholder="Search users...">
-                                <button id="searchButton">Search</button>
-
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                            <div class="breadcomb-report">
-                                <button data-toggle="tooltip" data-placement="left" title="Download Report" class="btn"><i class="icon nalika-download"></i></button>
                             </div>
                         </div>
                     </div>
@@ -43,50 +35,57 @@
                 <div class="product-status-wrap">
                     <h4>Products List</h4>
                     <div class="add-product">
-                        <a title="Add Users" asp-controller="AdminPage" asp-action="AddUsers">Add User</a>
+                        <a title="Add Users" asp-controller="AdminPage" asp-action="AddUsers">Thêm tài khoản</a>
                     </div>
-                    <table>
-                        <tr>
-                            <th>Email Address</th>
-                            <th>Role</th>
-                            <th>Firt Name</th>
-                            <th>Last Name</th>
-                            <th>PhoneNumber</th>
-                            <th>Address</th>
-                        </tr>
-                        @foreach (var p in Model)
-                        {
-                            var user = await UserManager.FindByIdAsync(p.Id);
-                            var roles = await UserManager.GetRolesAsync(user);
-                            <tr>
-                                <td data-field="email">@p.Email</td>
-                                <td data-field="role">@string.Join(",", roles)</td>
-                                <td class="editable" contenteditable="false" data-field="firstName">@p.FirstName</td>
-                                <td class="editable" contenteditable="false" data-field="lastName">@p.LastName</td>
-                                <td class="editable" contenteditable="false" data-field="phoneNumber">@p.PhoneNumber</td>
-                                <td class="editable" contenteditable="false" data-field="address">@p.Address</td>
-                                <td class="hidden" data-field="id">@p.Id</td>
-                                <td>
-                                    <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                    </button>
-                                    <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                    </button>
-                                    <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
-                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                    <div class="custom-pagination">
-                        <ul class="pagination">
-                            @for (int i = 1; i <= @Model.Count() / 5 + 1; i++)
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="AccountTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="hidden">ID</th>
+                                    <th>Địa chỉ email</th>
+                                    <th>Quyền</th>
+                                    <th>Họ</th>
+                                    <th>Tên</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ</th>
+                                    <th></th>
+                                </tr>
+                            
+                            </thead>
+                                <tbody>
+
+                            @foreach (var p in Model)
                             {
-                                <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+                                var user = await UserManager.FindByIdAsync(p.Id);
+                                var roles = await UserManager.GetRolesAsync(user);
+                                    <tr>
+                                        <td class="hidden" data-field="id">@p.Id</td>
+                                        <td data-field="email">@p.Email</td>
+                                        <td data-field="role">@string.Join(",", roles)</td>
+                                        <td class="editable" contenteditable="false" data-field="firstName">@p.FirstName</td>
+                                        <td class="editable" contenteditable="false" data-field="lastName">@p.LastName</td>
+                                        <td class="editable" contenteditable="false" data-field="phoneNumber">@p.PhoneNumber</td>
+                                        <td class="editable" contenteditable="false" data-field="address">@p.Address</td>
+                                        <td>
+                                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                             }
-                        </ul>
+                                </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -190,4 +189,12 @@
         });
 
     });
+    
+    // new DataTable('#AccountTable', {
+    //     layout: {
+    //         topStart: {
+    //             buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    //         }
+    //     }
+    // });
 </script>

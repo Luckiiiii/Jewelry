@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Data;
+using System.Net;
 using System.Text.Json;
 
 namespace Jewelry.Data
@@ -78,7 +79,7 @@ namespace Jewelry.Data
             StoreUser user = await _userManager.FindByEmailAsync("luckyphuocs@gmail.com");
             if (user == null)
             {
-                user = new StoreUser() { FirstName = "Lucky", LastName = "Phuoc", Email = "luckyphuocs@gmail.com", UserName = "luckyphuocs@gmail.com" };
+                user = new StoreUser() { Address = "mot", PhoneNumber = "0123456789", FirstName = "Lucky", LastName = "Phuoc", Email = "luckyphuocs@gmail.com", UserName = "luckyphuocs@gmail.com" };
                 var result = await _userManager.CreateAsync(user, "P@ssw0rd!");
                 if (result != IdentityResult.Success)
                 {
@@ -98,7 +99,7 @@ namespace Jewelry.Data
             StoreUser managerUser = await _userManager.FindByEmailAsync("manager@gmail.com");
             if (managerUser == null)
             {
-                managerUser = new StoreUser() { FirstName = "Manager", LastName = "User", Email = "manager@gmail.com", UserName = "manager@gmail.com" };
+                managerUser = new StoreUser() { Address = "mot", PhoneNumber = "0123456789", FirstName = "Manager", LastName = "User", Email = "manager@gmail.com", UserName = "manager@gmail.com" };
                 var result = await _userManager.CreateAsync(managerUser, "P@ssw0rd!");
                 if (result != IdentityResult.Success)
                 {
@@ -114,66 +115,170 @@ namespace Jewelry.Data
             {
                 await _userManager.AddToRoleAsync(managerUser, "manager");
             }
-
-            if (!_context.Products.Any())
+            if (!_context.Material.Any())
             {
-                // Need to create the Sample Data
-                var file = Path.Combine(_environment.ContentRootPath, "Data/art.json");
-                var json = File.ReadAllText(file);
-                var products = JsonSerializer.Deserialize<IEnumerable<Product>>(json);
-                _context.Products.AddRange(products);
-                /*var order = _context.Orders.Where(o => o.Id == 1).FirstOrDefault();
-                if (order != null)
-                {
-                    order.User = user;
-                    order.Items = new List<OrderItem>()
+                _context.Material.AddRange(
+                    new Material
                     {
-                        new OrderItem()
-                        {
-                            Product = products.First(),
-                            Quantity = 5,
-                            UnitPrice = products.First().Price
-                        }
-                    };
-                }*/
+                        Name = "Vàng"
+                    },
+                    new Material
+                    {
+                        Name = "Bạc"
+                    });
+                _context.SaveChanges();
+            }
+            if (!_context.Size.Any())
+            {
+                var sizes = new List<Size>();
 
-                /*var order = new Order()
+                for (int i = 6; i <= 20; i++)
                 {
-                    
-                    OrderDate = DateTime.Today,
-                    OrderNumber = "1000",
-                    //order.User = user,
-                    Items = new List<OrderItem>()
-                    {
-                        new OrderItem()
+                    sizes.Add(new Size {Name = i.ToString() });
+                }
+
+                _context.Size.AddRange(sizes);
+                _context.SaveChanges();
+            }
+
+            if (!_context.PurchasePrice.Any())
+            {
+                _context.PurchasePrice.AddRange(
+                    new PurchasePrice { Price = 100, EffectiveDate = DateTime.UtcNow },
+                    new PurchasePrice { Price = 100, EffectiveDate = DateTime.UtcNow }
+                );
+                _context.SaveChanges();
+            }
+
+            if (!_context.SalesPrice.Any())
+            {
+                _context.SalesPrice.AddRange(
+                    new SalesPrice { Price = 120, EffectiveDate = DateTime.UtcNow },
+                    new SalesPrice { Price = 120, EffectiveDate = DateTime.UtcNow }
+                );
+                _context.SaveChanges();
+            }
+            
+            if (!_context.ProductItems.Any())
+            {
+                var size = _context.Size.FirstOrDefault(s => s.Id == 1);
+                var material = _context.Material.FirstOrDefault(s => s.Id == 1);
+                var product = _context.Products.FirstOrDefault(s => s.Id == 1);
+                var purchasePrice = _context.PurchasePrice.FirstOrDefault(s => s.Id == 1);
+                var salesPrice = _context.SalesPrice.FirstOrDefault(s => s.Id == 1);
+
+                if (size != null && material != null && product != null && purchasePrice != null && salesPrice != null)
+                {
+                    _context.ProductItems.AddRange(
+                        new ProductItem
                         {
-                            Product = products.First(),
-                            Quantity = 5,
-                            UnitPrice = products.First().Price
-                        }
+                            Sizes = size,
+                            Materials = material,
+                            Product = product,
+                            PurchasePrice = purchasePrice,
+                            SalesPrice = salesPrice,
+                            Quantity = 100
+                        },
+                        new ProductItem
+                        {
+                            Sizes = size,
+                            Materials = material,
+                            Product = product,
+                            PurchasePrice = purchasePrice,
+                            SalesPrice = salesPrice,
+                            Quantity = 150
+                        });
+
+                    _context.SaveChanges();
+                }
+            }
+            //var size = _context.Size.FirstOrDefault(s => s.Id == 1);
+            //var material = _context.Material.FirstOrDefault(s => s.Id == 1);
+            //var product = _context.Products.Where(p => p.Id == 9).FirstOrDefault();
+            //if (product != null)
+            //{
+            //    product.Item = new List<ProductItem>()
+            //    {
+            //        new ProductItem
+            //        {
+            //            Sizes = size,
+            //            Materials = material,
+            //            PurchasePrice = null,
+            //            SalesPrice = null,
+            //            Quantity = 100,
+
+            //        },
+            //        new ProductItem
+            //        {
+            //            Sizes = size,
+            //            Materials = material,
+            //            PurchasePrice = null,
+            //            SalesPrice = null,
+            //            Quantity = 150,
+
+            //        }
+            //    };
+            //}
+
+            //if (!_context.ProductItems.Any())
+            //{
+            // Need to create the Sample Data
+            //var file = Path.Combine(_environment.ContentRootPath, "Data/art.json");
+            //var json = File.ReadAllText(file);
+            //var products = JsonSerializer.Deserialize<IEnumerable<ProductItem>>(json);
+            //_context.ProductItems.AddRange(products);
+            /*var order = _context.Orders.Where(o => o.Id == 1).FirstOrDefault();
+            if (order != null)
+            {
+                order.User = user;
+                order.Items = new List<OrderItem>()
+                {
+                    new OrderItem()
+                    {
+                        Product = products.First(),
+                        Quantity = 5,
+                        UnitPrice = products.First().Price
                     }
                 };
-                order.User = user;
-                _context.Orders.Add(order);
-                _context.SaveChanges();*/
-          //      var order = _context.Orders.Where(o => o.Id == 1).FirstOrDefault();
-          //      if (order != null)
-          //      {
-          //          order.User = user;
-          //          order.Items = new List<OrderItem>()
-          //{
-          //  new OrderItem()
-          //  {
-          //    Product = products.First(),
-          //    Quantity = 5,
-          //    UnitPrice = products.First().Price
-          //  }
-          //};
-          //      }
+            }*/
 
-                _context.SaveChanges();
+            /*var order = new Order()
+            {
 
-            }
+                OrderDate = DateTime.Today,
+                OrderNumber = "1000",
+                //order.User = user,
+                Items = new List<OrderItem>()
+                {
+                    new OrderItem()
+                    {
+                        Product = products.First(),
+                        Quantity = 5,
+                        UnitPrice = products.First().Price
+                    }
+                }
+            };
+            order.User = user;
+            _context.Orders.Add(order);
+            _context.SaveChanges();*/
+            //      var order = _context.Orders.Where(o => o.Id == 1).FirstOrDefault();
+            //      if (order != null)
+            //      {
+            //          order.User = user;
+            //          order.Items = new List<OrderItem>()
+            //{
+            //  new OrderItem()
+            //  {
+            //    Product = products.First(),
+            //    Quantity = 5,
+            //    UnitPrice = products.First().Price
+            //  }
+            //};
+            //      }
+
+            //    _context.SaveChanges();
+
+            //}
         }
     }
 }

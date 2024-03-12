@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ProductCategory>
+@foreach (var category in Model)
+{
+    <tr>
+        <td class="editable" contenteditable="false" data-field="name">@category.Name</td>
+        <td class="hidden" data-field="id">@category.Id</td>
+        <td>
+            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </button>
+            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            </button>
+            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+            </button>
+        </td>
+    </tr>
+}
