@@ -6,6 +6,10 @@ namespace Jewelry.Data
     {
        
         IEnumerable<Product> GetAllProducts();
+        IEnumerable<ProductItem> GetConfirmedProductItems();
+        IEnumerable<Product> GetProductsWithAllItemsZeroQuantity();
+        IEnumerable<ProductItem> GetAllProductItems();
+        ProductItem GetProductItemById(int productId);
         IEnumerable<Product> GetProductsByCategory(string category);
         Product GetProductById(int productId);
         public bool IsProductExists(string product);
@@ -47,7 +51,9 @@ namespace Jewelry.Data
 
         InventoryReceipt GetInventoryReceiptById(int inventoryId);
         IEnumerable<InventoryReceiptDetails> GetAllInventoryReceiptDetails();
+        IEnumerable<InventoryReceipt> GetAllInventoryReceipt();
         InventoryReceiptDetails GetInventoryReceiptDetailsById(int inventoryId);
+        IEnumerable<InventoryReceiptDetails> GetDetailsByIvnetoryReceipt(int inventoryReceiptId);
         ProductItem GetProductItemByProductIdSizeIdMaterialId(int productId, int sizeId, int materialId);
         void UpdateEntity(object entity);
 

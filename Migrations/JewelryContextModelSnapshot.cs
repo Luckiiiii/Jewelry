@@ -278,13 +278,7 @@ namespace Jewelry.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PurchasePriceId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SalesPriceId")
                         .HasColumnType("int");
 
                     b.Property<int>("SizesId")
@@ -295,10 +289,6 @@ namespace Jewelry.Migrations
                     b.HasIndex("MaterialsId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("PurchasePriceId");
-
-                    b.HasIndex("SalesPriceId");
 
                     b.HasIndex("SizesId");
 
@@ -319,7 +309,12 @@ namespace Jewelry.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("ProductItemId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductItemId");
 
                     b.ToTable("PurchasePrice");
                 });
@@ -338,7 +333,12 @@ namespace Jewelry.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("ProductItemId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductItemId");
 
                     b.ToTable("SalesPrice");
                 });
@@ -813,18 +813,6 @@ namespace Jewelry.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jewelry.Data.Entities.PurchasePrice", "PurchasePrice")
-                        .WithMany()
-                        .HasForeignKey("PurchasePriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Jewelry.Data.Entities.SalesPrice", "SalesPrice")
-                        .WithMany()
-                        .HasForeignKey("SalesPriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Jewelry.Data.Entities.Size", "Sizes")
                         .WithMany()
                         .HasForeignKey("SizesId")
@@ -835,11 +823,29 @@ namespace Jewelry.Migrations
 
                     b.Navigation("Product");
 
-                    b.Navigation("PurchasePrice");
-
-                    b.Navigation("SalesPrice");
-
                     b.Navigation("Sizes");
+                });
+
+            modelBuilder.Entity("Jewelry.Data.Entities.PurchasePrice", b =>
+                {
+                    b.HasOne("Jewelry.Data.Entities.ProductItem", "ProductItem")
+                        .WithMany("PurchasePrice")
+                        .HasForeignKey("ProductItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductItem");
+                });
+
+            modelBuilder.Entity("Jewelry.Data.Entities.SalesPrice", b =>
+                {
+                    b.HasOne("Jewelry.Data.Entities.ProductItem", "ProductItem")
+                        .WithMany("SalesPrice")
+                        .HasForeignKey("ProductItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductItem");
                 });
 
             modelBuilder.Entity("Jewelry.Data.Entities.Status", b =>
@@ -959,6 +965,13 @@ namespace Jewelry.Migrations
                     b.Navigation("Img");
 
                     b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("Jewelry.Data.Entities.ProductItem", b =>
+                {
+                    b.Navigation("PurchasePrice");
+
+                    b.Navigation("SalesPrice");
                 });
 #pragma warning restore 612, 618
         }

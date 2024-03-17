@@ -15,7 +15,7 @@
                                 </div>
                                 <div class="breadcomb-ctn">
                                     <h2>Quản lý nhà cung cấp</h2>
-                                    <p>Welcome to Jewelry <span class="bread-ntd">Supplier Management</span></p>
+                                    <p>Chào mừng đến với cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +32,7 @@
                 <div class="product-status-wrap">
                     <h4>Suppliers List</h4>
                     <div class="add-supplier">
-                        <a title="Add Suppliers" asp-controller="AdminPage" asp-action="AddSupplier">Add Supplier</a>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm nhà cung cấp</button>
                     </div>
                     <div class="table-responsive">
                         <!--nanui-->
@@ -76,6 +76,55 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Thêm nhà cung cấp</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <form class="product-tab-list tab-pane active in" id="myForm" method="post">
+                                <div class="modal-body">
+                                    
+                                        <div id="nameValidationMessage" class="text-warning"></div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="review-content-section">
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                        <input name="Name" type="text" class="form-control" placeholder="Tên nhà cung cấp">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                        <input name="Email" type="text" class="form-control" placeholder="Địa chỉ Email">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-new-file account" aria-hidden="true"></i></span>
+                                                        <input name="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-favorites account" aria-hidden="true"></i></span>
+                                                        <input name="Address" type="text" class="form-control" placeholder="Địa chỉ">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button type="button" class="btn btn-success" id="save">Lưu</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,6 +132,31 @@
 </div>
 <script>
     $(document).ready(function () {
+        function validateSupplierForm(name, email, phoneNumber, address) {
+            var errorMessage = "";
+
+            // Kiểm tra các trường thông tin có hợp lệ không
+            if (!name) {
+                errorMessage = "Name is required.";
+            } else if (!email) {
+                errorMessage = "Email address is required.";
+            } else if (!phoneNumber) {
+                errorMessage = "Phone number is required.";
+            } else if (!isValidPhoneNumber(phoneNumber)) {
+                errorMessage = "Invalid phone number. Please enter a 10-digit number.";
+            } else if (!address) {
+                errorMessage = "Address is required.";
+            }
+
+            return errorMessage;
+        }
+
+        function isValidPhoneNumber(phoneNumber) {
+            // Biểu thức chính quy để kiểm tra định dạng số điện thoại (10 chữ số)
+            var phoneRegex = /^\d{10}$/;
+            return phoneRegex.test(phoneNumber);
+        }
+
         $('.edit-btn').click(function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
@@ -99,21 +173,10 @@
             var address = $row.find('.editable[data-field="address"]').text();
             var errorMessage = "";
 
-            // Kiểm tra các trường thông tin có hợp lệ không
-            if (!name) {
-                errorMessage = "Name is required.";
-            } else if (!email) {
-                errorMessage = "Email address is required.";
-            } else if (!phoneNumber) {
-                errorMessage = "Phone number is required.";
-            } else if (!/^\d{10}$/.test(phoneNumber)) {
-                errorMessage = "Invalid phone number. Please enter a 10-digit number.";
-            } else if (!address) {
-                errorMessage = "Address is required.";
-            }
-            if (errorMessage) {
-                alert(errorMessage);
-                return; // Dừng quá trình lưu nếu có trường nào đó không hợp lệ
+            var validationMessage = validateSupplierForm(name, email, phoneNumber, address);
+            if (validationMessage) {
+                alert(validationMessage);
+                return;
             }
             $.ajax({
                 url: '/AdminPage/SaveSupplier',
@@ -159,22 +222,53 @@
                 }
             });
         });
-        // $(document).ready(function () {
-        //     $('#searchButton').click(function () {
-        //         var searchText = $('#searchInput').val();
-        //         $.ajax({
-        //             url: '/AdminPage/SearchSupplier',
-        //             type: 'GET',
-        //             data: { searchText: searchText },
-        //             success: function (response) {
-        //                 Cập nhật nội dung của bảng với kết quả tìm kiếm
-        //                 $('.product-status-wrap table tbody').html(response);
-        //             },
-        //             error: function (error) {
-        //                 console.error('Error searching supplier:', error);
-        //             }
-        //         });
-        //     });
-        // });
+
+        $("#save").click(function () {
+            // Lấy giá trị từ các trường nhập liệu
+            var name = $("input[name='Name']").val();
+            var email = $("input[name='Email']").val();
+            var phoneNumber = $("input[name='PhoneNumber']").val();
+            var address = $("input[name='Address']").val();
+
+            // Kiểm tra xem các trường có hợp lệ không
+            var validationMessage = validateSupplierForm(name, email, phoneNumber, address);
+            if (validationMessage) {
+                alert(validationMessage);
+                return;
+            }
+            $.ajax({
+                url: '/AdminPage/AddSupplier',
+                type: 'POST',
+                data: $("#myForm").serialize(),
+                success: function (response) {
+                    // Đóng modal
+                    $("#myModal").modal('hide');
+
+                    // Thêm dòng mới vào bảng
+                    var newRow = `<tr>
+                <td class="hidden">${response.id}</td>
+                <td class="editable" contenteditable="false">${response.name}</td>
+                <td>${response.email}</td>
+                <td class="editable" contenteditable="false">${response.phoneNumber}</td>
+                <td class="editable" contenteditable="false">${response.address}</td>
+                <td>
+                    <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    </button>
+                    <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                    </button>
+                    <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    </button>
+                </td>
+            </tr>`;
+                    $("#SupplierTable tbody").append(newRow);
+                },
+                error: function (error) {
+                    console.error('Error saving data:', error);
+                }
+            });
+        });
     });
 </script>

@@ -7,6 +7,7 @@ using Jewelry.Models;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Jewelry.Controllers
 {
@@ -33,14 +34,14 @@ namespace Jewelry.Controllers
             return View(users);
         }
 
-        public IActionResult SearchUsers(string searchText)
-        {
-            // Thực hiện tìm kiếm người dùng dựa trên searchText
-            var users = _repository.SearchUsers(searchText);
+        //public IActionResult SearchUsers(string searchText)
+        //{
+        //    // Thực hiện tìm kiếm người dùng dựa trên searchText
+        //    var users = _repository.SearchUsers(searchText);
 
-            // Trả về một phần giao diện người dùng (partial view) chứa kết quả tìm kiếm
-            return PartialView("_UserTable", users);
-        }
+        //    // Trả về một phần giao diện người dùng (partial view) chứa kết quả tìm kiếm
+        //    return PartialView("_UserTable", users);
+        //}
 
 
         [HttpPost]
@@ -109,6 +110,53 @@ namespace Jewelry.Controllers
             }
             return View(model);
         }
+
+        public async Task<IActionResult> AddUserModal(string email, string firstName, string lastName, string phoneNumber, string address, string password, bool isEmployee)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existingUser = await _userManager.FindByEmailAsync(email);
+                    if (existingUser != null)
+                    {
+                        return Json(new { success = false, errorMessage = "Email already exists." });
+                    }
+
+                    var user = new StoreUser
+                    {
+                        UserName = email,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        Email = email,
+                        PhoneNumber = phoneNumber,
+                        Address = address,
+                    };
+                    var result = await _userManager.CreateAsync(user, password);
+                    if (result.Succeeded)
+                    {
+
+                        if (isEmployee)
+                        {
+                            await _userManager.AddToRoleAsync(user, "manager");
+                        }
+                        var roles = await _userManager.GetRolesAsync(user);
+                        await _signInManger.SignInAsync(user, isPersistent: false);
+
+                        return Json(new { success = true, email = user.Email, firstName = user.FirstName, lastName = user.LastName, phoneNumber = user.PhoneNumber, address = user.Address, roles = roles });
+                    }
+                    
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error adding category: {ex}");
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
+                }
+            }
+
+            return Json(new { success = false, errorMessage = "Invalid data." });
+        }
+
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string userId)
         {
@@ -135,45 +183,50 @@ namespace Jewelry.Controllers
             return View(Supplier);
         }
 
-        public async Task<IActionResult> AddSupplier(AddSupplierViewModel model)
+        public async Task<IActionResult> AddSupplier(string name, string email, string phoneNumber, string address)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var isEmailExists = _repository.IsEmailExists(model.Email);
-                    if (isEmailExists)
+                    var isCategoryExists = _repository.IsEmailExists(email);
+                    if (isCategoryExists)
                     {
-                        ModelState.AddModelError("CustomError", "Email already exists.");
-                        return View(model);
+                        // Trả về JSON object thông báo lỗi
+                        return Json(new { success = false, errorMessage = "Email already exists." });
                     }
 
                     var supplier = new Supplier
                     {
-                        Name = model.Name,
-                        Email = model.Email,
-                        PhoneNumber = model.PhoneNumber,
-                        Address = model.Address
+                        Name = name,
+                        Email = email,
+                        PhoneNumber = phoneNumber,
+                        Address = address
                     };
 
-                    _repository.AddEntity(supplier); 
+                    _repository.AddEntity(supplier);
 
                     if (_repository.SaveAll())
-                    {               
-                        return RedirectToAction("SupplierManagement", "AdminPage");
+                    {
+                        // Trả về JSON object thông báo thành công
+                        return Json(new { success = true, name = supplier.Name, email = supplier.Email, phoneNumber = supplier.PhoneNumber, address = supplier.Address });
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Failed to save changes."); 
+                        // Trả về JSON object thông báo lỗi
+                        return Json(new { success = false, errorMessage = "Failed to save changes." });
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Error adding supplier: {ex}");
-                    ModelState.AddModelError("", "An error occurred while processing your request."); 
+                    _logger.LogError($"Error adding category: {ex}");
+                    // Trả về JSON object thông báo lỗi
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
                 }
             }
-            return View(model);
+
+            // Trả về JSON object thông báo lỗi nếu dữ liệu không hợp lệ
+            return Json(new { success = false, errorMessage = "Invalid data." });
         }
 
         public IActionResult SaveSupplier(int supplierId, string name, string email, string phoneNumber, string address)
@@ -221,11 +274,11 @@ namespace Jewelry.Controllers
             }
         }
 
-        public IActionResult SearchSupplier(string searchText)
-        {
-            var supplier = _repository.SearchSupplier(searchText);
-            return PartialView("_SupplierTable", supplier);
-        }
+        //public IActionResult SearchSupplier(string searchText)
+        //{
+        //    var supplier = _repository.SearchSupplier(searchText);
+        //    return PartialView("_SupplierTable", supplier);
+        //}
 
         public IActionResult CategoryManagement()
         {
@@ -233,43 +286,50 @@ namespace Jewelry.Controllers
             return View(category);
         }
 
-        public async Task<IActionResult>AddCategory(ProductCategory model)
+        [HttpPost]
+        public async Task<IActionResult> AddCategory(string name)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var isCategoryExists = _repository.IsCategoryExists(model.Name);
+                    var isCategoryExists = _repository.IsCategoryExists(name);
                     if (isCategoryExists)
                     {
-                        ModelState.AddModelError("CustomError", "Category already exists.");
-                        return View(model);
+                        // Trả về JSON object thông báo lỗi
+                        return Json(new { success = false, errorMessage = "Category already exists." });
                     }
 
                     var category = new ProductCategory
                     {
-                        Name = model.Name,
+                        Name = name,
                     };
 
                     _repository.AddEntity(category);
 
                     if (_repository.SaveAll())
                     {
-                        return RedirectToAction("CategoryManagement", "AdminPage");
+                        // Trả về JSON object thông báo thành công
+                        return Json(new { success = true, categoryName = category.Name });
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Failed to save changes.");
+                        // Trả về JSON object thông báo lỗi
+                        return Json(new { success = false, errorMessage = "Failed to save changes." });
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Error adding supplier: {ex}");
-                    ModelState.AddModelError("", "An error occurred while processing your request.");
+                    _logger.LogError($"Error adding category: {ex}");
+                    // Trả về JSON object thông báo lỗi
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
                 }
             }
-            return View(model);
+
+            // Trả về JSON object thông báo lỗi nếu dữ liệu không hợp lệ
+            return Json(new { success = false, errorMessage = "Invalid data." });
         }
+
 
         public IActionResult SaveCategory(int categoryId, string name)
         {
@@ -305,19 +365,45 @@ namespace Jewelry.Controllers
             }
         }
 
-        public IActionResult SearchCategory(string searchText)
-        {
-            var category = _repository.SearchCategory(searchText);
-            return PartialView("_CategoryTable", category);
-        }
+        //public IActionResult SearchCategory(string searchText)
+        //{
+        //    var category = _repository.SearchCategory(searchText);
+        //    return PartialView("_CategoryTable", category);
+        //}
 
         public IActionResult ProductManagement()
         {
-
-            var product = _repository.GetAllProducts();
+            var product = _repository.GetConfirmedProductItems();
             return View(product);
         }
 
+        public IActionResult SaveProduct(int productItemId, int productId, decimal? salesPrice, string? warrantyInformation)
+        {
+            var product = _repository.GetProductById(productId);
+            var existingProductItem = _repository.GetProductItemById(productItemId);
+            if (existingProductItem != null)
+            {
+                if(salesPrice != null && salesPrice !=0 &&
+                   salesPrice != existingProductItem.SalesPrice?.OrderByDescending(pp => pp.EffectiveDate).FirstOrDefault()?.Price)
+                {
+                    var sPrice = new SalesPrice
+                    {
+                        Price = (decimal)salesPrice,
+                        EffectiveDate = DateTime.UtcNow
+                    };
+                    existingProductItem.SalesPrice.Add(sPrice);
+                }
+                if(warrantyInformation != null)
+                {
+                    product.WarrantyInformation = warrantyInformation;
+                }
+                if (_repository.SaveAll())
+                {
+                    return Json(new { success = true });
+                }
+            }
+            return Json(new { success = false });
+        }
 
         public string GetCategoryName(int id)
         {
@@ -393,12 +479,77 @@ namespace Jewelry.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddProductModal(int categoryId, string name, string description, string warrantyInformation, List<IFormFile> img)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var isProductExists = _repository.IsProductExists(name);
+                    if (isProductExists)
+                    {
+                        return Json(new { success = false, errorMessage = "Product already exists." });
+                    }
+                    var existingCategory = _repository.GetCategoryById(categoryId);
+                    var product = new Product
+                    {
+                        Category = existingCategory,
+                        Name = name,
+                        Description = description,
+                        WarrantyInformation = warrantyInformation
+                    };
+
+                    // Lưu sản phẩm vào database
+                    _repository.AddEntity(product);
+
+                    // Lưu hình ảnh vào thư mục wwwroot/img và cập nhật đường dẫn vào database
+                    foreach (var image in img)
+                    {
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + image.FileName;
+                        var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "img", uniqueFileName);
+                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await image.CopyToAsync(stream);
+                        }
+                        var productImage = new ProductImage
+                        {
+                            Product = product,
+                            Name = image.FileName,
+                            UrlImage = "/img/" + uniqueFileName
+                        };
+                        _repository.AddEntity(productImage);
+                    }
+
+                    if (_repository.SaveAll())
+                    {
+                        return Json(new { success = true, productId = product.Id, name = product.Name });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, errorMessage = "Failed to save changes." });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error adding product: {ex}");
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
+                }
+            }
+            return Json(new { success = false, errorMessage = "Invalid data." });
+        }
+
         public IActionResult InventoryReceiptManagement()
         {
-            var inventory = _repository.GetAllInventoryReceiptDetails();
+            var inventory = _repository.GetAllInventoryReceipt();
             return View(inventory);
         }
 
+        public IActionResult InventoryDetailManagement(int id)
+        {
+            var inventory = _repository.GetDetailsByIvnetoryReceipt(id);
+            return View(inventory);
+        }
         public string GetSupplierName(int id)
         {
             var supplier = _repository.GetSupplierById(id);
@@ -407,7 +558,8 @@ namespace Jewelry.Controllers
 
         public IActionResult AddInventoryReceipt()
         {
-            
+            var categories = _repository.GetCategory();
+            ViewBag.categories = categories.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
             var suppliers = _repository.GetAllSupplier();
             ViewBag.suppliers = suppliers.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name});
             var products = _repository.GetAllProducts();
@@ -416,14 +568,6 @@ namespace Jewelry.Controllers
             ViewBag.sizes = sizes.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
             var materials = _repository.GetAllMaterial();
             ViewBag.materials = materials.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
-            //var suppliersid = _repository.GetAllSupplier();
-            //ViewBag.suppliersid = suppliersid.Select(c => new SelectListItem { Value = c.Name, Text = c.Id.ToString() });
-            var productsid = _repository.GetAllProducts();
-            ViewBag.productsid = productsid.Select(c => new SelectListItem { Value = c.Name, Text = c.Id.ToString() });
-            var sizesid = _repository.GetAllSize();
-            ViewBag.sizesid = sizesid.Select(c => new SelectListItem { Value = c.Name, Text = c.Id.ToString() });
-            var materialsid = _repository.GetAllMaterial();
-            ViewBag.materialsid = materialsid.Select(c => new SelectListItem { Value = c.Name, Text = c.Id.ToString() });
             List<AddInventoryReceiptViewModel> viewModelList = new List<AddInventoryReceiptViewModel>();
           
             return View(viewModelList);
@@ -435,72 +579,71 @@ namespace Jewelry.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (user != null)
             {
+                var isSupplier = _repository.GetSupplierById(inventoryReceipts.FirstOrDefault().SupplierId);
+                var inventoryReceipt = new InventoryReceipt
+                {
+                    User = user,
+                    Supplier = isSupplier,
+                    CreationDate = DateTime.Now,
+                    Confirmation = false,
+                    Note = ""
+                };
+                _repository.AddEntity(inventoryReceipt);
                 foreach (var item in inventoryReceipts)
                 {
+                    var purchasePrice = new PurchasePrice
+                    {
+                        Price = item.PurchasePrice,
+                        EffectiveDate = DateTime.Now
+                    };
+                     var salesPrice = new SalesPrice
+                    {
+                        Price = item.PurchasePrice,
+                        EffectiveDate = DateTime.Now
+                    };
+
                     ProductItem productItem;
                     var existingProductItem = _repository.GetProductItemByProductIdSizeIdMaterialId(item.ProductId, item.SizeId, item.MaterialId);
 
                     if (existingProductItem != null)
                     {
-                        // Cập nhật số lượng và giá nhập
                         existingProductItem.Quantity += item.Quantity;
-                        if(existingProductItem.PurchasePrice != null)
+
+                        if (existingProductItem.PurchasePrice == null)
                         {
-                            // Cập nhật giá nhập
-                            existingProductItem.PurchasePrice.Price = item.PurchasePrice;
-                            existingProductItem.PurchasePrice.EffectiveDate = DateTime.Now;
+                            existingProductItem.PurchasePrice = new List<PurchasePrice>();
                         }
-                        else
+                        existingProductItem.PurchasePrice.Add(purchasePrice);
+
+                        if (existingProductItem.SalesPrice == null)
                         {
-                            // Tạo mới PurchasePrice
-                            existingProductItem.PurchasePrice = new PurchasePrice { Price = item.PurchasePrice, EffectiveDate = DateTime.Now };
+                            existingProductItem.SalesPrice = new List<SalesPrice>();
                         }
-                        // Kiểm tra xem SalesPrice có phải là null không
-                        if (existingProductItem.SalesPrice != null)
-                        {
-                            // Cập nhật giá bán
-                            existingProductItem.SalesPrice.Price = item.PurchasePrice; // Giá SalesPrice ban đầu giống như giá PurchasePrice
-                            existingProductItem.SalesPrice.EffectiveDate = DateTime.Now;
-                        }
-                        {
-                            // Tạo mới SalesPrice
-                            existingProductItem.SalesPrice = new SalesPrice { Price = item.PurchasePrice, EffectiveDate = DateTime.Now }; // Giá SalesPrice ban đầu giống như giá PurchasePrice
-                        }
+                        existingProductItem.SalesPrice.Add(salesPrice);
 
                         productItem = existingProductItem;
                     }
                     else
                     {
-                        // Tạo mới PurchasePrice và SalesPrice
-                        var purchasePrice = new PurchasePrice { Price = item.PurchasePrice, EffectiveDate = DateTime.Now };
-                        var salesPrice = new SalesPrice { Price = item.PurchasePrice, EffectiveDate = DateTime.Now }; // Giá SalesPrice ban đầu giống như giá PurchasePrice
                         var isProduct = _repository.GetProductById(item.ProductId);
                         var isSize = _repository.GetSizeById(item.SizeId);
                         var isMaterial = _repository.GetMaterialById(item.MaterialId);
+
                         // Tạo mới ProductItem
                         productItem = new ProductItem
                         {
                             Product = isProduct,
                             Sizes = isSize,
                             Materials = isMaterial,
-                            PurchasePrice = purchasePrice,
-                            SalesPrice = salesPrice,
+                            PurchasePrice = new List<PurchasePrice> { purchasePrice },
+                            SalesPrice = new List<SalesPrice> { salesPrice },
                             Quantity = item.Quantity
                         };
 
                         _repository.AddEntity(productItem);
                     }
 
-                    var isSupplier = _repository.GetSupplierById(item.SupplierId);
 
-                    var inventoryReceipt = new InventoryReceipt
-                    {
-                        User = user,
-                        Supplier = isSupplier,
-                        CreationDate = DateTime.Now,
-                        Confirmation = false,
-                        Note = ""
-                    };
                     // Tạo mới InventoryReceiptDetails
                     var inventoryReceiptDetails = new InventoryReceiptDetails
                     {
@@ -508,27 +651,43 @@ namespace Jewelry.Controllers
                         InventoryReceipt = inventoryReceipt,
                         Quantity = item.Quantity
                     };
-                    _repository.AddEntity(inventoryReceipt);
                     _repository.AddEntity(inventoryReceiptDetails);
                 }
+
                 await _repository.SaveChangesAsync();
             }
 
-            return Json(inventoryReceipts.Count + " record(s) inserted.");
+            return Json(new { redirectUrl = Url.Action("InventoryReceiptManagement", "AdminPage") });
         }
 
-        public IActionResult SaveInventoryReceipt(int inventoryId,string note)
+
+        public IActionResult SaveInventoryReceipt(int inventoryId, string note)
         {
-            var inventory = _repository.GetInventoryReceiptDetailsById(inventoryId);
-            if (inventoryId != null)
+            var inventory = _repository.GetInventoryReceiptById(inventoryId);
+            if (inventory != null)
             {
-                inventory.InventoryReceipt.Note = note;
+                inventory.Note = note;
                 if (_repository.SaveAll())
                 {
                     return Json(new { success = true });
                 }
             }
 
+            return Json(new { success = false });
+        }
+
+        public IActionResult ConfirmationInventory(int inventoryId)
+        {
+            var inventory = _repository.GetInventoryReceiptById(inventoryId);
+            if (inventory != null)
+            {
+                inventory.ConfirmationDate = DateTime.Now;
+                inventory.Confirmation = true;
+                if (_repository.SaveAll())
+                {
+                    return Json(new { success = true, confirmationDate = inventory.ConfirmationDate?.ToString("M/d/yyyy h:mm:ss tt") });
+                }
+            }
             return Json(new { success = false });
         }
 

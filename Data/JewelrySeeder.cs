@@ -140,58 +140,100 @@ namespace Jewelry.Data
                 _context.Size.AddRange(sizes);
                 _context.SaveChanges();
             }
-
-            if (!_context.PurchasePrice.Any())
+            if (!_context.Supplier.Any())
             {
-                _context.PurchasePrice.AddRange(
-                    new PurchasePrice { Price = 100, EffectiveDate = DateTime.UtcNow },
-                    new PurchasePrice { Price = 100, EffectiveDate = DateTime.UtcNow }
+                _context.Supplier.AddRange(
+                    new Supplier
+                    {
+                        Name = "Công Ty Cổ Phần Đầu Tư Và Kinh Doanh Vàng Việt Nam",
+                        Address = "Phòng Số 1, Tầng 4, Tòa Nhà Đào Duy Anh, Số 9 Đào Duy Anh, Hà Nội",
+                        Email = "info@vietnamgoldcorp.com",
+                        PhoneNumber = "0335772269",
+                    },
+                    new Supplier
+                    {
+                        Name = "Công Ty TNHH Vàng Bạc Đá Quý Huy Thành",
+                        Address = "135 Hàng Bạc, Hoàn Kiếm, Hà Nội",
+                        Email = "cskh@htj.vn",
+                        PhoneNumber = "0339264656",
+                    }
                 );
-                _context.SaveChanges();
             }
 
-            if (!_context.SalesPrice.Any())
-            {
-                _context.SalesPrice.AddRange(
-                    new SalesPrice { Price = 120, EffectiveDate = DateTime.UtcNow },
-                    new SalesPrice { Price = 120, EffectiveDate = DateTime.UtcNow }
-                );
-                _context.SaveChanges();
-            }
-            
-            if (!_context.ProductItems.Any())
-            {
-                var size = _context.Size.FirstOrDefault(s => s.Id == 1);
-                var material = _context.Material.FirstOrDefault(s => s.Id == 1);
-                var product = _context.Products.FirstOrDefault(s => s.Id == 1);
-                var purchasePrice = _context.PurchasePrice.FirstOrDefault(s => s.Id == 1);
-                var salesPrice = _context.SalesPrice.FirstOrDefault(s => s.Id == 1);
+            //if (!_context.PurchasePrice.Any())
+            //{
+            //    _context.PurchasePrice.AddRange(
+            //        new PurchasePrice { Price = 100, EffectiveDate = DateTime.UtcNow },
+            //        new PurchasePrice { Price = 100, EffectiveDate = DateTime.UtcNow }
+            //    );
+            //    _context.SaveChanges();
+            //}
 
-                if (size != null && material != null && product != null && purchasePrice != null && salesPrice != null)
-                {
-                    _context.ProductItems.AddRange(
-                        new ProductItem
-                        {
-                            Sizes = size,
-                            Materials = material,
-                            Product = product,
-                            PurchasePrice = purchasePrice,
-                            SalesPrice = salesPrice,
-                            Quantity = 100
-                        },
-                        new ProductItem
-                        {
-                            Sizes = size,
-                            Materials = material,
-                            Product = product,
-                            PurchasePrice = purchasePrice,
-                            SalesPrice = salesPrice,
-                            Quantity = 150
-                        });
+            //if (!_context.SalesPrice.Any())
+            //{
+            //    _context.SalesPrice.AddRange(
+            //        new SalesPrice { Price = 120, EffectiveDate = DateTime.UtcNow },
+            //        new SalesPrice { Price = 120, EffectiveDate = DateTime.UtcNow }
+            //    );
+            //    _context.SaveChanges();
+            //}
 
-                    _context.SaveChanges();
-                }
-            }
+            //if (!_context.ProductItems.Any())
+            //{
+            //    var size = _context.Size.FirstOrDefault(s => s.Id == 1);
+            //    var material = _context.Material.FirstOrDefault(s => s.Id == 1);
+            //    var product = _context.Products.FirstOrDefault(s => s.Id == 1);
+
+            //    if (size != null && material != null && product != null)
+            //    {
+            //        var purchasePrice1 = new PurchasePrice
+            //        {
+            //            Price = 10000000,
+            //            EffectiveDate = DateTime.UtcNow
+            //        };
+
+            //        var salesPrice1 = new SalesPrice
+            //        {
+            //            Price = 20000000,
+            //            EffectiveDate = DateTime.UtcNow
+            //        };
+
+            //        var purchasePrice2 = new PurchasePrice
+            //        {
+            //            Price = 20000000,
+            //            EffectiveDate = DateTime.UtcNow
+            //        };
+
+            //        var salesPrice2 = new SalesPrice
+            //        {
+            //            Price = 40000000,
+            //            EffectiveDate = DateTime.UtcNow
+            //        };
+
+            //        _context.ProductItems.AddRange(
+            //            new ProductItem
+            //            {
+            //                Sizes = size,
+            //                Materials = material,
+            //                Product = product,
+            //                PurchasePrice = new List<PurchasePrice> { purchasePrice1 },
+            //                SalesPrice = new List<SalesPrice> { salesPrice1 },
+            //                Quantity = 100
+            //            },
+            //            new ProductItem
+            //            {
+            //                Sizes = size,
+            //                Materials = material,
+            //                Product = product,
+            //                PurchasePrice = new List<PurchasePrice> { purchasePrice2 },
+            //                SalesPrice = new List<SalesPrice> { salesPrice2 },
+            //                Quantity = 150
+            //            });
+
+            //        _context.SaveChanges();
+            //    }
+            //}
+
             //var size = _context.Size.FirstOrDefault(s => s.Id == 1);
             //var material = _context.Material.FirstOrDefault(s => s.Id == 1);
             //var product = _context.Products.Where(p => p.Id == 9).FirstOrDefault();

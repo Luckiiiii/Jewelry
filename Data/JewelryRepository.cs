@@ -89,6 +89,100 @@ namespace Jewelry.Data
             }
         }
 
+        public IEnumerable<ProductItem> GetAllProductItems()
+        {
+            try
+            {
+                _logger.LogInformation("GetAllProductItems was called");
+                return _context.ProductItems
+                    .Include(p=>p.Product).ThenInclude(i=>i.Img)
+                    .Include(p => p.Product).ThenInclude(i => i.Category)
+                    .Include(p=>p.Materials)
+                    .Include(p => p.Sizes)
+                    .Include(p=>p.PurchasePrice)
+                    .Include(p=>p.SalesPrice)
+                    .OrderBy(p => p.Product)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all product item: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<ProductItem> GetConfirmedProductItems()
+        {
+            try
+            {
+                _logger.LogInformation("GetConfirmedProductItems was called");
+
+                var productItemIds = _context.InventoryReceiptDetails
+                    .Where(ird => ird.InventoryReceipt.Confirmation == true)
+                    .Select(ird => ird.ProductItem.Id)
+                    .ToList();
+
+                var productItems = _context.ProductItems
+                    .Where(p => productItemIds.Contains(p.Id))
+                    .Include(p => p.Product).ThenInclude(i => i.Img)
+                    .Include(p => p.Product).ThenInclude(i => i.Category)
+                    .Include(p => p.Materials)
+                    .Include(p => p.Sizes)
+                    .Include(p => p.PurchasePrice)
+                    .Include(p => p.SalesPrice)
+                    .OrderBy(p => p.Product)
+                    .ToList();
+
+                return productItems;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get confirmed product items: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<Product> GetProductsWithAllItemsZeroQuantity()
+        {
+            try
+            {
+                _logger.LogInformation("GetProductsWithAllItemsZeroQuantity was called");
+
+                var products = _context.Products
+                    .Where(p => p.Item.All(i => i.Quantity == 0))
+                    .OrderBy(p => p.Name)
+                    .ToList();
+
+                return products;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get products with all items zero quantity: {ex}");
+                return null;
+            }
+        }
+
+
+
+        public ProductItem GetProductItemById(int productId)
+        {
+            try
+            {
+                _logger.LogInformation("GetProductItemById was called");
+                return _context.ProductItems
+                    .Include(i => i.Materials)
+                    .Include(i => i.SalesPrice)
+                    .Include(i => i.PurchasePrice)
+                    .Include(i => i.Product)
+                    .FirstOrDefault(s => s.Id == productId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get productItems by ID: {ex}");
+                return null;
+            }
+        }
+
         public IEnumerable<Product> GetProductsByCategory(string category)
         {
             try
@@ -420,6 +514,51 @@ namespace Jewelry.Data
             }
         }
 
+        public IEnumerable<InventoryReceipt> GetAllInventoryReceipt()
+        {
+            try
+            {
+                _logger.LogInformation("GetAllInventoryReceipt was called");
+                return _context.InventoryReceipt
+                    .Include(i => i.User)
+                    .Include(i => i.Supplier)
+                   .OrderBy(p => p.Id)
+                   .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all InventoryReceipt: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<InventoryReceiptDetails>GetDetailsByIvnetoryReceipt(int inventoryReceiptId)
+        {
+            try
+            {
+                _logger.LogInformation("GetDetailsByIvnetoryReceipt was called");
+                return _context.InventoryReceiptDetails
+                    .Where(d => d.InventoryReceipt.Id == inventoryReceiptId)
+                    .Include(i => i.ProductItem)
+                    .ThenInclude(p => p.PurchasePrice)
+                    .Include(i => i.ProductItem)
+                    .ThenInclude(p => p.Product)
+                    .Include(i => i.ProductItem)
+                    .ThenInclude(s => s.Sizes)
+                    .Include(i => i.ProductItem)
+                    .ThenInclude(m => m.Materials)
+                    .Include(i => i.InventoryReceipt)
+                    .OrderBy(p => p.Id)
+                    .ToList();
+            
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Inventory by ID: {ex}");
+                return null;
+            }
+        }
+
         public IEnumerable<InventoryReceiptDetails> GetAllInventoryReceiptDetails()
         {
             try
@@ -470,6 +609,8 @@ namespace Jewelry.Data
                 .Include(p => p.SalesPrice)
                 .FirstOrDefault(pi => pi.Product.Id == productId && pi.Sizes.Id == sizeId && pi.Materials.Id == materialId);
         }
+
+        
 
         public void UpdateEntity(object entity)
         {

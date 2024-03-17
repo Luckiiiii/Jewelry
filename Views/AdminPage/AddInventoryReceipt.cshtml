@@ -36,6 +36,11 @@
 
                 <div class="product-status-wrap">
                     <h4>Thêm phiếu nhập</h4>
+                    <div class="row">
+                        <div class="add-supplier">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm Sản Phẩm</button>
+                        </div>
+                    </div>
                     <div>
                         @Html.DropDownList("SupplierId", (IEnumerable<SelectListItem>)ViewBag.suppliers, new { @class = "form-controller selectpicker", data_live_search = "true", title = "Chọn nhà cung cấp" })
                     </div>
@@ -105,6 +110,57 @@
                             Save
                         </button>
                     </div>
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Thêm nhà cung cấp</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <form class="product-tab-list tab-pane active in" id="myForm" method="post">
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <div asp-for="Category"> 
+                                                        @Html.DropDownList("categoryId", (IEnumerable<SelectListItem>)ViewBag.categories, new { @class = "form-controller selectpicker category-dropdown", data_live_search = "true", title = "Chọn sản phẩm" })
+                                                    </div>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                    <input name="name" type="text" class="form-control" placeholder="Ten san pham">
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <input name="description" type="text" class="form-control" placeholder="Description">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <input name="warrantyInformation" type="text" class="form-control" placeholder="Warranty Information">
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <input name="img" type="file" class="form-control" multiple>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- Modal footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-success" id="saveProduct">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
             </div>
@@ -114,6 +170,7 @@
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script> *@
 
 <script type="text/javascript">
     function Remove(button) {
@@ -126,7 +183,139 @@
     }
 
     $(document).ready(function () {
-        $("table").on("click", "#btnAdd", function () {
+
+	
+
+        $("body").on("click", "#btnSave", function () {
+            var inventoryReceipts = new Array();
+            $("#inventoryReceipt TBODY TR").each(function () {
+                var row = $(this);
+                var inventoryReceipt = {};
+                inventoryReceipt.SupplierId = $("#SupplierId").val();
+                inventoryReceipt.ProductId = row.find("TD").eq(0).find("input").val();
+                inventoryReceipt.SizeId = row.find("TD").eq(1).find("input").val();
+                inventoryReceipt.MaterialId = row.find("TD").eq(2).find("input").val();
+                inventoryReceipt.Quantity = row.find("TD").eq(3).text(); 
+                inventoryReceipt.PurchasePrice = row.find("TD").eq(4).text();
+                inventoryReceipts.push(inventoryReceipt);   
+                
+            });
+            console.log(inventoryReceipts);
+
+            $.ajax({
+                async: true,
+                type: "POST",
+                url: "/AdminPage/AddInventoryReceipt",
+                data: JSON.stringify(inventoryReceipts),
+                contentType: "application/json; charset=utf-8",
+                dataType: "JSON",
+                success: function (response) {
+                    window.location.href = response.redirectUrl;
+                },
+                error: function () {
+                    alert("There is some problem");
+                }
+            });
+        });
+        $(document).on('click', '#btnAdd', function () {
+            var supplierId = $('#SupplierId')
+            var productName = $("#ProductId option:selected").text();
+            var sizeName = $("#SizeId option:selected").text();
+            var materialName = $("#MaterialId option:selected").text();
+            var productNames = $("#ProductId option:selected").val();
+            var sizeNames = $("#SizeId option:selected").val();
+            var materialNames = $("#MaterialId option:selected").val();
+            var quantity = $("#QuantityId").val();
+            var purchasePrice = $("#PurchasePriceId").val();
+            var errorMessage = "";
+
+            if (!productNames) {
+                errorMessage = "Please select a product.";
+            } else if (!sizeNames) {
+                errorMessage = "Please select a size.";
+            } else if (!materialNames) {
+                errorMessage = "Please select a material.";
+            } else if (!quantity) {
+                errorMessage = "Please enter quantity.";
+            } else if (!purchasePrice) {
+                errorMessage = "Please enter purchase price.";
+            } else if (!supplierId) {
+                errorMessage1 = "Please enter SupplierId price."
+            }
+            
+
+            if (errorMessage) {
+                alert(errorMessage);
+                return;
+            }
+
+            var tBody = $("#inventoryReceipt > TBODY")[0];
+            var row = tBody.insertRow(-1);
+
+            var cell = $(row.insertCell(-1));
+            cell.html(productName + '<input type="hidden" value="' + productNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(sizeName + '<input type="hidden" value="' + sizeNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(materialName + '<input type="hidden" value="' + materialNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(quantity);
+
+            cell = $(row.insertCell(-1));
+            cell.html(purchasePrice);
+
+            cell = $(row.insertCell(-1));
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "Remove(this);");
+            btnRemove.val("Remove");
+            cell.append(btnRemove);
+            reset_btnadd();
+
+        });
+        function reset_btnadd() {
+            $("#ProductId").val('').change();
+
+            $("#SizeId").val('').change();
+            $("#MaterialId").val('').change();
+            $("#MaterialId").val('').change();
+            $("#QuantityId").val('');
+            $("#PurchasePriceId").val('');
+            $('.selectpicker').selectpicker('refresh');
+
+        }
+        $("#saveProduct").click(function (event) {
+            event.preventDefault();
+
+            var formData = new FormData();
+            formData.append('categoryId', $('select[name="categoryId"]').val());
+            formData.append('name', $('input[name="name"]').val());
+            formData.append('description', $('input[name="description"]').val());
+            formData.append('warrantyInformation', $('input[name="warrantyInformation"]').val());
+            formData.append('img', $('input[name="img"]')[0].files[0]);
+
+            $.ajax({
+                url: '/AdminPage/AddProductModal',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $("#myModal").modal('hide');
+                    var newRow = `<option value=${response.productId}>${response.name}</option>`;
+                    $("#ProductId").append(newRow);
+                    $('#ProductId').selectpicker('refresh');
+                },
+                error: function (error) {
+                    console.error('Error saving data:', error);
+                }
+            });
+        });
+
+        @* $(document).on('click', '#btnAdd', function () {
             var productName = $("#ProductId option:selected").text();
             var sizeName = $("#SizeId option:selected").text();
             var materialName = $("#MaterialId option:selected").text();
@@ -160,40 +349,20 @@
             btnRemove.attr("onclick", "Remove(this);");
             btnRemove.val("Remove");
             cell.append(btnRemove);
+            reset_btnadd();
+
         });
+        function reset_btnadd() {
+                     $('.selectpicker').selectpicker(); 
 
-        $("body").on("click", "#btnSave", function () {
-            var inventoryReceipts = new Array();
-            $("#inventoryReceipt TBODY TR").each(function () {
-                var row = $(this);
-                var inventoryReceipt = {};
-                inventoryReceipt.SupplierId = $("#SupplierId").val();
-                inventoryReceipt.ProductId = row.find("TD").eq(0).find("input").val();
-                inventoryReceipt.SizeId = row.find("TD").eq(1).find("input").val();
-                inventoryReceipt.MaterialId = row.find("TD").eq(2).find("input").val();
-                inventoryReceipt.Quantity = row.find("TD").eq(3).text(); 
-                inventoryReceipt.PurchasePrice = row.find("TD").eq(4).text();
-                inventoryReceipts.push(inventoryReceipt);   
-                
-            });
-            console.log(inventoryReceipts);
+            $("#ProductId").val('').change();
+            $("#SizeId").val('');
+            $("#MaterialId").val('');
+            $("#MaterialId").val('');
+            $("#QuantityId").val('');
+            $("#PurchasePriceId").val('');
 
-            $.ajax({
-                async: true,
-                type: "POST",
-                url: "/AdminPage/AddInventoryReceipt",
-                data: JSON.stringify(inventoryReceipts),
-                contentType: "application/json; charset=utf-8",
-                dataType: "JSON",
-                success: function (response) {
-                    alert(response + " record(s) inserted.");
-                },
-                error: function () {
-                    alert("There is some problem");
-                }
-            });
-        });
-
-        $('.selectpicker').selectpicker();
+        } *@
+        // $('.selectpicker').selectpicker(); 
     });
 </script>

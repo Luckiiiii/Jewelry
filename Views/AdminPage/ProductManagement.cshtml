@@ -1,8 +1,7 @@
 ﻿@{
     Layout = "_LayoutAdmin";
 }
-@model IEnumerable<Product>
-
+@model IEnumerable<ProductItem>
 <div class="breadcome-area">
     <div class="container-fluid">
         <div class="row">
@@ -15,16 +14,9 @@
                                     <i class="icon nalika-home"></i>
                                 </div>
                                 <div class="breadcomb-ctn">
-                                    <h2>Product Management</h2>
-                                    <p>Welcome to Jewelry <span class="bread-ntd">Product Management</span></p>
+                                    <h2>Quản lý sản phẩm</h2>
+                                    <p>Chào mừng đến với của hảng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
-                                <input type="text" id="searchInput" placeholder="Search Product...">
-                                <button id="searchButton">Search</button>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                            <div class="breadcomb-report">
-                                <button data-toggle="tooltip" data-placement="left" title="Download Report" class="btn"><i class="icon nalika-download"></i></button>
                             </div>
                         </div>
                     </div>
@@ -38,57 +30,70 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Products List</h4>
-                    <div class="add-product">
-                        <a title="Add Products" asp-controller="AdminPage" asp-action="AddProduct">Add Product</a>
+                    <h4>Danh sách sản phẩm</h4>
+                    <div class="add-supplier">
+                        <a title="Thêm sản phẩm" asp-controller="AdminPage" asp-action="AddProduct">Thêm sản phẩm</a>
                     </div>
-                    <table>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Warranty Information</th>
-                            <th>Image</th>
-                        </tr>
-                        @foreach (var product in Model)
-                        {
-                            <tr asp-validation-summary="ModelOnly">
-                                <td class="editable" contenteditable="false" data-field="name">@product.Name</td>
-                                <td data-field="description">@product.Description</td>
-                                <td data-field="category">@product.Category.Name</td>
-                                <td data-field="warranty">@product.WarrantyInformation</td>
-                                <td>
-                                    @if (product.Img.Any())
-                                    {
-                                        <img src="@product.Img.FirstOrDefault()?.UrlImage" alt="Product Image" width="100" height="100" />
-                                    }
-                                    else
-                                    {
-                                        <span>No Image Available</span>
-                                    }
-                                </td>
-                                <td class="hidden" data-field="id">@product.Id</td>
-                                <td>
-                                    <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                    </button>
-                                    <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                    </button>
-                                    <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
-                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                    <div class="custom-pagination">
-                        <ul class="pagination">
-                            @for (int i = 1; i <= @Model.Count() / 5 + 1; i++)
-                            {
-                                <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
-                            }
-                        </ul>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="ProductItemTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="hidden">ID</th>
+                                    <th class="hidden">IDP</th>
+                                    <th>Hình ảnh sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Chất liệu</th>
+                                    <th>Size</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá nhập</th>
+                                    <th>Giá bán</th>
+                                    <th>Thông tin bảo hành</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var productItem in Model)
+                                {
+                                    <tr asp-validation-summary="ModelOnly">
+                                        <td class="hidden" data-field="id">@productItem.Id</td>
+                                        <td class="hidden" data-field="idp">@productItem.Product.Id</td>
+                                        <td>
+                                            @if (productItem.Product.Img.Any())
+                                            {
+                                                <img src="@productItem.Product.Img.FirstOrDefault()?.UrlImage" alt="Product Image" width="100" height="100" />
+                                            }
+                                            else
+                                            {
+                                                <span>No Image Available</span>
+                                            }
+                                        </td>
+                                        <td data-field="productCategory">@productItem.Product.Category.Name</td>
+                                        <td class="editable" contenteditable="false" data-field="productName">@productItem.Product.Name</td>
+                                        <td data-field="material" data-id="@productItem.Materials.Id">@productItem.Materials.Name</td>
+                                        <td data-field="size" data-id="@productItem.Sizes.Id">@productItem.Sizes.Name</td>
+                                        <td data-field="quantity">@productItem.Quantity</td>
+                                        <td>@(productItem.PurchasePrice?.OrderByDescending(pp => pp.EffectiveDate).FirstOrDefault()?.Price.ToString("N0") ?? "0")</td>
+                                        <td class="editable" contenteditable="false" data-field="salesPrice">@(productItem.SalesPrice?.OrderByDescending(pp => pp.EffectiveDate).FirstOrDefault()?.Price.ToString("N0") ?? "0")</td>
+                                        <td class="editable" contenteditable="false" data-field="warrantyInformation">@productItem.Product.WarrantyInformation</td>
+                                        <td>
+                                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                            </button>
+                                            
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -106,35 +111,33 @@
 
         $('.save-btn').click(function () {
             var $row = $(this).closest('tr');
-            var productId = $row.find('.hidden[data-field="id"]').text();
-            var name = $row.find('.editable[data-field="name"]').text();
-            var description = $row.find('td[data-field="description"]').text();
-            var category = $row.find('td[data-field="category"]').text();
-            var warrantyInformation = $row.find('td[data-field="warranty"]').text();
+            var productItemId = $row.find('.hidden[data-field="id"]').text();
+            var productId = $row.find('.hidden[data-field="idp"]').text();
+            var salesPrice = $row.find('.editable[data-field="salesPrice"]').text().replace(/,/g, '');
+            var warrantyInformation = $row.find('.editable[data-field="warrantyInformation"]').text();
+            // var sizeId = $row.find('[data-field="size"]').data('id');
+            // var materialId = $row.find('[data-field="material"]').data('id');
             var errorMessage = "";
-            // Kiểm tra các trường thông tin có hợp lệ không
-            if (!name) {
-                errorMessage = "Name is required.";
-            } else if (!description) {
-                errorMessage = "Description is required.";
-            } else if (!category) {
-                errorMessage = "Category is required.";
-            } else if (!warrantyInformation) {
-                errorMessage = "Warranty information is required.";
+
+            if (!salesPrice) {
+                errorMessage = "Sales Price is required.";
+            } else if (!/^\d+$/.test(salesPrice.trim())) {
+                errorMessage = "Sales Price must be a number.";
+            } else if (!warrantyInformation.trim()) {
+                errorMessage = "Warranty Information is required.";
             }
             if (errorMessage) {
                 alert(errorMessage);
-                return; // Dừng quá trình lưu nếu có trường nào đó không hợp lệ
+                return;
             }
             $.ajax({
                 url: '/AdminPage/SaveProduct',
                 type: 'POST',
                 dataType: 'json',
                 data: {
+                    productItemId: productItemId,
                     productId: productId,
-                    name: name,
-                    description: description,
-                    category: category,
+                    salesPrice: salesPrice,
                     warrantyInformation: warrantyInformation
                 },
                 success: function (response) {
@@ -148,28 +151,5 @@
                 }
             });
         });
-
-        $('.trash-btn').click(function () {
-            var $row = $(this).closest('tr');
-            var productId = $row.find('.hidden[data-field="id"]').text();
-
-            $.ajax({
-                url: '/AdminPage/DeleteProduct',
-                type: 'POST',
-                dataType: 'json',
-                data: { productId: productId },
-                success: function (response) {
-                    if (response.success) {
-                        $row.remove(); // Xóa hàng khỏi bảng nếu xóa thành công
-                    } else {
-                        alert('Failed to delete product.'); // Hiển thị thông báo nếu xóa không thành công
-                    }
-                },
-                error: function (error) {
-                    console.error('Error deleting product:', error);
-                }
-            });
-        });
     });
 </script>
-

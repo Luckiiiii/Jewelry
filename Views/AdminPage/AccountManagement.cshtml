@@ -34,8 +34,8 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
                     <h4>Products List</h4>
-                    <div class="add-product">
-                        <a title="Add Users" asp-controller="AdminPage" asp-action="AddUsers">Thêm tài khoản</a>
+                    <div class="add-supplier">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm tài khoản</button>
                     </div>
                     <div class="table-responsive">
                         <!--nanui-->
@@ -87,6 +87,75 @@
                                 </tbody>
                         </table>
                     </div>
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Thêm nhà cung cấp</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <form class="product-tab-list tab-pane active in" id="myForm" method="post">
+                                <div class="modal-body">
+                                    
+                                        <div id="nameValidationMessage" class="text-warning"></div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="review-content-section">
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                        <input name="FirstName" type="text" class="form-control" placeholder="Họ">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                        <input name="Email" type="text" class="form-control" placeholder="Địa chỉ Email">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-new-file account" aria-hidden="true"></i></span>
+                                                        <input name="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-favorites account" aria-hidden="true"></i></span>
+                                                        <input name="Address" type="text" class="form-control" placeholder="Địa chỉ">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="review-content-section">
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                        <input name="LastName" type="text" class="form-control" placeholder="Tên">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                        <input name="Password" type="text" class="form-control" placeholder="Mật khẩu">
+                                                    </div>
+                                                    <div class="input-group mg-b-pro-edt">
+                                                        <span class="input-group-addon position"><i class="icon nalika-new-file account" aria-hidden="true"></i></span>
+                                                        <input name="ConfirmPassword" type="text" class="form-control" placeholder="Xác nhận mật khẩu">
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input name="IsEmployee" type="checkbox">
+                                                            <span style="font-size: 16px; color: #000;">Employee</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button type="button" class="btn btn-success" id="save">Lưu</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,6 +163,45 @@
 </div>
 <script>
     $(document).ready(function () {
+        function validateUserForm(firstName, lastName, phoneNumber, address, email, password, confirmPassword) {
+            var errorMessage = "";
+
+            // Kiểm tra các trường thông tin có hợp lệ không
+            if (!firstName) {
+                errorMessage = "First name is required.";
+            } else if (!lastName) {
+                errorMessage = "Last name is required.";
+            } else if (!email) {
+                errorMessage = "Email address is required.";
+            } else if (!password) {
+                errorMessage = "Password is required.";
+            } else if (!confirmPassword) {
+                errorMessage = "Confirm password is required.";
+            } else if (password !== confirmPassword) {
+                errorMessage = "Passwords do not match.";
+            } else if (!phoneNumber) {
+                errorMessage = "Phone number is required.";
+            } else if (!isValidPhoneNumber(phoneNumber)) {
+                errorMessage = "Invalid phone number. Please enter a 10-digit number.";
+            } else if (!address) {
+                errorMessage = "Address is required.";
+            }
+
+            return errorMessage;
+        }
+
+        function isValidPhoneNumber(phoneNumber) {
+            // Biểu thức chính quy để kiểm tra định dạng số điện thoại (10 chữ số)
+            var phoneRegex = /^\d{10}$/;
+            return phoneRegex.test(phoneNumber);
+        }
+
+        $('.edit-btn').click(function () {
+            var $row = $(this).closest('tr');
+            $row.find('.editable').prop('contenteditable', true).addClass('editing');
+            $row.find('.edit-btn').hide();
+            $row.find('.save-btn').show();
+        });
         $('.edit-btn').click(function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
@@ -170,31 +278,71 @@
                 }
             });
         });
-        $(document).ready(function () {
-            $('#searchButton').click(function () {
-                var searchText = $('#searchInput').val();
-                $.ajax({
-                    url: '/AdminPage/SearchUsers',
-                    type: 'GET',
-                    data: { searchText: searchText },
-                    success: function (response) {
-                        // Cập nhật nội dung của bảng với kết quả tìm kiếm
-                        $('.product-status-wrap table tbody').html(response);
-                    },
-                    error: function (error) {
-                        console.error('Error searching users:', error);
-                    }
-                });
+        $('#save').click(function () {
+            // Lấy dữ liệu từ các trường nhập trong modal
+            var email = $('input[name="Email"]').val();
+            var firstName = $('input[name="FirstName"]').val();
+            var lastName = $('input[name="LastName"]').val();
+            var password = $('input[name="Password"]').val();
+            var confirmPassword = $('input[name="ConfirmPassword"]').val();
+            var phoneNumber = $('input[name="PhoneNumber"]').val();
+            var address = $('input[name="Address"]').val();
+            var isEmployee = $('input[name="IsEmployee"]').is(':checked');
+
+            // Kiểm tra các trường có hợp lệ không
+            var errorMessage = validateUserForm(firstName, lastName, phoneNumber, address, email, password, confirmPassword);
+            if (errorMessage) {
+                alert(errorMessage);
+                return; // Dừng quá trình lưu nếu có trường nào đó không hợp lệ
+            }
+
+            // Gửi dữ liệu lên controller thông qua Ajax
+            $.ajax({
+                url: '/AdminPage/AddUserModal',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    password: password,
+                    phoneNumber: phoneNumber,
+                    address: address,
+                    isEmployee: isEmployee
+                },
+                success: function (response) {
+                    console.log('User added successfully!');
+                    // Đóng modal
+                    $('#myModal').modal('hide');
+                    // Thêm dòng mới vào bảng với thông tin tài khoản mới
+                    var newRow = `<tr>
+                        <td class="hidden">${response.id}</td>
+                        <td data-field="email">${response.email}</td>
+                        <td data-field="role">${response.role}</td>
+                        <td class="editable" contenteditable="false" data-field="firstName">${response.firstName}</td>
+                        <td class="editable" contenteditable="false" data-field="lastName">${response.lastName}</td>
+                        <td class="editable" contenteditable="false" data-field="phoneNumber">${response.phoneNumber}</td>
+                        <td class="editable" contenteditable="false" data-field="address">${response.address}</td>
+                        <td>
+                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </button>
+                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            </button>
+                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                    $('#AccountTable tbody').append(newRow);
+                },
+                error: function (error) {
+                    console.error('Error adding user:', error);
+                }
             });
         });
-
     });
     
-    // new DataTable('#AccountTable', {
-    //     layout: {
-    //         topStart: {
-    //             buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-    //         }
-    //     }
-    // });
+    
 </script>

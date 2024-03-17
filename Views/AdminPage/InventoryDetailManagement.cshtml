@@ -1,0 +1,143 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<InventoryReceiptDetails>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Quản lý phiếu nhập</h2>
+                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Suppliers List</h4>
+                    <div class="add-supplier">
+                        <a title="Thêm phiếu nhập" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
+                    </div>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="InventoryReceiptTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Chất liệu</th>
+                                    <th>Size</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inventory in Model)
+                                {
+                                    <tr asp-validation-summary="ModelOnly">
+                                        <td>@(inventory.ProductItem?.Product?.Name ?? "")</td>
+                                        <td>@(inventory.ProductItem?.Materials?.Name ?? "")</td>
+                                        <td>@(inventory.ProductItem?.Sizes?.Name ?? "")</td>
+                                        <td>
+                                            @(inventory.ProductItem.PurchasePrice.FirstOrDefault(pp => pp.EffectiveDate.Year == inventory.InventoryReceipt.CreationDate.Year &&
+                                                pp.EffectiveDate.Month == inventory.InventoryReceipt.CreationDate.Month &&
+                                                pp.EffectiveDate.Day == inventory.InventoryReceipt.CreationDate.Day &&
+                                                pp.EffectiveDate.Hour == inventory.InventoryReceipt.CreationDate.Hour &&
+                                                pp.EffectiveDate.Minute == inventory.InventoryReceipt.CreationDate.Minute)?.Price.ToString("N0") ?? "0")
+                                        </td>
+                                        <td>@(inventory.Quantity)</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                <tr id="total-row">
+                                    <td>Tổng:</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="total-quantity"></td>
+                                    <td id="total-amount"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Khởi tạo DataTables
+        var table = $('#InventoryReceiptTable').DataTable({
+            dom: 'lsBfrtip',
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.0.1/i18n/vi.json',
+            },
+            "lengthMenu": [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "Tất cả"]
+            ],
+            buttons: [{
+                extend: 'collection',
+                text: 'Xuất ra',
+                buttons: [
+                    'excel',
+                    'csv',
+                    'pdfHtml5',
+                    'print',
+                    'copy'
+                ]
+            }],
+            initComplete: function () {
+                $('#export-buttons').append(buttons);
+            }
+        });
+
+        // Tính tổng số lượng và tổng thành tiền
+        var totalQuantity = 0;
+        var totalAmount = 0;
+
+        $('#InventoryReceiptTable tbody tr').not('#total-row').each(function () {
+            var quantity = parseInt($(this).find('td:eq(4)').text());
+            totalQuantity += quantity;
+
+            var priceString = $(this).find('td:eq(3)').text().replace(/,/g, '');
+            var price = parseFloat(priceString);
+            var amount = price * quantity;  // Tính thành tiền
+
+            totalAmount += amount;  // Cộng dồn thành tiền vào tổng
+
+            // Cập nhật thành tiền trong DataTables
+            table.cell(this, 5).data(amount.toLocaleString('it-IT') + ' VND');
+        });
+
+        // Cập nhật tổng số lượng và tổng thành tiền trong DataTables
+        table.cell('#total-quantity').data(totalQuantity);
+        table.cell('#total-amount').data(totalAmount.toLocaleString('it-IT') + ' VND');
+
+        // Vẽ lại bảng để cập nhật các thay đổi
+        table.draw();
+    });
+
+</script>

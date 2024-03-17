@@ -55,15 +55,15 @@
         ============================================ -->
     <link rel="stylesheet" href="~/css/responsive.css">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
 
 
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://www.datatables.net/rss.xml">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.8.1/css/bootstrap-select.css">
 
     <!-- modernizr JS
         ============================================ -->
@@ -118,9 +118,9 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a title="Thêm nhà cung cấp" asp-controller="AdminPage" asp-action="AddSupplier">
+                                    <a title="Quản lý phiếu nhập" asp-controller="AdminPage" asp-action="InventoryReceiptManagement">
                                         <span class="mini-sub-pro">
-                                            Thêm nhà cung cấp
+                                            Quản lý phiếu nhập
                                         </span>
                                     </a>
                                 </li>
@@ -128,13 +128,6 @@
                                     <a title="Thêm phiếu nhập" asp-controller="AdminPage" asp-action="AddInventoryReceipt">
                                         <span class="mini-sub-pro">
                                             Thêm phiếu nhập
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Quản lý phiếu nhập" asp-controller="AdminPage" asp-action="InventoryReceiptManagement">
-                                        <span class="mini-sub-pro">
-                                            Quản lý phiếu nhập
                                         </span>
                                     </a>
                                 </li>
@@ -154,9 +147,9 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a title="Thêm danh mục" asp-controller="AdminPage" asp-action="AddCategory">
+                                    <a title="Sửa sản phẩm" asp-controller="AdminPage" asp-action="ProductManagement">
                                         <span class="mini-sub-pro">
-                                           Thêm danh mục
+                                            Quản lý sản phẩm
                                         </span>
                                     </a>
                                 </li>
@@ -164,13 +157,6 @@
                                     <a title="Thêm sản phẩm" asp-controller="AdminPage" asp-action="AddProduct">
                                         <span class="mini-sub-pro">
                                             Thêm sản phẩm
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Sửa sản phẩm" asp-controller="AdminPage" asp-action="ProductManagement">
-                                        <span class="mini-sub-pro">
-                                            Sửa sản phẩm
                                         </span>
                                     </a>
                                 </li>
@@ -305,7 +291,6 @@
     <script src="~/js/vendor/jquery-1.12.4.min.js"></script>
     <!-- bootstrap JS
         ============================================ -->
-    <script src="~/js/bootstrap.min.js"></script>
     <!-- wow JS
         ============================================ -->
     <script src="~/js/wow.min.js"></script>
@@ -346,8 +331,6 @@
         ============================================ -->
     <script src="~/js/main.js"></script>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/js/site.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -355,13 +338,12 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-
     <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
 
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -369,6 +351,10 @@
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+   
+
+    <!--test-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.8.1/js/bootstrap-select.js"></script>
 
 
     <script>
@@ -391,7 +377,6 @@
                         'pdfHtml5',
                         'print',
                         'copy'
-
                     ]
                 }],
                 initComplete: function () {
@@ -403,9 +388,61 @@
         initDataTable('#AccountTable');
         initDataTable('#SupplierTable');
         initDataTable('#CategoryTable');
-        initDataTable('#InventoryReceiptTable');
+        initDataTable('#InventoryTable');
+        initDataTable('#ProductItemTable')
         
     </script>
+    <script>
+        // $(document).on('click', '#btnAdd', function () {
+        //     var productName = $("#ProductId option:selected").text();
+        //     var sizeName = $("#SizeId option:selected").text();
+        //     var materialName = $("#MaterialId option:selected").text();
+        //     var productNames = $("#ProductId option:selected").val();
+        //     var sizeNames = $("#SizeId option:selected").val();
+        //     var materialNames = $("#MaterialId option:selected").val();
+        //     var quantity = $("#QuantityId").val();
+        //     var purchasePrice = $("#PurchasePriceId").val();
+
+        //     var tBody = $("#inventoryReceipt > TBODY")[0];
+        //     var row = tBody.insertRow(-1);
+
+        //     var cell = $(row.insertCell(-1));
+        //     cell.html(productName + '<input type="hidden" value="' + productNames + '" />');
+
+        //     cell = $(row.insertCell(-1));
+        //     cell.html(sizeName + '<input type="hidden" value="' + sizeNames + '" />');
+
+        //     cell = $(row.insertCell(-1));
+        //     cell.html(materialName + '<input type="hidden" value="' + materialNames + '" />');
+
+        //     cell = $(row.insertCell(-1));
+        //     cell.html(quantity);
+
+        //     cell = $(row.insertCell(-1));
+        //     cell.html(purchasePrice);
+
+        //     cell = $(row.insertCell(-1));
+        //     var btnRemove = $("<input />");
+        //     btnRemove.attr("type", "button");
+        //     btnRemove.attr("onclick", "Remove(this);");
+        //     btnRemove.val("Remove");
+        //     cell.append(btnRemove);
+        //     reset_btnadd();
+
+        // });
+        // function reset_btnadd() {
+        //     $("#ProductId").val('').change();
+
+        //     $("#SizeId").val('').change();
+        //     $("#MaterialId").val('').change();
+        //     $("#MaterialId").val('').change();
+        //     $("#QuantityId").val('');
+        //     $("#PurchasePriceId").val('');
+        //     $('.selectpicker').selectpicker('refresh');
+
+        // }
+    </script>
     @RenderSection("Scripts", false)
+
 </body>
 </html>

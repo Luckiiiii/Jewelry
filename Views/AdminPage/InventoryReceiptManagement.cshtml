@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_LayoutAdmin";
 }
-@model IEnumerable<InventoryReceiptDetails>
+@model IEnumerable<InventoryReceipt>
 <div class="breadcome-area">
     <div class="container-fluid">
         <div class="row">
@@ -40,16 +40,12 @@
                             <ul id="export-buttons"></ul>
                         </div>
                         <!--btuun excel pdf-->
-                        <table id="InventoryReceiptTable" class="table">
+                        <table id="InventoryTable" class="table">
                             <thead>
                                 <tr>
-                                    <th class="hidden">Id</th>
-                                    <th>Tên sản phẩm</th>
-                                    <th>Chất liệu</th>
-                                    <th>Size</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá</th>
+                                    <th>Id</th>
                                     <th>Nhà cung cấp</th>
+                                    <th>Người tạo</th>
                                     <th>Ngày tạo</th>
                                     <th>Ngày xác nhận</th>
                                     <th>Ghi chú</th>
@@ -59,17 +55,13 @@
                             <tbody>
                                 @foreach (var inventory in Model)
                                 {
-                                    <tr asp-validation-summary="ModelOnly">
-                                        <td class="hidden" data-field="id">@inventory.Id</td>
-                                        <td>@(inventory.ProductItem?.Product?.Name ?? "")</td>
-                                        <td>@(inventory.ProductItem?.Materials?.Name ?? "")</td>
-                                        <td>@(inventory.ProductItem?.Sizes?.Name ?? "")</td>
-                                        <td>@(inventory.Quantity)</td>
-                                        <td>@(inventory.ProductItem?.PurchasePrice?.Price ?? 0)</td>
-                                        <td>@(inventory.InventoryReceipt?.Supplier?.Name ?? "")</td>
-                                        <td>@(inventory.InventoryReceipt?.CreationDate.ToString() ?? "")</td>
-                                        <td>@(inventory.InventoryReceipt?.ConfirmationDate?.ToString() ?? "")</td>
-                                        <td class="editable" contenteditable="false" data-field="note">@(inventory.InventoryReceipt?.Note ?? "")</td>
+                                    <tr data-inventory-id="@inventory.Id" asp-validation-summary="ModelOnly">
+                                        <td data-field="id">@inventory.Id</td>
+                                        <td>@(inventory.Supplier.Name)</td>
+                                        <td>@(inventory.User?.FirstName ?? "") @(inventory?.User.LastName ?? "")</td>
+                                        <td>@(inventory.CreationDate)</td>
+                                        <td>@(inventory.ConfirmationDate)</td>
+                                        <td class="editable" contenteditable="false" data-field="note">@(inventory.Note ?? "")</td>
                                         <td>
                                             <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
                                                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
@@ -77,9 +69,12 @@
                                             <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
                                             </button>
-                                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
-                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                            </button>
+                                            @if (!inventory.Confirmation)
+                                            {
+                                                <button data-toggle="tooltip" title="Check" class="pd-setting-ed check-btn">
+                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                </button>
+                                            }
                                         </td>
                                     </tr>
                                 }
@@ -102,7 +97,7 @@
 
         $('.save-btn').click(function () {
             var $row = $(this).closest('tr');
-            var inventoryReceiptDetailsId = $row.find('.hidden[data-field="id"]').text();
+            var inventoryId = $row.find('[data-field="id"]').text();
             var note = $row.find('.editable[data-field="note"]').text();
             
             
@@ -110,10 +105,7 @@
                 url: '/AdminPage/SaveInventoryReceipt',
                 type: 'POST',
                 dataType: 'json',
-                data: {
-                    inventoryReceiptDetailsId = inventoryReceiptDetailsId,
-                    note = note
-                },
+                data: { inventoryId: inventoryId, note: note },
                 success: function (response) {
                     console.log('Data saved successfully!');
                     $row.find('.editable').prop('contenteditable', false).removeClass('editing');
@@ -126,26 +118,37 @@
             });
         });
 
-        $('.trash-btn').click(function () {
+        $('.check-btn').click(function () {
             var $row = $(this).closest('tr');
-            var inventoryId = $row.find('.hidden[data-field="id"]').text();
+            var inventoryId = $row.find('[data-field="id"]').text();
 
             $.ajax({
-                url: '/AdminPage/DeleteSupplier',
+                url: '/AdminPage/ConfirmationInventory',
                 type: 'POST',
                 dataType: 'json',
                 data: { inventoryId: inventoryId },
                 success: function (response) {
                     if (response.success) {
-                        $row.remove(); // Xóa hàng khỏi bảng nếu xóa thành công
+                        var $confirmationDateCell = $row.find('td:nth-child(9)');
+                        $confirmationDateCell.text(response.confirmationDate);
+
+                        // Ẩn nút "Check"
+                        $row.find('.check-btn').hide();
+
+                        console.log('Data updated successfully!');
                     } else {
-                        alert('Failed to delete inventory.'); // Hiển thị thông báo nếu xóa không thành công
+                        alert('Failed to confirmation inventory.'); // Hiển thị thông báo nếu xóa không thành công
                     }
                 },
                 error: function (error) {
-                    console.error('Error deleting inventory:', error);
+                    console.error('Error confirmation inventory:', error);
                 }
             });
+        });
+
+        $('#InventoryTable tbody').on('click', 'tr', function () {
+            var inventoryId = $(this).data('inventory-id');
+            window.location.href = '/AdminPage/InventoryDetailManagement?id=' + inventoryId;
         });
         // $(document).ready(function () {
         //     $('#searchButton').click(function () {
