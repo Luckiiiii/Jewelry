@@ -2,11 +2,13 @@ export class ProductItem {
     id: number;
     product: Product;
     size: Size;
-    price: number;
     quantity: number;
+    material: Material;
+    purchasePrice: PurchasePrice[];
+    salesPrice: SalesPrice[];
 }
 
-export class ProductPortfolio {
+export class ProductCategory {
     id: number;
     name: string;
 }
@@ -16,14 +18,33 @@ export class Size {
     name: string;
 }
 
+export class Material {
+    id: number;
+    name: string;
+}
+
+export class PurchasePrice {
+    id: number;
+    productItem: ProductItem;
+    price: number;
+    effectiveDate: Date = new Date();
+}
+
+export class SalesPrice {
+    id: number;
+    productItem: ProductItem;
+    price: number;
+    effectiveDate: Date = new Date();
+}
+
 export class Product {
     id: number;
-    category: string;
-    title: string;
+    name: string;
     description: string;
-    artId: string;
     img: ProductImage[];
-    portfolio: ProductPortfolio;
+    item: ProductItem[]; 
+    category: ProductCategory;
+    warrantyInformation: string;
 }
 
 export class ProductImage {

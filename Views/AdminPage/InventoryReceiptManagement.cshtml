@@ -32,7 +32,7 @@
                 <div class="product-status-wrap">
                     <h4>Suppliers List</h4>
                     <div class="add-supplier">
-                        <a title="Thêm phiếu nhập" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
+                        <a title="Thêm phiếu nhập" class="btn btn-primary" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
                     </div>
                     <div class="table-responsive">
                         <!--nanui-->
@@ -63,18 +63,21 @@
                                         <td>@(inventory.ConfirmationDate)</td>
                                         <td class="editable" contenteditable="false" data-field="note">@(inventory.Note ?? "")</td>
                                         <td>
-                                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                            <button title="Chỉnh sửa" class="pd-setting-ed edit-btn">
                                                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                             </button>
-                                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                            <button title="Lưu" class="pd-setting-ed save-btn" style="display:none;">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
                                             </button>
                                             @if (!inventory.Confirmation)
                                             {
-                                                <button data-toggle="tooltip" title="Check" class="pd-setting-ed check-btn">
+                                                <button title="Xác nhận" class="pd-setting-ed check-btn">
                                                     <i class="fa fa-check" aria-hidden="true"></i>
                                                 </button>
                                             }
+                                            <button title="Xem chi tiết" class="pd-setting-ed detail-btn">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 }
@@ -88,14 +91,14 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('.edit-btn').click(function () {
+         $(document).on('click', '.edit-btn', function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
             $row.find('.edit-btn').hide();
             $row.find('.save-btn').show();
         });
 
-        $('.save-btn').click(function () {
+        $(document).on('click', '.save-btn', function () {
             var $row = $(this).closest('tr');
             var inventoryId = $row.find('[data-field="id"]').text();
             var note = $row.find('.editable[data-field="note"]').text();
@@ -118,7 +121,7 @@
             });
         });
 
-        $('.check-btn').click(function () {
+        $(document).on('click', '.check-btn', function () {
             var $row = $(this).closest('tr');
             var inventoryId = $row.find('[data-field="id"]').text();
 
@@ -146,8 +149,8 @@
             });
         });
 
-        $('#InventoryTable tbody').on('click', 'tr', function () {
-            var inventoryId = $(this).data('inventory-id');
+        $(document).on('click', '.detail-btn', function () {
+            var inventoryId = $(this).closest('tr').data('inventory-id');
             window.location.href = '/AdminPage/InventoryDetailManagement?id=' + inventoryId;
         });
         // $(document).ready(function () {

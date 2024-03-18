@@ -137,34 +137,35 @@
 
             // Kiểm tra các trường thông tin có hợp lệ không
             if (!name) {
-                errorMessage = "Name is required.";
+                errorMessage = "Tên là bắt buộc.";
             } else if (!email) {
-                errorMessage = "Email address is required.";
+                errorMessage = "Địa chỉ email là bắt buộc.";
             } else if (!phoneNumber) {
-                errorMessage = "Phone number is required.";
+                errorMessage = "Số điện thoại là bắt buộc.";
             } else if (!isValidPhoneNumber(phoneNumber)) {
-                errorMessage = "Invalid phone number. Please enter a 10-digit number.";
+                errorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập một số có 10 chữ số bắt đầu bằng số 0.";
             } else if (!address) {
-                errorMessage = "Address is required.";
+                errorMessage = "Địa chỉ là bắt buộc.";
             }
 
             return errorMessage;
         }
 
         function isValidPhoneNumber(phoneNumber) {
-            // Biểu thức chính quy để kiểm tra định dạng số điện thoại (10 chữ số)
-            var phoneRegex = /^\d{10}$/;
+            // Biểu thức chính quy để kiểm tra định dạng số điện thoại (10 chữ số, bắt đầu bằng số 0)
+            var phoneRegex = /^0\d{9}$/;
             return phoneRegex.test(phoneNumber);
         }
 
-        $('.edit-btn').click(function () {
+
+        $(document).on('click', '.edit-btn', function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
             $row.find('.edit-btn').hide();
             $row.find('.save-btn').show();
         });
 
-        $('.save-btn').click(function () {
+        $(document).on('click', '.save-btn', function () {
             var $row = $(this).closest('tr');
             var supplierId = $row.find('.hidden[data-field="id"]').text();
             var name = $row.find('.editable[data-field="name"]').text();
@@ -201,7 +202,7 @@
             });
         });
 
-        $('.trash-btn').click(function () {
+        $(document).on('click', '.trash-btn', function () {
             var $row = $(this).closest('tr');
             var supplierId = $row.find('.hidden[data-field="id"]').text();
 

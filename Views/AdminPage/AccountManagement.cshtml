@@ -195,21 +195,14 @@
             var phoneRegex = /^\d{10}$/;
             return phoneRegex.test(phoneNumber);
         }
-
-        $('.edit-btn').click(function () {
-            var $row = $(this).closest('tr');
-            $row.find('.editable').prop('contenteditable', true).addClass('editing');
-            $row.find('.edit-btn').hide();
-            $row.find('.save-btn').show();
-        });
-        $('.edit-btn').click(function () {
+        $(document).on('click', '.edit-btn', function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
             $row.find('.edit-btn').hide();
             $row.find('.save-btn').show();
         });
 
-        $('.save-btn').click(function () {
+        $(document).on('click', '.save-btn', function () {
             var $row = $(this).closest('tr');
             var userId = $row.find('.hidden[data-field="id"]').text();
             var email = $row.find('td[data-field="email"]').text();
@@ -257,7 +250,7 @@
                 }
             });
         });
-        $('.trash-btn').click(function () {
+        $(document).on('click', '.trash-btn', function () {
             var $row = $(this).closest('tr');
             var userId = $row.find('.hidden[data-field="id"]').text();
 
@@ -278,7 +271,7 @@
                 }
             });
         });
-        $('#save').click(function () {
+        $("#save").click(function () {
             // Lấy dữ liệu từ các trường nhập trong modal
             var email = $('input[name="Email"]').val();
             var firstName = $('input[name="FirstName"]').val();

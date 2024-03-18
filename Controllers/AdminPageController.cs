@@ -297,7 +297,7 @@ namespace Jewelry.Controllers
                     if (isCategoryExists)
                     {
                         // Trả về JSON object thông báo lỗi
-                        return Json(new { success = false, errorMessage = "Category already exists." });
+                        return Json(new { success = false, errorMessage = "Tên danh mục sản phẩm này đã tồn tại." });
                     }
 
                     var category = new ProductCategory
@@ -327,7 +327,7 @@ namespace Jewelry.Controllers
             }
 
             // Trả về JSON object thông báo lỗi nếu dữ liệu không hợp lệ
-            return Json(new { success = false, errorMessage = "Invalid data." });
+            return Json(new { success = false, errorMessage = "Tên danh mục là trường bắt buộc." });
         }
 
 

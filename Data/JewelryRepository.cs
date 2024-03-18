@@ -79,8 +79,11 @@ namespace Jewelry.Data
             {
                 _logger.LogInformation("GetAllProducts was called");
                 return _context.Products
-                   .OrderBy(p => p.Name)
-                   .ToList();
+                    .Include(i => i.Category)
+                    .Include(i => i.Img)
+                    .Include(i => i.Item)
+                    .OrderBy(p => p.Name)
+                    .ToList();
             }
             catch (Exception ex)
             {

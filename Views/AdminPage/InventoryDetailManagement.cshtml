@@ -110,7 +110,8 @@
                 ]
             }],
             initComplete: function () {
-                $('#export-buttons').append(buttons);
+                var dataTable = this.api();
+                $('#export-buttons').append(dataTable.buttons);
             }
         });
 

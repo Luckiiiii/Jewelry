@@ -76,7 +76,7 @@
                                             <input type="text" name="PurchasePrice" class="form-control" />
                                         </td>
                                         <td>
-                                            <input type="button" value="Remove" onclick="Remove(this)" />
+                                            <input type="button" value="Xóa" onclick="Remove(this)" />
                                         </td>
                                     </tr>
                                 }
@@ -90,7 +90,7 @@
                                         @Html.DropDownList("SizeId", (IEnumerable<SelectListItem>)ViewBag.sizes, new { @class = "form-control selectpicker size-dropdown", data_live_search = "true", title = "Chọn Size" })
                                     </td>
                                     <td>
-                                        @Html.DropDownList("MaterialId", (IEnumerable<SelectListItem>)ViewBag.materials, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn Material" })
+                                        @Html.DropDownList("MaterialId", (IEnumerable<SelectListItem>)ViewBag.materials, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn chất liệu" })
                                     </td>
                                     <td>
                                         <input type="text" name="Quantity" id="QuantityId" class="form-control" />
@@ -99,7 +99,7 @@
                                         <input type="text" name="PurchasePrice" id="PurchasePriceId" class="form-control" />
                                     </td>
                                     <td>
-                                        <input type="button" id="btnAdd" value="Add" />
+                                        <input type="button" id="btnAdd" value="Thêm" />
                                     </td>
                                 </tr>
                             </tfoot>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="add-product">
                         <button type="submit" id="btnSave" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
-                            Save
+                            Lưu
                         </button>
                     </div>
                     <div class="modal" id="myModal">
@@ -175,17 +175,14 @@
 <script type="text/javascript">
     function Remove(button) {
         var row = $(button).closest("tr");
-        var name = $("td", row).eq(0).html();
-        if (confirm("Do you want to delete: " + name)) {
+        var name = $("td", row).eq(0).text();
+        if (confirm("Bạn có muốn xóa: " + name)) {
             var table = $("#inventoryReceipt")[0];
             table.deleteRow(row[0].rowIndex);
         }
     }
 
     $(document).ready(function () {
-
-	
-
         $("body").on("click", "#btnSave", function () {
             var inventoryReceipts = new Array();
             $("#inventoryReceipt TBODY TR").each(function () {
@@ -213,10 +210,11 @@
                     window.location.href = response.redirectUrl;
                 },
                 error: function () {
-                    alert("There is some problem");
+                    alert("OOP! Có lỗi rồi");
                 }
             });
         });
+
         $(document).on('click', '#btnAdd', function () {
             var supplierId = $('#SupplierId')
             var productName = $("#ProductId option:selected").text();
@@ -230,20 +228,23 @@
             var errorMessage = "";
 
             if (!productNames) {
-                errorMessage = "Please select a product.";
+                errorMessage = "Bạn chưa nhập tên sản phẩm.";
             } else if (!sizeNames) {
-                errorMessage = "Please select a size.";
+                errorMessage = "Bạn chưa nhập size.";
             } else if (!materialNames) {
-                errorMessage = "Please select a material.";
+                errorMessage = "Bạn chưa nhập chất liệu.";
             } else if (!quantity) {
-                errorMessage = "Please enter quantity.";
+                errorMessage = "Bạn chưa nhâp số lượng.";
             } else if (!purchasePrice) {
-                errorMessage = "Please enter purchase price.";
+                errorMessage = "Bạn chưa nhập giá nhập.";
             } else if (!supplierId) {
-                errorMessage1 = "Please enter SupplierId price."
+                errorMessage = "Bạn chưa nhập nhà cung cấp.";
+            } else if (quantity < 0) {
+                errorMessage = "Số lượng phải lớn hơn 0.";
+            } else if (purchasePrice<0) {
+                errorMessage = "Giá nhập phải lớn hơn 0.";
             }
             
-
             if (errorMessage) {
                 alert(errorMessage);
                 return;
@@ -276,6 +277,7 @@
             reset_btnadd();
 
         });
+
         function reset_btnadd() {
             $("#ProductId").val('').change();
 
@@ -287,6 +289,7 @@
             $('.selectpicker').selectpicker('refresh');
 
         }
+
         $("#saveProduct").click(function (event) {
             event.preventDefault();
 
@@ -314,6 +317,27 @@
                 }
             });
         });
+
+        $("#btnSave").click(function (event) {
+            event.preventDefault();
+
+            var supplierId = $('select[name="SupplierId"]').val();
+            var productId = $('select[name="ProductId"]').val();
+            var sizeId = $('select[name="SizeId"]').val();
+            var materialId = $('select[name="MaterialId"]').val();
+            var quantity = $('input[name="Quantity"]').val();
+            var purchasePrice = $('input[name="PurchasePrice"]').val();
+
+            // Kiểm tra xem dữ liệu có trống không
+            if (!supplierId || !productId || !sizeId || !materialId || !quantity || !purchasePrice) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            // Nếu dữ liệu không trống, tiếp tục gửi form
+            $(this).closest('form').submit();
+        });
+
 
         @* $(document).on('click', '#btnAdd', function () {
             var productName = $("#ProductId option:selected").text();

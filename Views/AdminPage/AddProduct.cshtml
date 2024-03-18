@@ -27,15 +27,15 @@
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
-                                                <input asp-for="Name" type="text" class="form-control" placeholder="Ten san pham">
+                                                <input asp-for="Name" type="text" class="form-control" placeholder="Tên sản phẩm">
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
-                                                <input asp-for="Description" type="text" class="form-control" placeholder="Description" >
+                                                <input asp-for="Description" type="text" class="form-control" placeholder="Mô tả" >
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
-                                                <input asp-for="WarrantyInformation" type="text" class="form-control" placeholder="Warranty Information">
+                                                <input asp-for="WarrantyInformation" type="text" class="form-control" placeholder="Thông tin bảo hành">
                                             </div>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
@@ -63,11 +63,11 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="text-center custom-pro-edt-ds">
-                                                <button type="submit" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
-                                                    Save
+                                                <button type="submit" class="btn btn-ctl-bt waves-effect waves-light m-r-10" id="save">
+                                                    Lưu
                                                 </button>
                                                 <button type="button" class="btn btn-ctl-bt waves-effect waves-light" id="discardButton">
-                                                    Discard
+                                                    Xóa
                                                 </button>
                                             </div>
                                         </div>
@@ -102,6 +102,24 @@
                     $("#Category_Name").val(data);
                 }
             });
+        });
+        $("#save").click(function (event) {
+            event.preventDefault();
+
+            var categoryId = $('#ProductCategory').val();
+            var name = $('input[name="Name"]').val();
+            var description = $('input[name="Description"]').val();
+            var warrantyInformation = $('input[name="WarrantyInformation"]').val();
+            var img = $('input[name="Img"]')[0].files[0];
+
+            // Kiểm tra xem dữ liệu có trống không
+            if (!categoryId || !name || !description || !warrantyInformation || !img) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            // Nếu dữ liệu không trống, tiếp tục gửi form
+            $(this).closest('form').submit();
         });
         $('.selectpicker').selectpicker();
     });

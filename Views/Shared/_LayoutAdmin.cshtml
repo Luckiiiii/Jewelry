@@ -98,7 +98,7 @@
                                 <li>
                                     <a title="Thêm tài khoản" asp-controller="AdminPage" asp-action="AddUsers">
                                         <span class="mini-sub-pro">
-                                            thêm tài khoản
+                                            Thêm tài khoản
                                         </span>
                                     </a>
                                 </li>
@@ -380,18 +380,19 @@
                     ]
                 }],
                 initComplete: function () {
-                    $('#export-buttons').append(buttons);
+                    var dataTable = this.api();
+                    $('#export-buttons').append(dataTable.buttons);
                 }
             });
-
         }
+
         initDataTable('#AccountTable');
         initDataTable('#SupplierTable');
         initDataTable('#CategoryTable');
         initDataTable('#InventoryTable');
         initDataTable('#ProductItemTable')
-        
     </script>
+
     <script>
         // $(document).on('click', '#btnAdd', function () {
         //     var productName = $("#ProductId option:selected").text();

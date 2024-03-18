@@ -44,7 +44,7 @@
                             <thead>
                                 <tr>
                                     <th class="hidden">ID</th>
-                                    <th>Tên</th>
+                                    <th>Tên danh mục sản phẩm</th>
                                     <th class="hidden"></th>
                                 </tr>
                             </thead>
@@ -108,14 +108,14 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('.edit-btn').click(function () {
+        $(document).on('click', '.edit-btn', function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
             $row.find('.edit-btn').hide();
             $row.find('.save-btn').show();
         });
 
-        $('.save-btn').click(function () {
+        $(document).on('click', '.save-btn', function () {
             var $row = $(this).closest('tr');
             var categoryId = $row.find('.hidden[data-field="id"]').text();
             var name = $row.find('.editable[data-field="name"]').text();
@@ -149,7 +149,7 @@
             });
         });
 
-        $('.trash-btn').click(function () {
+        $(document).on('click', '.trash-btn', function () {
             var $row = $(this).closest('tr');
             var categoryId = $row.find('.hidden[data-field="id"]').text();
 
@@ -176,23 +176,29 @@
                 type: 'POST',
                 data: $("#myForm").serialize(),
                 success: function (response) {
-                    $("#myModal").modal('hide');
-                    var newRow = `<tr>
-                    <td class="hidden">${response.id}</td>
-                    <td class="editable" contenteditable="false">${response.categoryName}</td>
-                    <td>
-                        <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
-                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                        </button>
-                        <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                        </button>
-                        <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
-                            <i class="fa fa-trash-o" aria-hidden="true"></i>
-                        </button>
-                    </td>
-                </tr>`;
-                    $("#CategoryTable tbody").append(newRow);
+                    if (response.success === false) {
+                        // Hiển thị thông báo lỗi
+                        alert(response.errorMessage);
+                    } else {
+                        $("#myModal").modal('hide');
+                        var newRow = `<tr>
+                        <td class="hidden">${response.id}</td>
+                        <td class="editable" contenteditable="false">${response.categoryName}</td>
+                        <td>
+                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </button>
+                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            </button>
+                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                        $("#CategoryTable tbody").append(newRow);
+                    }
+                    
                 },
                 error: function (error) {
                     console.error('Error saving data:', error);

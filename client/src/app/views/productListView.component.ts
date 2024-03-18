@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+﻿import { Component, OnInit } from "@angular/core";
 import { Store } from "../services/store.service";
-
+import { Product } from "../shared/Product";
 
 @Component({
     selector: "product-list",
