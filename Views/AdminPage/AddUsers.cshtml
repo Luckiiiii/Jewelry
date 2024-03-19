@@ -55,13 +55,13 @@
                                             <span asp-validation-for="Password" class="text-warning"></span>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon position"><i class="icon nalika-favorites-button account" aria-hidden="true"></i></span>
-                                                <input asp-for="Password" type="text" class="form-control" placeholder="Mật khẩu">
+                                                <input asp-for="Password" class="form-control" placeholder="Mật khẩu">
                                                 
                                             </div>
                                             <span asp-validation-for="ConfirmPassword" class="text-warning"></span>
                                             <div class="input-group mg-b-pro-edt">
                                                 <span class="input-group-addon position"><i class="icon nalika-favorites-button account" aria-hidden="true"></i></span>
-                                                <input asp-for="ConfirmPassword" type="text" class="form-control" placeholder="Xác nhận mật khẩu">
+                                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Xác nhận mật khẩu">
                                                 
                                             </div>
                                             <div class="checkbox">
@@ -70,20 +70,6 @@
                                                     <span style="font-size: 16px; color: #000;">Quyền nhân viên</span>
                                                 </label>
                                             </div>
-                                            @if (!ViewData.ModelState.IsValid)
-                                            {
-                                                <div class="alert alert-danger" role="alert">
-                                                    @foreach (var key in ViewData.ModelState.Keys)
-                                                    {
-                                                        foreach (var error in ViewData.ModelState[key].Errors)
-                                                        {
-                                                            <span>@error.ErrorMessage</span>
-
-                                                            <br />
-                                                        }
-                                                    }
-                                                </div>
-                                            }
                                         </div>
                                     </div>
                                     <div class="row">

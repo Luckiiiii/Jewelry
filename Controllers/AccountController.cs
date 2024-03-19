@@ -53,7 +53,7 @@ namespace Jewelry.Controllers
 
                 }
             }
-            ModelState.AddModelError("", "Failed to login");
+            ModelState.AddModelError("", "Đăng nhập thất bại");
             return View();
         }
 

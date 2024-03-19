@@ -1,5 +1,6 @@
 using Jewelry.Data;
 using Jewelry.Data.Entities;
+using Jewelry.Models;
 using Jewelry.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -20,8 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
     builder.Services.AddIdentity<StoreUser, IdentityRole>(cfg =>
     {
-        cfg.User.RequireUniqueEmail = true;
+        cfg.User.RequireUniqueEmail = true; 
     })
+        .AddErrorDescriber<CustomIdentityErrorDescriber>()
         .AddEntityFrameworkStores<JewelryContext>()
         .AddSignInManager<SignInManager<StoreUser>>();
 builder.Services.AddAuthentication().AddCookie().AddJwtBearer(cfg =>

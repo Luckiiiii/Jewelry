@@ -72,7 +72,7 @@ namespace Jewelry.Controllers
                 var existingUser = await _userManager.FindByEmailAsync(model.Email);
                 if (existingUser != null)
                 {
-                    ModelState.AddModelError(string.Empty, "Email already exists.");
+                    ModelState.AddModelError(string.Empty, "Email đã tồn tại.");
                     return View(model);
                 }
                 var user = new StoreUser
@@ -105,7 +105,7 @@ namespace Jewelry.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
 
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                ModelState.AddModelError(string.Empty, "Lỗi đăng nhập");
 
             }
             return View(model);

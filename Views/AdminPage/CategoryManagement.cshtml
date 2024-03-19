@@ -15,7 +15,7 @@
                                 </div>
                                 <div class="breadcomb-ctn">
                                     <h2>Quản lý danh mục</h2>
-                                    <p>Welcome to Jewelry <span class="bread-ntd">Supplier Management</span></p>
+                                    <p>Chào mừng đến với cửa hàng vàng bạc<span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
                             </div>
                         </div>
@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Category List</h4>
+                    <h4>Quản lý danh mục sản phẩm</h4>
                     <!-- Button to Open the Modal -->
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm danh mục sản phẩm</button>
 
@@ -78,14 +78,21 @@
 
                                 <!-- Modal Header -->
                                 <div class="modal-header">
-                                    <h4 class="modal-title">Thêm Category</h4>
+                                    <h4 class="modal-title">Thêm danh mục sản phẩm</h4>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
 
                                 <!-- Modal body -->
                                 <div class="modal-body">
-                                        <label for="name">Tên:</label><br>
-                                        <input type="text" id="name" name="name"><br>
+                                        
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="review-content-section">
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                <input type="text" id="name" name="name" class="form-control" placeholder="Tên danh mục sản phẩm">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Modal footer -->
@@ -123,7 +130,7 @@
 
             // Kiểm tra các trường thông tin có hợp lệ không
             if (!name) {
-                errorMessage = "Name is required.";
+                errorMessage = "Tên là trường bắt buộc.";
             }
             if (errorMessage) {
                 alert(errorMessage);
@@ -144,7 +151,7 @@
                     $row.find('.save-btn').hide();
                 },
                 error: function (error) {
-                    console.error('Error saving data:', error);
+                    console.error('Lỗi lưu dữ liệu:', error);
                 }
             });
         });
@@ -162,11 +169,11 @@
                     if (response.success) {
                         $row.remove();
                     } else {
-                        alert('Failed to delete category.');
+                        alert('Không thể xóa danh mục.');
                     }
                 },
                 error: function (error) {
-                    console.error('Error deleting category:', error);
+                    console.error('Lỗi xóa danh mục:', error);
                 }
             });
         });
@@ -201,7 +208,7 @@
                     
                 },
                 error: function (error) {
-                    console.error('Error saving data:', error);
+                    console.error('Lỗi lưu dữ liệu:', error);
                 }
             });
         });

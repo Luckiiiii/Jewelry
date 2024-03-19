@@ -1,4 +1,4 @@
-﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+﻿@*<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>*@
 @inject Microsoft.AspNetCore.Identity.UserManager<StoreUser> UserManager
 @{
     Layout = "_LayoutAdmin";
@@ -33,7 +33,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Products List</h4>
+                    <h4>Quản lý tài khoản</h4>
                     <div class="add-supplier">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm tài khoản</button>
                     </div>
@@ -93,7 +93,7 @@
 
                                 <!-- Modal Header -->
                                 <div class="modal-header">
-                                    <h4 class="modal-title">Thêm nhà cung cấp</h4>
+                                    <h4 class="modal-title">Thêm nhà tài khoản</h4>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <!-- Modal body -->
@@ -139,7 +139,7 @@
                                                     <div class="checkbox">
                                                         <label>
                                                             <input name="IsEmployee" type="checkbox">
-                                                            <span style="font-size: 16px; color: #000;">Employee</span>
+                                                            <span style="font-size: 16px; color: #000;">Quyền nhân viên</span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -166,33 +166,32 @@
         function validateUserForm(firstName, lastName, phoneNumber, address, email, password, confirmPassword) {
             var errorMessage = "";
 
-            // Kiểm tra các trường thông tin có hợp lệ không
             if (!firstName) {
-                errorMessage = "First name is required.";
+                errorMessage = "Họ là trường bắt buộc.";
             } else if (!lastName) {
-                errorMessage = "Last name is required.";
+                errorMessage = "Tên là trường bắt buộc.";
             } else if (!email) {
-                errorMessage = "Email address is required.";
+                errorMessage = "Địa chỉ Email trường bắt buộc.";
             } else if (!password) {
-                errorMessage = "Password is required.";
+                errorMessage = "Mật khẩu là trường bắt buộc.";
             } else if (!confirmPassword) {
-                errorMessage = "Confirm password is required.";
+                errorMessage = "Xác nhận mật khẩu là trường bắt buộc.";
             } else if (password !== confirmPassword) {
-                errorMessage = "Passwords do not match.";
+                errorMessage = "Mật khẩu không khớp.";
             } else if (!phoneNumber) {
-                errorMessage = "Phone number is required.";
+                errorMessage = "Số điện thoại là trường bắt buộc.";
             } else if (!isValidPhoneNumber(phoneNumber)) {
-                errorMessage = "Invalid phone number. Please enter a 10-digit number.";
+                errorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập một số có 10 chữ số bắt đầu bằng số 0.";
             } else if (!address) {
-                errorMessage = "Address is required.";
+                errorMessage = "Địa chỉ là trường bắt buộc.";
             }
 
             return errorMessage;
         }
 
         function isValidPhoneNumber(phoneNumber) {
-            // Biểu thức chính quy để kiểm tra định dạng số điện thoại (10 chữ số)
-            var phoneRegex = /^\d{10}$/;
+           
+            var phoneRegex = /^0\d{9}$/;
             return phoneRegex.test(phoneNumber);
         }
         $(document).on('click', '.edit-btn', function () {
@@ -213,19 +212,19 @@
             var errorMessage = "";
           
             if (!firstName) {
-                errorMessage = "First name is required.";
+                errorMessage = "Họ là trường bắt buộc.";
             } else if (!lastName) {
-                errorMessage = "Last name is required.";
+                errorMessage = "Tên là trường bắt buộc.";
             } else if (!phoneNumber) {
-                errorMessage = "Phone number is required.";
-            } else if (!/^\d{10}$/.test(phoneNumber)) {
-                errorMessage = "Invalid phone number. Please enter a 10-digit number.";
+                errorMessage = "Số điện thoại là trường bắt buộc.";
+            } else if (!/^0\d{9}$/.test(phoneNumber)) {
+                errorMessage = "Số điện thoại không hợp lệ.";
             } else if (!address) {
-                errorMessage = "Address is required.";
+                errorMessage = "Địa chỉ là trường bắt buộc.";
             } 
             if (errorMessage) {
                 alert(errorMessage);
-                return; // Dừng quá trình lưu nếu có trường nào đó không hợp lệ
+                return; 
             }
             $.ajax({
                 url: '/AdminPage/SaveUser',
@@ -261,18 +260,17 @@
                 data: { userId: userId },
                 success: function (response) {
                     if (response.success) {
-                        $row.remove(); // Xóa hàng khỏi bảng nếu xóa thành công
+                        $row.remove(); 
                     } else {
-                        alert('Failed to delete user.'); // Hiển thị thông báo nếu xóa không thành công
+                        alert('Lỗi không thể xóa tài khoản.'); 
                     }
                 },
                 error: function (error) {
-                    console.error('Error deleting user:', error);
+                    console.error('Lỗi xóa tài khoản:', error);
                 }
             });
         });
         $("#save").click(function () {
-            // Lấy dữ liệu từ các trường nhập trong modal
             var email = $('input[name="Email"]').val();
             var firstName = $('input[name="FirstName"]').val();
             var lastName = $('input[name="LastName"]').val();
@@ -282,14 +280,13 @@
             var address = $('input[name="Address"]').val();
             var isEmployee = $('input[name="IsEmployee"]').is(':checked');
 
-            // Kiểm tra các trường có hợp lệ không
             var errorMessage = validateUserForm(firstName, lastName, phoneNumber, address, email, password, confirmPassword);
             if (errorMessage) {
                 alert(errorMessage);
-                return; // Dừng quá trình lưu nếu có trường nào đó không hợp lệ
+                return; 
             }
 
-            // Gửi dữ liệu lên controller thông qua Ajax
+    
             $.ajax({
                 url: '/AdminPage/AddUserModal',
                 type: 'POST',
@@ -304,10 +301,10 @@
                     isEmployee: isEmployee
                 },
                 success: function (response) {
-                    console.log('User added successfully!');
-                    // Đóng modal
+                    console.log('Tài khoản đã được thêm thành công!');
+
                     $('#myModal').modal('hide');
-                    // Thêm dòng mới vào bảng với thông tin tài khoản mới
+
                     var newRow = `<tr>
                         <td class="hidden">${response.id}</td>
                         <td data-field="email">${response.email}</td>
@@ -331,7 +328,7 @@
                     $('#AccountTable tbody').append(newRow);
                 },
                 error: function (error) {
-                    console.error('Error adding user:', error);
+                    console.error('Lỗi không thể thêm tài khoản:', error);
                 }
             });
         });
