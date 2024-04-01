@@ -9,8 +9,11 @@ namespace Jewelry.Models
         public int ProductId { get; set; }
         public int SizeId { get; set; }
         public int MaterialId { get; set; }
+        public int PurityId { get; set; }
+        public double Weight { get; set; }
         public int PurchasePrice { get; set; }
         public int Quantity { get; set; }
+        
     }
 
 }

@@ -16,4 +16,5 @@ namespace Jewelry.Data.Entities
     public ProductCategory Category { get; set; }
     public string WarrantyInformation { get; set; }
   }
+
 }

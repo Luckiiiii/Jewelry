@@ -23,27 +23,27 @@ namespace Jewelry.Controllers
             _logger = logger;
             _mapper = mapper;
         }
-        [HttpGet]
-        public IActionResult Get(int orderId)
-        {
-            var order = _repository.GetOrderById(User.Identity.Name, orderId);
-            if(order != null) return Ok(_mapper.Map<IEnumerable<OrderItem>, IEnumerable<OrderItemViewModel>>(order.Items));
-            return NotFound();
-        }
-        [HttpGet("{id}")]
-        public IActionResult Get(int orderId, int id)
-        {
-            var order = _repository.GetOrderById(User.Identity.Name, orderId);
-            if(order != null)
-            {
-                var item = order.Items.Where(i => i.Id == id).FirstOrDefault();
-                if(item != null)
-                {
-                    return Ok(_mapper.Map<OrderItem, OrderItemViewModel>(item));
-                }
-            }
-            return NotFound();
-        }
+        //[HttpGet]
+        //public IActionResult Get(int orderId)
+        //{
+        //    var order = _repository.GetOrderById(User.Identity.Name, orderId);
+        //    if(order != null) return Ok(_mapper.Map<IEnumerable<OrderItem>, IEnumerable<OrderItemViewModel>>(order.Items));
+        //    return NotFound();
+        //}
+        //[HttpGet("{id}")]
+        //public IActionResult Get(int orderId, int id)
+        //{
+        //    var order = _repository.GetOrderById(User.Identity.Name, orderId);
+        //    if(order != null)
+        //    {
+        //        var item = order.Items.Where(i => i.Id == id).FirstOrDefault();
+        //        if(item != null)
+        //        {
+        //            return Ok(_mapper.Map<OrderItem, OrderItemViewModel>(item));
+        //        }
+        //    }
+        //    return NotFound();
+        //}
     }
     
 }

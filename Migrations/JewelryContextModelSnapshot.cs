@@ -278,17 +278,25 @@ namespace Jewelry.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PurityId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("SizesId")
                         .HasColumnType("int");
 
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MaterialsId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("PurityId");
 
                     b.HasIndex("SizesId");
 
@@ -317,6 +325,23 @@ namespace Jewelry.Migrations
                     b.HasIndex("ProductItemId");
 
                     b.ToTable("PurchasePrice");
+                });
+
+            modelBuilder.Entity("Jewelry.Data.Entities.Purity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Purity");
                 });
 
             modelBuilder.Entity("Jewelry.Data.Entities.SalesPrice", b =>
@@ -368,8 +393,8 @@ namespace Jewelry.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CancellationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -381,7 +406,6 @@ namespace Jewelry.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -731,7 +755,7 @@ namespace Jewelry.Migrations
                         .IsRequired();
 
                     b.HasOne("Jewelry.Data.Entities.ProductItem", "ProductItem")
-                        .WithMany()
+                        .WithMany("InventoryReceiptDetails")
                         .HasForeignKey("ProductItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -813,6 +837,12 @@ namespace Jewelry.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Jewelry.Data.Entities.Purity", "Purity")
+                        .WithMany()
+                        .HasForeignKey("PurityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Jewelry.Data.Entities.Size", "Sizes")
                         .WithMany()
                         .HasForeignKey("SizesId")
@@ -822,6 +852,8 @@ namespace Jewelry.Migrations
                     b.Navigation("Materials");
 
                     b.Navigation("Product");
+
+                    b.Navigation("Purity");
 
                     b.Navigation("Sizes");
                 });
@@ -864,9 +896,7 @@ namespace Jewelry.Migrations
 
                     b.HasOne("Jewelry.Data.Entities.StoreUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Order");
 
@@ -969,6 +999,8 @@ namespace Jewelry.Migrations
 
             modelBuilder.Entity("Jewelry.Data.Entities.ProductItem", b =>
                 {
+                    b.Navigation("InventoryReceiptDetails");
+
                     b.Navigation("PurchasePrice");
 
                     b.Navigation("SalesPrice");

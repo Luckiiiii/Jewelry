@@ -26,10 +26,19 @@
     color: #495057 !important;
     opacity: 1; /* Firefox */
 }
-
-:-ms-input-placeholder { /* chạy trên Internet Explorer 10-11 */
-    color: #495057 !important;
+img.img-product-small {
+    max-width: 100% !important;
 }
+.nav-tabs {
+    border-bottom: 1px solid transparent !important;
+}
+.nav-img-border {
+    border: 1px solid #fff !important;
+}
+
+    :-ms-input-placeholder { /* chạy trên Internet Explorer 10-11 */
+        color: #495057 !important;
+    }
 
 ::-ms-input-placeholder { /* chạy trên Microsoft Edge */
     color: #495057 !important;
@@ -125,6 +134,13 @@ ul {
 }
 
 body {
+}
+.footer-css {
+    height: 70px;
+    border-radius: 4px 4px 0 0;
+    background-color: #333;
+    color: #ffffff8c;
+    line-height: 70px;
 }
 
 .mg-tb-30 {
@@ -1778,16 +1794,16 @@ ul#single-product-tab {
         width: 25%;
         float: left;
         padding: 0px 5px;
-        border: 1px solid transparent;
     }
 
 .single-pro-list {
     margin-top: 20px;
 }
 
+
 .single-product-details h1 {
     font-size: 20px;
-    color: #fff !important;
+    color: #000 !important;
 }
 
 .single-product-details h1, .single-pro-size h6, .color-quality-details h5, .color-quality h4, .single-social-area h3, .sb-shop-product-single h2 {
@@ -1811,13 +1827,13 @@ ul#single-product-tab {
 }
 
 .single-regular, .list-regular {
-    color: #fff;
+    color: #000;
     font-weight: 700;
     font-size: 24px;
 }
 
 .single-old, .list-old {
-    color: #fff;
+    color: #000;
     font-weight: 400;
     font-size: 14px;
     margin: 0px 10px;
@@ -1825,21 +1841,21 @@ ul#single-product-tab {
 
 .single-pro-cn h3 {
     font-size: 14px;
-    color: #fff;
+    color: #000;
     font-weight: 400;
     text-transform: uppercase;
 }
 
 .single-pro-cn p, .list-pro-cn p {
     font-size: 14px;
-    color: #fff;
+    color: #000;
     font-weight: 400;
     line-height: 24px;
 }
 
 .single-pro-size h6, .color-quality-details h5, .color-quality h4, .single-social-area h3 {
     font-size: 14px;
-    color: #fff;
+    color: #000;
 }
 
 .single-pro-size {
@@ -1854,12 +1870,12 @@ ul#single-product-tab {
     }
 
 .single-product-pr {
-    background: #1b2a47;
+    background: #fff;
     padding: 20px;
 }
 
 .single-tb-pr {
-    background: #1b2a47;
+    background: #fff;
     padding: 20px;
 }
 
@@ -1953,14 +1969,21 @@ ul#single-product-tab {
     height: 40px;
     line-height: 40px;
     text-align: center;
-    width: 150px;
-    background: #152036;
-    border-radius: 25px;
+    width: 170px;
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #909090;
+    border-radius: 20px;
+    cursor: pointer;
     transition: all .4s ease 0s;
 }
 
+    .pro-button:hover {
+        color: #ffff;
+        background: #152036;
+    }
     .pro-button a, .pro-button a:focus, .list-pro-button a, .list-pro-button a:focus {
-        color: #fff;
+        color:#000;
         display: block;
         font-size: 14px;
         font-weight: 700;
@@ -1973,9 +1996,9 @@ ul#single-product-tab {
 }
 
     .pro-viwer a, .list-pro-viwer a {
-        border: 1px solid #fff;
+        border: 1px solid #ccc;
         border-radius: 50%;
-        color: #fff;
+        color: #000;
         display: inline-block;
         font-size: 15px;
         height: 40px;
@@ -2027,7 +2050,7 @@ ul#single-product-tab {
 }
 
 .review-content-section p {
-    color: #fff;
+    color: #000;
     font-weight: 400;
     font-size: 14px;
     line-height: 24px;
@@ -2063,7 +2086,7 @@ ul.tab-custon-design {
 ul.tab-custon-design, ul.tab-review-design {
     padding: 15px 35px;
     width: 100%;
-    background: #152036;
+    background: #ccc;
 }
 
     ul.tab-custon-design li, ul.tab-review-design li {
@@ -2072,7 +2095,7 @@ ul.tab-custon-design, ul.tab-review-design {
 
         ul.tab-custon-design li span, ul.tab-review-design li span {
             margin: 0px 20px;
-            color: #fff;
+            color: #000;
             font-size: 14px;
         }
 
@@ -2093,11 +2116,11 @@ ul.tab-custon-design li a, ul.tab-custon-design li a:hover, ul.tab-custon-design
 }
 
 ul.tab-custon-design li.active a, ul.tab-review-design li.active a {
-    color: #fff !important;
+    color: #000 !important;
 }
 
 .hpanel .panel-body {
-    background: #fff;
+    background: #000;
     border-radius: 2px;
     padding: 15px;
     position: relative;
@@ -4504,4 +4527,8 @@ th.fc-day-header.fc-widget-header {
     background: #152036;
     border-color: #152036;
     color: #fff;
+}
+/*TRANG CUA HANG*/
+select#categorySelect {
+    margin: 8px 0;
 }

@@ -50,6 +50,8 @@
                                     <th>Tên sản phẩm</th>
                                     <th>Chất liệu</th>
                                     <th>Size</th>
+                                    <th>Độ tinh khiết</th>
+                                    <th>Trọng lượng (gram)</th>
                                     <th>Số lượng</th>
                                     <th>Giá nhập</th>
                                     <th>Giá bán</th>
@@ -77,6 +79,8 @@
                                         <td class="editable" contenteditable="false" data-field="productName">@productItem.Product.Name</td>
                                         <td data-field="material" data-id="@productItem.Materials.Id">@productItem.Materials.Name</td>
                                         <td data-field="size" data-id="@productItem.Sizes.Id">@productItem.Sizes.Name</td>
+                                        <td data-field="purity" data-id="@productItem.Purity.Id">@productItem.Purity.Name</td>
+                                        <td data-field="weight" data-id="@productItem.Weight">@productItem.Weight</td>
                                         <td data-field="quantity">@productItem.Quantity</td>
                                         <td>@(productItem.PurchasePrice?.OrderByDescending(pp => pp.EffectiveDate).FirstOrDefault()?.Price.ToString("N0") ?? "0")</td>
                                         <td class="editable" contenteditable="false" data-field="salesPrice">@(productItem.SalesPrice?.OrderByDescending(pp => pp.EffectiveDate).FirstOrDefault()?.Price.ToString("N0") ?? "0")</td>
@@ -120,11 +124,11 @@
             var errorMessage = "";
 
             if (!salesPrice) {
-                errorMessage = "Sales Price is required.";
+                errorMessage = "Trường giá bán không được trống.";
             } else if (!/^\d+$/.test(salesPrice.trim())) {
-                errorMessage = "Sales Price must be a number.";
+                errorMessage = "Giá bán không hợp lệ.";
             } else if (!warrantyInformation.trim()) {
-                errorMessage = "Warranty Information is required.";
+                errorMessage = "Trường thông tin bảo hành không được trống.";
             }
             if (errorMessage) {
                 alert(errorMessage);
@@ -147,7 +151,7 @@
                     $row.find('.save-btn').hide();
                 },
                 error: function (error) {
-                    console.error('Error saving data:', error);
+                    console.error('Lỗi lưu dữ liệu:', error);
                 }
             });
         });

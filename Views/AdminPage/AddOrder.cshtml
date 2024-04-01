@@ -1,0 +1,350 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+
+@model IEnumerable<AddOrderViewModel>
+<style>
+    .span-sum {
+        padding: 10px 0 10px 0;
+        font-weight: 700;
+    }
+</style>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Thêm Đơn Hàng</h2>
+                                    <p>Cửa hàng vàng bạc<span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Thêm đơn hàng</h4>
+                    <div>
+                        <table class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <th>Tên người mua</th>
+                                <th>Địa chỉ</th>
+                                <th>Số điện thoại</th>
+                                <th>Ghi chú</th>
+                            </thead>
+                            <tbody>
+                                <td>
+                                    <input type="text" name="Customer" id="CustomerId" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" name="Address" id="AddressId" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" name="PhoneNumber" id="PhoneNumberId" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="text" name="Note" id="NoteId" class="form-control" />
+                                </td>
+                            </tbody>
+                        </table>
+                        <table id="order" class="table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Chất liệu</th>
+                                    <th>Độ tinh khiết</th>
+                                    <th>Size</th>                                    
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="productRows">
+                                @foreach (var productItem in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DropDownList("ProductId", (IEnumerable<SelectListItem>)ViewBag.products, new { @class = "form-controller selectpicker", data_live_search = "true", title = "Chọn sản phẩm" })
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("MaterialId", (IEnumerable<SelectListItem>)ViewBag.materials, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn Material" })
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("PurityId", (IEnumerable<SelectListItem>)ViewBag.purity, new { @class = "form-control selectpicker purity-dropdown", data_live_search = "true", title = "Chọn độ tinh khiết" })
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("SizeId", (IEnumerable<SelectListItem>)ViewBag.sizes, new { @class = "form-control selectpicker size-dropdown", data_live_search = "true", title = "Chọn Size" })
+                                        </td>
+                                        <td>
+                                            <input type="text" name="Quantity" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="text" id="unitPrice" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="text" id="totalUnitPrice" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="button" value="Xóa" onclick="Remove(this)" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>
+                                        @Html.DropDownList("ProductId", (IEnumerable<SelectListItem>)ViewBag.products, new { @class = "form-controller selectpicker product-dropdown", data_live_search = "true", title = "Chọn sản phẩm" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("MaterialId", (IEnumerable<SelectListItem>)ViewBag.materials, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn chất liệu" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("PurityId", (IEnumerable<SelectListItem>)ViewBag.purity, new { @class = "form-control selectpicker material-dropdown", data_live_search = "true", title = "Chọn độ tinh khiết" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("SizeId", (IEnumerable<SelectListItem>)ViewBag.sizes, new { @class = "form-control selectpicker size-dropdown", data_live_search = "true", title = "Chọn Size" })
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Quantity" id="QuantityId" class="form-control" />
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <input type="button" id="btnAdd" value="Thêm" />
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="span-sum">
+                            <span >Tổng tiền</span>
+                            <span id="totalPrice"></span>
+                        </div>
+                    </div>
+                    <div class="add-product">
+                        <button type="submit" id="btnSave" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
+                            Lưu
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+<script type="text/javascript">
+    function Remove(button) {
+        var row = $(button).closest("tr");
+        var name = $("td", row).eq(0).text();
+        if (confirm("Bạn có muốn xóa: " + name)) {
+            var table = $("#order")[0];
+            table.deleteRow(row[0].rowIndex);
+        }
+    }
+
+    $(document).ready(function () {
+        $("body").on("click", "#btnSave", function () {
+            var orders = new Array();
+            var hasError = false; // Biến kiểm tra có lỗi không
+            var errorMessages = [];
+            var customer = $("#CustomerId").val();
+            var address = $("#AddressId").val();
+            var phoneNumber = $("#PhoneNumberId").val();
+            var note = $("#NoteId").val();
+
+            if (!customer) {
+                hasError = true;
+                errorMessages.push("Vui lòng nhập tên khách hàng.");
+            }
+
+            if (!address) {
+                hasError = true;
+                errorMessages.push("Vui lòng nhập địa chỉ giao hàng.");
+            }
+
+            if (!phoneNumber) {
+                hasError = true;
+                errorMessages.push("Vui lòng nhập số điện thoại.");
+            }
+
+            if (!note) {
+                hasError = true;
+                errorMessages.push("Vui lòng nhập ghi chú.");
+            }
+            $("#order TBODY TR").each(function () {
+                var row = $(this);
+                var order = {};
+                order.ProductId = row.find("TD").eq(0).find("input").val();
+                order.MaterialId = row.find("TD").eq(1).find("input").val(); 
+                order.PurityId = row.find("TD").eq(2).find("input").val();
+                order.SizeId = row.find("TD").eq(3).find("input").val(); 
+                order.Quantity = row.find("TD").eq(4).text();
+                order.Customer = $("#CustomerId").val();
+                order.Address = $("#AddressId").val();
+                order.PhoneNumber = $("#PhoneNumberId").val();
+                order.Note = $("#NoteId").val();
+                orders.push(order);
+            });
+            console.log(orders);
+
+            $.ajax({
+                async: true,
+                type: "POST",
+                url: "/AdminPage/AddOrder",
+                data: JSON.stringify(orders),
+                contentType: "application/json; charset=utf-8",
+                dataType: "JSON",
+                success: function (response) {
+                    window.location.href = response.redirectUrl;
+                },
+                error: function (xhr, status, error) {
+                    alert("Đã xảy ra lỗi: " + xhr.responseText);
+                }
+            });
+        });
+        var totalPrice = 0;
+        $(document).on('click', '#btnAdd', function () {
+            var productName = $("#ProductId option:selected").text();
+            var sizeName = $("#SizeId option:selected").text();
+            var materialName = $("#MaterialId option:selected").text();
+            var purityName = $("#PurityId option:selected").text();
+            var productNames = $("#ProductId option:selected").val();
+            var sizeNames = $("#SizeId option:selected").val();
+            var materialNames = $("#MaterialId option:selected").val();
+            var purityNames = $('#PurityId option:selected').val();
+            var quantity = $("#QuantityId").val();
+            var errorMessage = "";
+
+            if (!productNames) {
+                errorMessage = "Bạn chưa nhập tên sản phẩm.";
+            } else if (!sizeNames) {
+                errorMessage = "Bạn chưa nhập size.";
+            } else if (!materialNames) {
+                errorMessage = "Bạn chưa nhập chất liệu.";
+            } else if (!purityNames) {
+                errorMessage = "Bạn chưa nhập độ tinh khiết.";
+            } else if (!quantity) {
+                errorMessage = "Bạn chưa nhâp số lượng.";
+            } else if (quantity < 0) {
+                errorMessage = "Số lượng phải lớn hơn 0.";
+            }
+            if (errorMessage) {
+                alert(errorMessage);
+                return;
+            }
+
+            var tBody = $("#order > TBODY")[0];
+            var row = tBody.insertRow(-1);
+
+            var cell = $(row.insertCell(-1));
+            cell.html(productName + '<input type="hidden" value="' + productNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(materialName + '<input type="hidden" value="' + materialNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(purityName + '<input type="hidden" value="' + purityNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(sizeName + '<input type="hidden" value="' + sizeNames + '" />');
+
+            cell = $(row.insertCell(-1));
+            cell.html(quantity);
+
+            cell = $(row.insertCell(-1));
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "Remove(this);");
+            btnRemove.val("Remove");
+            cell.append(btnRemove);
+            reset_btnadd();
+            $.ajax({
+                url: '/AdminPage/GetPrice',
+                type: 'GET',
+                data: { productId: productNames, sizeId: sizeNames, materialId: materialNames, purityId: purityNames },
+                success: function (response) {
+                    if (response.success) {
+                        totalPrice += response.price * quantity
+                        var formattedtotalPrice = Number(totalPrice).toLocaleString('vi-VN') + ' VND';
+                        var total = Number(response.price * quantity).toLocaleString('vi-VN') + ' VND';
+                        var formattedPrice = Number(response.price).toLocaleString('vi-VN') + ' VND';
+                        cell.html(formattedPrice);
+                        cell = $(row.insertCell(-1));
+                        cell.html(total)
+                        cell = $(row.insertCell(-1));
+                        $('#totalPrice').text(formattedtotalPrice);
+                    }
+                }
+            });
+        });
+
+        function reset_btnadd() {
+            $("#ProductId").val('').change();            
+            $("#MaterialId").val('').change();
+            $("#PurityId").val('').change();
+            $("#SizeId").val('').change();
+            $("#QuantityId").val('');
+            $('.selectpicker').selectpicker('refresh');
+        }
+
+        $('#ProductId').change(function () {
+            var productId = $(this).val();
+            $.get('/AdminPage/GetMaterials', { productId: productId }, function (data) {
+                var materialsSelect = $('#MaterialId');
+                materialsSelect.empty();
+                $.each(data, function (index, material) {
+                    var newRow = `<option value=${material.id}>${material.name}</option>`;
+                    materialsSelect.append(newRow);
+                });
+                $('#MaterialId').selectpicker('refresh');
+            });
+        });
+
+        $('#MaterialId').change(function () {
+            var productId = $('#ProductId').val();
+            var materialId = $(this).val();
+            $.get('/AdminPage/GetPurity', { productId: productId, materialId: materialId }, function (data) {
+                var puritiesSelect = $('#PurityId');
+                puritiesSelect.empty();
+                $.each(data, function (index, purity) {
+                    var newRow = `<option value=${purity.id}>${purity.name}</option>`;
+                    puritiesSelect.append(newRow);
+                });
+                $('#PurityId').selectpicker('refresh');
+            });
+        });
+
+        $('#PurityId').change(function () {
+            var productId = $('#ProductId').val();
+            var materialId = $('#MaterialId').val();
+            var purityId = $(this).val();
+            $.get('/AdminPage/GetSizes', { productId: productId, materialId: materialId, purityId: purityId }, function (data) {
+                var sizesSelect = $('#SizeId');
+                sizesSelect.empty();
+                $.each(data, function (index, size) {
+                    var newRow = `<option value=${size.id}>${size.name}</option>`;
+                    sizesSelect.append(newRow);
+                });
+                $('#SizeId').selectpicker('refresh');
+            });
+        });
+    });
+
+</script>

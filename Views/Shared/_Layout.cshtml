@@ -3,63 +3,69 @@
 <head>
     <meta charset="utf-8" />
     <title>Jewelry @ViewBag.Title</title>
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-    <!-- Google Fonts
-        ============================================ -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
-    <!-- Bootstrap CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/bootstrap.min.css">
-    <!-- Bootstrap CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/font-awesome.min.css">
-    <!-- owl.carousel CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/owl.carousel.css">
-    <link rel="stylesheet" href="~/css/owl.theme.css">
-    <link rel="stylesheet" href="~/css/owl.transitions.css">
-    <!-- animate CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/animate.css">
-    <!-- normalize CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/normalize.css">
-    <!-- main CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/main.css">
-    <!-- morrisjs CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/morrisjs/morris.css">
-    <!-- mCustomScrollbar CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/scrollbar/jquery.mCustomScrollbar.min.css">
-    <!-- metisMenu CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/metisMenu/metisMenu.min.css">
-    <link rel="stylesheet" href="~/css/metisMenu/metisMenu-vertical.css">
-    <!-- calendar CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/calendar/fullcalendar.min.css">
-    <link rel="stylesheet" href="~/css/calendar/fullcalendar.print.min.css">
-    <!-- forms CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/form/all-type-forms.css">
-    <!-- style CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/cs/style.css">
-    <!-- responsive CSS
-        ============================================ -->
-    <link rel="stylesheet" href="~/css/responsive.css">
-    <!-- modernizr JS
-        ============================================ -->
-    <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+    @*
+     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+     <!-- Google Fonts
+         ============================================ -->
+     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
+     <!-- Bootstrap CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/bootstrap.min.css">
+     <!-- Bootstrap CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/font-awesome.min.css">
+     <!-- owl.carousel CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/owl.carousel.css">
+     <link rel="stylesheet" href="~/css/owl.theme.css">
+     <link rel="stylesheet" href="~/css/owl.transitions.css">
+     <!-- animate CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/animate.css">
+     <!-- normalize CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/normalize.css">
+     <!-- main CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/main.css">
+     <!-- morrisjs CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/morrisjs/morris.css">
+     <!-- mCustomScrollbar CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/scrollbar/jquery.mCustomScrollbar.min.css">
+     <!-- metisMenu CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/metisMenu/metisMenu.min.css">
+     <link rel="stylesheet" href="~/css/metisMenu/metisMenu-vertical.css">
+     <!-- calendar CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/calendar/fullcalendar.min.css">
+     <link rel="stylesheet" href="~/css/calendar/fullcalendar.print.min.css">
+     <!-- forms CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/form/all-type-forms.css">
+     <!-- style CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/cs/style.css">
+     <!-- responsive CSS
+         ============================================ -->
+     <link rel="stylesheet" href="~/css/responsive.css">
+     <!-- modernizr JS
+         ============================================ -->
+     <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <link href="~/lib/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+     *@
 
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
-    <link href="~/lib/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+
     <link href="~/css/site.css" rel="stylesheet" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     @RenderSection("head",false)
 </head>
 <body>
@@ -74,15 +80,21 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="App" asp-action="Index">Trang chủ</a>
                     </li>
+                    <li>
+                        <a class="nav-link" asp-controller="App" asp-action="HistoryOrders">Lịch sử</a>
+                    </li>
+                    @*
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="App" asp-action="Contact">Liên hệ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="App" asp-action="About">Về chúng tôi</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="App" asp-action="Shop">Cửa hàng</a>
-                    </li>
+                    *@
+                     <li class="nav-item">
+                         <a class="nav-link" asp-controller="App" asp-action="Shop">Cửa hàng</a>
+                     </li>
+                    
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
@@ -108,13 +120,14 @@
             </div>
         </nav>
     </header>
-    <section class="container">
+    <section class="container ">
         <h2 class="text-center">@ViewBag.Title</h2>
         @RenderBody()
     </section>
-    <footer class="container"><div class="text-center">Cửa hàng vàng bạc Tuấn Thành</div></footer>
+    <footer class="container"><div class="text-center footer-css">Cửa hàng vàng bạc Tuấn Thành</div></footer>
 
 
+    @*
     <!-- jquery
         ============================================ -->
     <script src="~/js/vendor/jquery-1.11.3.min.js"></script>
@@ -160,6 +173,8 @@
     <!-- main JS
         ============================================ -->
     <script src="~/js/main.js"></script>
+    *@
+    
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>

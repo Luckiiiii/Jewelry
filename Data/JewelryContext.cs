@@ -1,6 +1,8 @@
 ﻿using Jewelry.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+
 namespace Jewelry.Data
 {
     //IdentityDbContext<StoreUser>
@@ -15,7 +17,7 @@ namespace Jewelry.Data
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
-
+        public DbSet<OrderItem> OrderItem { get; set; }
         public DbSet<ProductItem> ProductItems { get; set; }
 
         public DbSet<InventoryReceipt> InventoryReceipt { get; set; }
@@ -29,7 +31,10 @@ namespace Jewelry.Data
         public DbSet<Size> Size { get; set; }
         public DbSet<PurchasePrice> PurchasePrice { get; set; }
         public DbSet<SalesPrice> SalesPrice { get; set; }
-
+        public DbSet<Payments> Payments { get; set; }
+        public DbSet<StatusCategory> StatusCategory { get; set; }
+        public DbSet<Status> Status { get; set; }
+        public DbSet<Purity> Purity { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

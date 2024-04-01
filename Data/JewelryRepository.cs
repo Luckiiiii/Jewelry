@@ -23,13 +23,13 @@ namespace Jewelry.Data
             _context.Add(model);
         }
 
-        public IEnumerable<Order> GetAllOrders()
-        {
-            return _context.Orders
-                .Include(o=>o.Items)
-                .ThenInclude(i=>i.Product)
-                .ToList(); 
-        }
+        //public IEnumerable<Order> GetAllOrders()
+        //{
+        //    return _context.Orders
+        //        .Include(o=>o.Items)
+        //        .ThenInclude(i=>i.Product)
+        //        .ToList(); 
+        //}
 
         public IEnumerable<Order> GetAllOrders(bool includeItems)
         {
@@ -64,14 +64,14 @@ namespace Jewelry.Data
             }
         }
 
-        public Order GetOrderById(string username, int id)
-        {
-            return _context.Orders
-                .Include(o => o.Items)
-                .ThenInclude(i => i.Product)
-                .Where(p => p.Id == id && p.User.UserName == username) 
-                .FirstOrDefault();
-        }
+        //public Order GetOrderById(string username, int id)
+        //{
+        //    return _context.Orders
+        //        .Include(o => o.Items)
+        //        .ThenInclude(i => i.Product)
+        //        .Where(p => p.Id == id && p.User.UserName == username) 
+        //        .FirstOrDefault();
+        //}
 
         public IEnumerable<Product> GetAllProducts()
         {
@@ -133,6 +133,7 @@ namespace Jewelry.Data
                     .Include(p => p.Sizes)
                     .Include(p => p.PurchasePrice)
                     .Include(p => p.SalesPrice)
+                    .Include (p => p.Purity)
                     .OrderBy(p => p.Product)
                     .ToList();
 
@@ -165,8 +166,6 @@ namespace Jewelry.Data
             }
         }
 
-
-
         public ProductItem GetProductItemById(int productId)
         {
             try
@@ -177,6 +176,7 @@ namespace Jewelry.Data
                     .Include(i => i.SalesPrice)
                     .Include(i => i.PurchasePrice)
                     .Include(i => i.Product)
+                    .ThenInclude(p => p.Img)
                     .FirstOrDefault(s => s.Id == productId);
             }
             catch (Exception ex)
@@ -186,13 +186,16 @@ namespace Jewelry.Data
             }
         }
 
-        public IEnumerable<Product> GetProductsByCategory(string category)
+        public IEnumerable<Product> GetProductsByCategory(int categoryId)
         {
             try
             {
-                _logger.LogInformation("GetAllProducts was call");
+                _logger.LogInformation("GetProductsByCategory was call");
                 return _context.Products
-                    .Where(p => p.Category.Name == category)
+                    .Include(c=>c.Category)
+                    .Include(i => i.Img)
+                    .Include(i => i.Item)
+                    .Where(p => p.Category.Id == categoryId)
                     .ToList();
             }
             catch (Exception ex)
@@ -207,13 +210,38 @@ namespace Jewelry.Data
             try
             {
                 _logger.LogInformation("GetProductById was called");
-                return _context.Products.FirstOrDefault(s => s.Id == productId);
+                return _context.Products
+                    .Include(i=>i.Img)
+                    .Include(i=>i.Category)
+                    .Include(i=>i.Item)
+                    .ThenInclude(p=>p.Sizes)
+                    .Include(i => i.Item)
+                    .ThenInclude(p => p.SalesPrice)
+                    .Include(i => i.Item)
+                    .ThenInclude(p => p.Materials)
+                    .FirstOrDefault(s => s.Id == productId);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Failed to get product by ID: {ex}");
                 return null;
             }
+        }
+        public IEnumerable<Product> GetProductsByName(string name)
+        {
+            return _context.Products
+                .Include(c => c.Category)
+                .Include(i => i.Img)
+                .Include(i => i.Item)
+                .Where(p => p.Name.Contains(name)).ToList();
+        }
+        public IEnumerable<Product> GetProductsByCategoryAndName(int categoryId, string name)
+        {
+            return _context.Products
+                .Include(c => c.Category)
+                .Include(i => i.Img)
+                .Include(i => i.Item)
+                .Where(p => p.Category.Id == categoryId && p.Name.Contains(name)).ToList();
         }
         public void DeleteProduct(Product product)
         {
@@ -424,6 +452,18 @@ namespace Jewelry.Data
         {
             return _context.ProductCategory.Any(s => s.Name == category);
         }
+        public bool IsMaterialExists(string material)
+        {
+            return _context.Material.Any(s => s.Name == material);
+        }
+        public bool IsSizeExists(string size)
+        {
+            return _context.Size.Any(s => s.Name == size);
+        }
+        public bool IsPurityExists(string purity)
+        {
+            return _context.Purity.Any(s => s.Name == purity);
+        }
         public IEnumerable<ProductCategory>SearchCategory(string searchText)
         {
             try
@@ -550,6 +590,8 @@ namespace Jewelry.Data
                     .ThenInclude(s => s.Sizes)
                     .Include(i => i.ProductItem)
                     .ThenInclude(m => m.Materials)
+                    .Include(i => i.ProductItem)
+                    .ThenInclude(m => m.Purity)
                     .Include(i => i.InventoryReceipt)
                     .OrderBy(p => p.Id)
                     .ToList();
@@ -602,7 +644,7 @@ namespace Jewelry.Data
             }
         }
 
-        public ProductItem GetProductItemByProductIdSizeIdMaterialId(int productId, int sizeId, int materialId)
+        public ProductItem GetProductItemByProductIdSizeIdMaterialPurityId(int productId, int sizeId, int materialId, int purityId)
         {
             return _context.ProductItems
                 .Include(pi => pi.Product)
@@ -610,11 +652,95 @@ namespace Jewelry.Data
                 .Include(pi => pi.Materials)
                 .Include(p => p.PurchasePrice)
                 .Include(p => p.SalesPrice)
-                .FirstOrDefault(pi => pi.Product.Id == productId && pi.Sizes.Id == sizeId && pi.Materials.Id == materialId);
+                .Include(p => p.Purity)
+                .FirstOrDefault(pi => pi.Product.Id == productId && pi.Sizes.Id == sizeId && pi.Materials.Id == materialId && pi.Purity.Id == purityId);
         }
 
-        
+		public List<ProductItem> GetProductItemsByProductPuritySize(int productId, int materialId, int purityId)
+		{
+			return _context.ProductItems
+				.Include(pi => pi.Product)
+				.Include(pi => pi.Sizes)
+				.Include(pi => pi.Materials)
+                .Include(pi => pi.Purity)
+				.Include(p => p.PurchasePrice)
+				.Include(p => p.SalesPrice)
+				.Where(pi => pi.Product.Id == productId && pi.Materials.Id == materialId && pi.Purity.Id == purityId)
+				.ToList();
+        }
+        public List<ProductItem> GetProductItemsByProductPurity(int productId, int materialId)
+        {
+            return _context.ProductItems
+                .Include(pi => pi.Product)
+                .Include(pi => pi.Sizes)
+                .Include(pi => pi.Materials)
+                .Include(p => p.PurchasePrice)
+                .Include(p => p.SalesPrice)
+                .Include(pi => pi.Purity)
+                .Where(pi => pi.Product.Id == productId && pi.Materials.Id == materialId)
+                .ToList();
+        }
 
+        public List<ProductItem> GeMaterialsByProduct(int productId)
+        {
+            return _context.ProductItems
+                .Include(pi => pi.Product)
+                .Include(pi => pi.Sizes)
+                .Include(pi => pi.Materials)
+                .Include(p => p.PurchasePrice)
+                .Include(p => p.SalesPrice)
+                .Include(pi => pi.Purity)
+                .Where(pi => pi.Product.Id == productId)
+                .ToList();
+        }
+
+        public IEnumerable<Payments> GetAllPayments()
+        {
+            try
+            {
+                _logger.LogInformation("GetAllPayments was called");
+                return _context.Payments
+                   .OrderBy(p => p.Name)
+                   .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all Payment: {ex}");
+                return null;
+            }
+        }
+
+        public Payments GetPaymentById(int paymentId)
+        {
+            try
+            {
+                _logger.LogInformation("GetPaymentById was called");
+                return _context.Payments.FirstOrDefault(s => s.Id == paymentId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get payment by ID: {ex}");
+                return null;
+            }
+        }
+        public StatusCategory GetStatusCategoryById(int stateId)
+        {
+            try
+            {
+                _logger.LogInformation("GetStatusCategoryById was called");
+                return _context.StatusCategory.FirstOrDefault(s => s.Id == stateId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get StatusCategory by ID: {ex}");
+                return null;
+            }
+        }
+
+        public Order OrderConfirmation(string orderNumber)
+        {
+            return _context.Orders.FirstOrDefault(o => o.OrderNumber == orderNumber);
+        }
         public void UpdateEntity(object entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
@@ -623,6 +749,239 @@ namespace Jewelry.Data
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
+        }
+
+        public (decimal MinPrice, decimal MaxPrice) GetProductItemPriceRange(int productId)
+        {
+            var prices = _context.ProductItems
+                .Include(pi => pi.SalesPrice)
+                .Include(pi => pi.InventoryReceiptDetails)
+                .ThenInclude(ird => ird.InventoryReceipt)
+                .Where(pi => pi.Product.Id == productId && pi.InventoryReceiptDetails.Any(ird => ird.InventoryReceipt.ConfirmationDate.HasValue))
+                .SelectMany(pi => pi.SalesPrice)
+                .OrderByDescending(sp => sp.EffectiveDate)
+                .Select(sp => sp.Price)
+                .ToList();
+
+            return prices.Any() ? (prices.Min(), prices.Max()) : (0, 0);
+        }
+
+        public IEnumerable<Order> GetAllOrders()
+        {
+            try
+            {
+                _logger.LogInformation("GetAllOrder was called");
+                return _context.Orders
+                    .Include(i => i.PaymentMethod)
+                    .Include(i => i.User)
+                    .Include(i => i.Items)
+                    .Include(i => i.Status)
+                    .ThenInclude(p => p.StatusCategory)
+                    .OrderBy(p => p.Id)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all Order: {ex}");
+                return null;
+            }
+        }
+
+        public Order GetOrderById(int orderId)
+        {
+            try
+            {
+                _logger.LogInformation("GetOrderById was called");
+                return _context.Orders
+                    .Include(i => i.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(i=>i.Product)
+                    .Include(i => i.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(i => i.Purity)
+                    .Include(i => i.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(i => i.SalesPrice)
+                    .Include(i=>i.User)
+                    .Include(i=>i.PaymentMethod)
+                    .Include(i => i.Status)
+                    .FirstOrDefault(s => s.Id == orderId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Order by ID: {ex}");
+                return null;
+            }
+        }
+        public Order GetOrderByIds(int orderId)
+        {
+            try
+            {
+                _logger.LogInformation("GetOrderByIds was called");
+                return _context.Orders
+                    .Include(o => o.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(p => p.Product)
+                                .ThenInclude(p => p.Category)
+                    .Include(o => o.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(p => p.Product)
+                                .ThenInclude(p => p.Img)
+                    .Include(o => o.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(p => p.Materials)
+                    .Include(o => o.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(p => p.Sizes)
+                    .Include(o => o.Items)
+                        .ThenInclude(i => i.Product)
+                            .ThenInclude(p => p.SalesPrice)
+                    .Include(o => o.Status)
+                    .Include(o => o.Items)
+                        .ThenInclude(p => p.Product)
+                            .ThenInclude(p => p.Purity)
+                    .FirstOrDefault(s => s.Id == orderId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Order by ID: {ex}");
+                return null;
+            }
+        }
+
+
+        public Status GetStatusById(int statusId)
+        {
+            try
+            {
+                _logger.LogInformation("GetStatusById was called");
+                return _context.Status.FirstOrDefault(s => s.Id == statusId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Status by ID: {ex}");
+                return null;
+            }
+        }
+
+        public Status GetStatusByOrder(int orderId)
+        {
+            try
+            {
+                _logger.LogInformation("GetStatusByOrder was called");
+                return _context.Status
+                    .Include(i => i.User)
+                    .Include(i => i.StatusCategory)
+                    .OrderByDescending(s => s.UpdateDate)
+                    .FirstOrDefault(s => s.Order.Id == orderId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Status by Order: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<Status> GetAllStatusByOrder(int orderId)
+        {
+            try
+            {
+                _logger.LogInformation("GetAllStatusByOrder was called");
+                return _context.Status
+                    .Include(i => i.User)
+                    .Include(i => i.Order)
+                    .Include(i => i.StatusCategory)
+                    .Where(p => p.Order.Id == orderId)
+                    .OrderBy(p => p.UpdateDate)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all Status: {ex}");
+                return null;
+            }
+        }
+
+        public Purity GetPurityById(int purityId)
+        {
+            try
+            {
+                _logger.LogInformation("GetPurityById was called");
+                return _context.Purity.FirstOrDefault(s => s.Id == purityId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Purity by ID: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<Purity> GetAllPurity()
+        {
+            try
+            {
+                _logger.LogInformation("GetAllPurity was called");
+                return _context.Purity
+                   .OrderBy(p => p.Name)
+                   .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all Purity: {ex}");
+                return null;
+            }
+        }
+        public IEnumerable<Order> GetOrderByUser(StoreUser user)
+        {
+            try
+            {
+                _logger.LogInformation("GetOrderByUser was called");
+                return _context.Orders
+                    .Include(p => p.User)
+                    .Include(p => p.Status)
+                    .ThenInclude(p=>p.StatusCategory)
+                    .Include(p => p.PaymentMethod)
+                    .Include(p => p.Items)
+                    .ThenInclude(p => p.Product)
+                    .Where(o => o.User == user)
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Order: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<OrderItem> GetOrderItemByOrder(int orderId)
+        {
+            try
+            {
+                _logger.LogInformation("GetOrderItemByOrder was called");
+                return _context.OrderItem
+                    .Include(p => p.Order)
+                        .ThenInclude(p => p.Status)
+                            .ThenInclude(p => p.StatusCategory)
+                    .Include(p => p.Product)
+                        .ThenInclude(p => p.Product)
+                            .ThenInclude(p => p.Img)
+                    .Include(p => p.Product)
+                        .ThenInclude(p => p.Sizes)
+                    .Include(p => p.Product)
+                        .ThenInclude (p => p.Materials)
+                    .Include(p => p.Product)
+                        .ThenInclude(p => p.Purity)
+                    .Include(p => p.Product)
+                        .ThenInclude(p => p.SalesPrice)
+                    .Where(o => o.Order.Id == orderId)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Order: {ex}");
+                return null;
+            }
         }
 
         public bool SaveAll()

@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Order>
+<style>
+    .block-content a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .block-progress {
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+        border: 1px solid #3333;
+        border-radius: 3px;
+    }
+
+    .checkout-page {
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+        border: 1px solid #3333;
+        border-radius: 3px;
+    }
+
+    a.my_order_button {
+        color: #000;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    li.button-pading {
+        padding: 20px 38px;
+    }
+
+        li.button-pading a:hover {
+            color: red;
+        }
+
+    li:focus {
+        background-color: #a1a1ff;
+    }
+
+    li.button-pading a:hover {
+        cursor: pointer;
+    }
+
+    .sidebar-border {
+    }
+
+    .status1 {
+        background-color: lightblue;
+    }
+
+    .status2 {
+        background-color: lightgreen;
+    }
+
+    .status3 {
+        background-color: yellow;
+    }
+
+    .status4 {
+        background-color: lightgrey;
+    }
+
+    .status5 {
+        background-color: lightcoral;
+    }
+
+    .status6 {
+        background-color: lightpink;
+    }
+
+    .css-link-history{
+        text-decoration: none;
+        color: #000;
+    }
+
+    .mb-60{
+        margin-top: 20px;
+        margin-bottom: 400px;
+    }
+</style>
+
+<div class="main-container col2-right-layout">
+    <div class="main container mb-60">
+        <div class="row">
+            <aside class="col-left sidebar col-sm-3 sidebar-border">
+                <div class="block block-progress">
+                    <dl>
+                        <dt style="display:flex">
+                            <i class="fa fa-1x fa-user"
+                               style="color:#5f5fff;font-size: 20px;margin-right:6px"></i><a class="css-link-history" href=" my_user">
+                                <span>Tài khoản của tôi </span>
+                            </a>
+                        </dt>
+
+                        <dt style="display:flex">
+                            <i class="fa fa-list-alt"
+                               style="color:#ffb93a;font-size: 20px;margin-right:6px"></i> <a class="css-link-history" asp-controller=" App" asp-action="HistoryOrders"><span class="css-link-history"> Lịch sử mua hàng</span></a>
+                        </dt>
+                    </dl>
+                </div>
+            </aside>
+            <section class="col-main col-sm-9">
+                <div class="checkout-page">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Số hóa đơn</th>
+                                <th>Ngày đặt</th>
+                                <th>Trạng thái</th>
+                                <th>Hình thức thanh toán</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>@order.Id</td>
+                                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@order.Status.Last().StatusCategory.Name</td>
+                                    <td>@order.PaymentMethod.Name</td>
+                                    <td>@order.Note</td>
+                                    <td>
+                                        <a asp-controller="App" asp-action="OrderDetails" asp-route-orderId="@order.Id">Xem chi tiết</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model Order
+<h2>Hóa đơn</h2>
+    <p>Ngày: @Model.OrderDate.ToString("dd/MM/yyyy")</p>
+    <p>Số hóa đơn: @Model.OrderNumber</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Tên hàng</th>
+                <th>Tuổi vàng</th>
+                <th>Cân Nặng</th>
+                <th>Số lượng</th>
+                <th>Đơn giá (VND)</th>
+                <th>Thành Tiền (VND)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                decimal total = 0;
+            }
+            @foreach (var item in Model.Items)
+            {
+                decimal subTotal = item.UnitPrice * item.Quantity;
+                total += subTotal;
+                <tr>
+                    <td>@item.Product.Product.Name</td>
+                    <td>@item.Product.Purity.Name</td>
+                    <td>@item.Product.Weight</td>
+                    <td>@item.Quantity</td>
+                    <td>@string.Format("{0:N0}", item.UnitPrice)</td>
+                    <td>@string.Format("{0:N0}", subTotal)</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="5" style="text-align:right">Tổng cộng:</td>
+                <td>@string.Format("{0:N0}", total)</td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="window.print()">In hóa đơn</button>

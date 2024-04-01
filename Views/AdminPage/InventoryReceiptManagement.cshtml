@@ -58,7 +58,7 @@
                                     <tr data-inventory-id="@inventory.Id" asp-validation-summary="ModelOnly">
                                         <td data-field="id">@inventory.Id</td>
                                         <td>@(inventory.Supplier.Name)</td>
-                                        <td>@(inventory.User?.FirstName ?? "") @(inventory?.User.LastName ?? "")</td>
+                                        <td>@(inventory.User?.FirstName ?? "") @(inventory.User?.LastName ?? "")</td>
                                         <td>@(inventory.CreationDate)</td>
                                         <td>@(inventory.ConfirmationDate)</td>
                                         <td class="editable" contenteditable="false" data-field="note">@(inventory.Note ?? "")</td>
@@ -132,7 +132,7 @@
                 data: { inventoryId: inventoryId },
                 success: function (response) {
                     if (response.success) {
-                        var $confirmationDateCell = $row.find('td:nth-child(9)');
+                        var $confirmationDateCell = $row.find('td:nth-child(5)');
                         $confirmationDateCell.text(response.confirmationDate);
 
                         // Ẩn nút "Check"
@@ -153,22 +153,5 @@
             var inventoryId = $(this).closest('tr').data('inventory-id');
             window.location.href = '/AdminPage/InventoryDetailManagement?id=' + inventoryId;
         });
-        // $(document).ready(function () {
-        //     $('#searchButton').click(function () {
-        //         var searchText = $('#searchInput').val();
-        //         $.ajax({
-        //             url: '/AdminPage/SearchSupplier',
-        //             type: 'GET',
-        //             data: { searchText: searchText },
-        //             success: function (response) {
-        //                 Cập nhật nội dung của bảng với kết quả tìm kiếm
-        //                 $('.product-status-wrap table tbody').html(response);
-        //             },
-        //             error: function (error) {
-        //                 console.error('Error searching supplier:', error);
-        //             }
-        //         });
-        //     });
-        // });
     });
 </script>

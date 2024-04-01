@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Jewelry.Controllers
 {
@@ -296,38 +297,150 @@ namespace Jewelry.Controllers
                     var isCategoryExists = _repository.IsCategoryExists(name);
                     if (isCategoryExists)
                     {
-                        // Trả về JSON object thông báo lỗi
                         return Json(new { success = false, errorMessage = "Tên danh mục sản phẩm này đã tồn tại." });
                     }
-
                     var category = new ProductCategory
                     {
                         Name = name,
                     };
-
                     _repository.AddEntity(category);
 
                     if (_repository.SaveAll())
                     {
-                        // Trả về JSON object thông báo thành công
                         return Json(new { success = true, categoryName = category.Name });
                     }
                     else
                     {
-                        // Trả về JSON object thông báo lỗi
                         return Json(new { success = false, errorMessage = "Failed to save changes." });
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($"Error adding category: {ex}");
-                    // Trả về JSON object thông báo lỗi
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
+                }
+            }
+            return Json(new { success = false, errorMessage = "Tên danh mục là trường bắt buộc." });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSize(string name)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var isSizeExists = _repository.IsSizeExists(name);
+                    if (isSizeExists)
+                    {
+                        return Json(new { success = false, errorMessage = "Size này đã tồn tại." });
+                    }
+
+                    var size = new Size
+                    {
+                        Name = name,
+                    };
+
+                    _repository.AddEntity(size);
+
+                    if (_repository.SaveAll())
+                    {
+                        return Json(new { success = true, sizeId = size.Id, sizeName = size.Name });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, errorMessage = "Failed to save changes." });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error adding size: {ex}");
                     return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
                 }
             }
 
             // Trả về JSON object thông báo lỗi nếu dữ liệu không hợp lệ
-            return Json(new { success = false, errorMessage = "Tên danh mục là trường bắt buộc." });
+            return Json(new { success = false, errorMessage = "Tên size là trường bắt buộc." });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPurity(string name)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var isPurityExists = _repository.IsPurityExists(name);
+                    if (isPurityExists)
+                    {
+                        return Json(new { success = false, errorMessage = "Độ tinh khiết này đã tồn tại." });
+                    }
+
+                    var purity = new Purity
+                    {
+                        Name = name,
+                    };
+
+                    _repository.AddEntity(purity);
+
+                    if (_repository.SaveAll())
+                    {
+                        return Json(new { success = true, purityId = purity.Id, purityName = purity.Name });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, errorMessage = "Failed to save changes." });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error adding purity: {ex}");
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
+                }
+            }
+
+            // Trả về JSON object thông báo lỗi nếu dữ liệu không hợp lệ
+            return Json(new { success = false, errorMessage = "Độ tinh khiết là trường bắt buộc." });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddMaterial(string name)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var isMaterialExists = _repository.IsMaterialExists(name);
+                    if (isMaterialExists)
+                    {
+                        return Json(new { success = false, errorMessage = "Chất liệu này đã tồn tại." });
+                    }
+
+                    var material = new Material
+                    {
+                        Name = name,
+                    };
+
+                    _repository.AddEntity(material);
+
+                    if (_repository.SaveAll())
+                    {
+                        return Json(new { success = true, materialId = material.Id, materialName = material.Name });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, errorMessage = "Failed to save changes." });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error adding material: {ex}");
+                    return Json(new { success = false, errorMessage = "An error occurred while processing your request." });
+                }
+            }
+
+            // Trả về JSON object thông báo lỗi nếu dữ liệu không hợp lệ
+            return Json(new { success = false, errorMessage = "Tên chât liệu là trường bắt buộc." });
         }
 
 
@@ -463,7 +576,7 @@ namespace Jewelry.Controllers
 
                     if (_repository.SaveAll())
                     {
-                        return RedirectToAction("AccountManagement", "AdminPage");
+                        return RedirectToAction("AddInventoryReceipt", "AdminPage");
                     }
                     else
                     {
@@ -560,6 +673,8 @@ namespace Jewelry.Controllers
         {
             var categories = _repository.GetCategory();
             ViewBag.categories = categories.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
+            var purity = _repository.GetAllPurity();
+            ViewBag.purity = purity.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
             var suppliers = _repository.GetAllSupplier();
             ViewBag.suppliers = suppliers.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name});
             var products = _repository.GetAllProducts();
@@ -603,7 +718,7 @@ namespace Jewelry.Controllers
                     };
 
                     ProductItem productItem;
-                    var existingProductItem = _repository.GetProductItemByProductIdSizeIdMaterialId(item.ProductId, item.SizeId, item.MaterialId);
+                    var existingProductItem = _repository.GetProductItemByProductIdSizeIdMaterialPurityId(item.ProductId, item.SizeId, item.MaterialId, item.PurityId);
 
                     if (existingProductItem != null)
                     {
@@ -628,6 +743,7 @@ namespace Jewelry.Controllers
                         var isProduct = _repository.GetProductById(item.ProductId);
                         var isSize = _repository.GetSizeById(item.SizeId);
                         var isMaterial = _repository.GetMaterialById(item.MaterialId);
+                        var isPurity = _repository.GetPurityById(item.PurityId);
 
                         // Tạo mới ProductItem
                         productItem = new ProductItem
@@ -635,6 +751,8 @@ namespace Jewelry.Controllers
                             Product = isProduct,
                             Sizes = isSize,
                             Materials = isMaterial,
+                            Purity = isPurity,
+                            Weight = item.Weight,
                             PurchasePrice = new List<PurchasePrice> { purchasePrice },
                             SalesPrice = new List<SalesPrice> { salesPrice },
                             Quantity = item.Quantity
@@ -691,7 +809,238 @@ namespace Jewelry.Controllers
             return Json(new { success = false });
         }
 
+        public IActionResult OrderManagement()
+        {
+            var orderProduct = _repository.GetAllOrders();
+            return View(orderProduct);
+        }
+
+        public IActionResult AddOrder()
+        {
+            var products = _repository.GetAllProducts();
+            ViewBag.products = products.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
+            ViewBag.materials = new List<SelectListItem>();
+            ViewBag.purity = new List<SelectListItem>();
+            ViewBag.sizes = new List<SelectListItem>();
+            List<AddOrderViewModel> viewModelList = new List<AddOrderViewModel>();
+            return View(viewModelList);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AddOrder([FromBody] List<AddOrderViewModel> model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    var paymentId = _repository.GetPaymentById(2);
+                    var statusCategory = _repository.GetStatusCategoryById(1);
+                    var order = new Order
+                    {
+                        OrderDate = DateTime.Now,
+                        OrderNumber = Guid.NewGuid().ToString(),
+                        User = user,
+                        DeliveryAddress = model.FirstOrDefault().Address,
+                        PhoneNumber = model.FirstOrDefault().PhoneNumber,
+                        ConsigneeName = model.FirstOrDefault().Customer,
+                        Note = model.FirstOrDefault().Note,
+                        PaymentMethod = paymentId,
+                        Status = new List<Status>
+                    {
+                        new Status
+                        {
+                            StatusCategory = statusCategory,
+                            UpdateDate = DateTime.Now,
+                            User = user,
+                            Note = model.FirstOrDefault().Note
+                        }
+                    }
+                    };
+                    _repository.AddEntity(order);
+                    foreach (var item in model)
+                    {
+                        var orderItem = new OrderItem
+                        {
+                            Order = order,
+                            ProductId = item.ProductId,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice
+                        };
+                        _repository.AddEntity(orderItem);
+                    }
+                    await _repository.SaveChangesAsync();
+                }
+            }
+            return Json(new { redirectUrl = Url.Action("OrderManagement", "AdminPage") });
+        }
+
+        public IActionResult GetPrice(int productId, int sizeId, int materialId, int purityId)
+        {
+            var productItem = _repository.GetProductItemByProductIdSizeIdMaterialPurityId(productId, sizeId, materialId, purityId);
+            if (productItem != null)
+            {
+                var latestPrice = productItem.SalesPrice.OrderByDescending(sp => sp.EffectiveDate).FirstOrDefault();
+
+                if (latestPrice != null)
+                {
+                    return Json(new { success = true, price = latestPrice.Price});
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        public JsonResult GetMaterials(int productId)
+        {
+            var productItems = _repository.GeMaterialsByProduct(productId);
+            var material = productItems.Select(pi => pi.Materials).Distinct();
+            return Json(material);
+        }
+
+        public JsonResult GetPurity(int productId, int materialId)
+        {
+            var productItems = _repository.GetProductItemsByProductPurity(productId, materialId);
+            var purity = productItems.Select(pi => pi.Purity).Distinct();
+            return Json(purity);
+        }
+
+        public JsonResult GetSizes(int productId, int materialId, int purityId)
+        {
+            var productItems = _repository.GetProductItemsByProductPuritySize(productId, materialId, purityId);
+            var sizes = productItems.Select(pi=>pi.Sizes).Distinct();
+            return Json(sizes);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(int orderId, string note)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user != null)
+            {
+                var order = _repository.GetOrderById(orderId);
+                if (order != null)
+                {
+                    // Get the next status
+                    var status = _repository.GetStatusByOrder(orderId);
+                    if (status.StatusCategory.Id == 1)
+                    {
+                        // Lấy danh sách các OrderItem trong Order
+                        var orderItems = order.Items;
+
+                        // Duyệt qua từng OrderItem
+                        foreach (var item in orderItems)
+                        {
+                            // Lấy ProductItem tương ứng
+                            var productItem = item.Product;
+
+                            // Giảm số lượng ProductItem
+                            productItem.Quantity -= item.Quantity;
+
+                            // Cập nhật ProductItem
+                            _repository.UpdateEntity(productItem);
+                        }
+
+                        // Lưu thay đổi
+                        await _repository.SaveChangesAsync();
+                    }
+
+                    var nextStatusId = status.StatusCategory.Id + 1;
+                    if (nextStatusId > 5) // If the status is "Thành công", don't change it
+                    {
+                        return Json(new { success = false });
+                    }
+
+                    var nextStatus = _repository.GetStatusCategoryById(nextStatusId);
+
+                    if (nextStatus != null)
+                    {
+                        var newStatus = new Status
+                        {
+                            Order = order,
+                            StatusCategory = nextStatus,
+                            UpdateDate = DateTime.Now,
+                            User = user,
+                            Note = note
+                        };
+                        _repository.AddEntity(newStatus);
+                        await _repository.SaveChangesAsync();
+                        return Json(new { success = true, status = nextStatus.Name });
+                    }
+                }
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelOrder(int orderId, string note)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user != null)
+            {
+                var order = _repository.GetOrderById(orderId);
+                if (order != null)
+                {
+                    var cancelledStatus = _repository.GetStatusCategoryById(6);
+
+                    if (cancelledStatus != null)
+                    {
+                        var newStatus = new Status
+                        {
+                            Order = order,
+                            StatusCategory = cancelledStatus,
+                            UpdateDate = DateTime.Now,
+                            User = user,
+                            Note = note
+                        };
+                        _repository.AddEntity(newStatus);
+                        await _repository.SaveChangesAsync();
+                        return Json(new { success = true, status = cancelledStatus.Name });
+                    }
+                }
+            }
+            return Json(new { success = false });
+        }
+
+        public IActionResult PrintOrder(int id)
+        {
+            var order = _repository.GetOrderById(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View(order);
+        }
+
+        public IActionResult GetOrderDetails(int orderId)
+        {
+            var order =  _repository.GetOrderByIds(orderId);
+            if (order != null)
+            {
+                var products = order.Items.Select(item => new
+                {
+                    name = item.Product.Product.Name,
+                    category = item.Product.Product.Category.Name,
+                    material = item.Product.Materials.Name,
+                    size = item.Product.Sizes.Name,
+                    purity = item.Product.Purity.Name,
+                    weight = item.Product.Weight,
+                    quantity = item.Quantity,
+                    warrantyInformation = item.Product.Product.WarrantyInformation,
+                    salesPrice = item.Product.SalesPrice.OrderByDescending(sp => sp.EffectiveDate).FirstOrDefault().Price,
+                    imageUrl = item.Product.Product.Img.FirstOrDefault()?.UrlImage
+                });
+
+                return Json(new { success = true, products = products });
+            }
+
+            return Json(new { success = false });
+        }
+
+        public IActionResult Status(int orderId)
+        {
+            var status = _repository.GetAllStatusByOrder(orderId);
+            return Json(new { success = true, status = status});
+        }
     }
-
-
 }

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Product>
+<div class="row">
+    @foreach (var product in Model)
+    {
+        var priceRange = ViewBag.PriceRanges[product.Id];
+        <div class="col-md-3">
+            <div class="border bg-light rounded p-1">
+                @if (product.Img.Any())
+                {
+                    <img src="@product.Img.First().UrlImage" class="img-fluid" alt="@product.Name" />
+                }
+                <h3>@product.Name</h3>
+                <p>
+                    @if (priceRange.Item1 == 0 && priceRange.Item2 == 0)
+                    {
+                        <text>Liên hệ</text>
+                    }
+                    else if (priceRange.Item1 == priceRange.Item2)
+                    {
+                        <text>Giá: @string.Format("{0:N0}", priceRange.Item1) VND</text>
+                    }
+                    else
+                    {
+                        <text>Giá: @string.Format("{0:N0}", priceRange.Item1) - @string.Format("{0:N0}", priceRange.Item2) VND</text>
+                    }
+                </p>
+                <button class="btn btn-success detail-btn" data-product-id="@product.Id">Buy</button>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.detail-btn', function () {
+            var productId = $(this).data('product-id');
+            window.location.href = '/App/ProductDetail?id=' + productId;
+        });
+    });
+</script>

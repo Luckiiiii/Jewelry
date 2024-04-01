@@ -1,34 +1,95 @@
-﻿@model IEnumerable<Product>
-@section Scripts{
-    <script src="~/client/vendor.js"></script>
-    <script src="~/client/polyfills.js"></script>
-    <script src="~/client/runtime.js"></script>
-    <script src="~/client/main.js" asp-append-version="true"></script>
+﻿@section head {
+    <!-- favicon -->
+    <link rel="shortcut icon" type="~/image/x-icon" href="img/favicon.ico">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+
+    <!-- Other CSS -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/nalika-icon.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/site.css">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="~/css/responsive.css">
 }
-@section head {
-    <base href="/app/shop"/>
-    <link href="~/client/styles.css" rel="stylesheet" />
-}
-<the-shop></the-shop>
-@*
-<h1>Shop</h1>
+@model IEnumerable<Product>
+<style>
+    div#productList {
+        margin-bottom: 60px;
+    }
+
+    .btn-search-css{
+        padding: 8px 10px;
+    }
+</style>
+<h1>Cửa hàng vàng bạc Tuấn Thành</h1>
 <p>Count: @Model.Count()</p>
-<div class="row">
-    @foreach (var p in Model)
+<form id="searchForm">
+    <input type="text" id="searchBox" class="search-shop" placeholder="Tìm kiếm sản phẩm...">
+    <button type="submit" class="btn-search-css">Tìm kiếm</button>
+</form>
+<span class="search-category">Lọc theo</span>
+<select id="categorySelect">
+    <option value="">Tất cả</option>
+    @foreach (var category in ViewBag.Categories)
     {
+        <option value="@category.Id">@category.Name</option>
+    }
+</select>
+<div class="row" id="productList">
+    @foreach (var product in Model)
+    {
+        var priceRange = ViewBag.PriceRanges[product.Id];
         <div class="col-md-3">
-            <div class=" border bg-light rounded p-1">
-                <img id="imga" src="~/img/@(p.ArtId).jpg" class="img-fluid" alt="@p.Title" />
-                <h3>@p.Category - @p.Size</h3>
-                <ul class="product-props">
-                    <li>Price: $@p.Price</li>
-                    <li>Artist: @p.Artist</li>
-                    <li>Title: @p.Title</li>
-                    <li>Descripsion: @p.ArtDescription</li>
-                </ul>
-                <button id="buyButton" class="btn btn-success">Buy</button>
+            <div class="border bg-light rounded p-1 text-center-shop">
+                @if (product.Img.Any())
+                {
+                    <img src="@product.Img.First().UrlImage" class="img-fluid" alt="@product.Name" />
+                }
+                <h3 class="text-left">@product.Name</h3>
+                <p class="text-left">
+                    @if (priceRange.Item1 == 0 && priceRange.Item2 == 0)
+                    {
+                        <text>Liên hệ</text>
+                    }
+                    else if (priceRange.Item1 == priceRange.Item2)
+                    {
+                        <text>Giá: @string.Format("{0:N0}", priceRange.Item1) VND</text>
+                    }
+                    else
+                    {
+                        <text>Giá: @string.Format("{0:N0}", priceRange.Item1) - @string.Format("{0:N0}", priceRange.Item2) VND</text>
+                    }
+                </p>
+                <button class="btn btn-success detail-btn btn-mt" data-product-id="@product.Id">Mua Ngay</button>
             </div>
         </div>
     }
 </div>
-*@
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.detail-btn', function () {
+            var productId = $(this).data('product-id');
+            window.location.href = '/App/ProductDetail?id=' + productId;
+        });
+        $('#categorySelect').change(function () {
+            var categoryId = $(this).val();
+            $.get('/App/GetProductsByCategory', { categoryId: categoryId }, function (data) {
+                $('#productList').html(data);
+            });
+        });
+        $('#searchForm').submit(function (event) {
+            event.preventDefault();
+            var searchTerm = $('#searchBox').val();
+            var categoryId = $('#categorySelect').val();
+            $.get('/App/GetProductsByName', { name: searchTerm, categoryId: categoryId }, function (data) {
+                $('#productList').html(data);
+            });
+        });
+    });
+</script>

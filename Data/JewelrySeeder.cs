@@ -124,7 +124,77 @@ namespace Jewelry.Data
                     },
                     new Material
                     {
+                        Name = "Vàng trắng",
+                    },
+                    new Material
+                    {
+                        Name = "Bạch kim",
+                    },
+                    new Material
+                    {
                         Name = "Bạc"
+                    });
+                _context.SaveChanges();
+            }
+            if (!_context.ProductCategory.Any())
+            {
+                _context.ProductCategory.AddRange(
+                    new ProductCategory
+                    {
+                        Name = "Nhẫn"
+                    },
+                    new ProductCategory
+                    {
+                        Name = "Vòng cổ",
+                    },
+                    new ProductCategory
+                    {
+                        Name = "Lắc",
+                    },
+                    new ProductCategory
+                    {
+                        Name = "Bông tai"
+                    });
+                _context.SaveChanges();
+            }
+            if (!_context.Purity.Any())
+            {
+                _context.Purity.AddRange(
+                    new Purity
+                    {
+                        Name = "24k"
+                    },
+                    new Purity
+                    {
+                        Name = "23k",
+                    },
+                    new Purity
+                    {
+                        Name = "22k",
+                    },
+                    new Purity
+                    {
+                        Name = "18k",
+                    },
+                    new Purity
+                    {
+                        Name = "16k",
+                    },
+                    new Purity
+                    {
+                        Name = "15k",
+                    },
+                    new Purity
+                    {
+                        Name = "14k",
+                    },
+                    new Purity
+                    {
+                        Name = "10k",
+                    },
+                    new Purity
+                    {
+                        Name = "9k"
                     });
                 _context.SaveChanges();
             }
@@ -138,6 +208,49 @@ namespace Jewelry.Data
                 }
 
                 _context.Size.AddRange(sizes);
+                _context.SaveChanges();
+            }
+            if (!_context.Payments.Any())
+            {
+                _context.Payments.AddRange(
+                    new Payments
+                    {
+                        Name = "Thanh toán online"
+                    },
+                    new Payments
+                    {
+                        Name = "Thanh toán khi nhận hàng"
+                        
+                    });
+                _context.SaveChanges();
+            }
+            if (!_context.StatusCategory.Any())
+            {
+                _context.StatusCategory.AddRange(
+                    new StatusCategory
+                    {
+                        Name = "Chờ xác nhận"
+                    },
+                    new StatusCategory
+                    {
+                        Name = "Chờ lấy hàng"
+                    },
+                    new StatusCategory
+                    {
+                        Name = "Đang giao"
+                    },
+                    new StatusCategory
+                    {
+                        Name = "Đã giao hàng"
+                    },
+                    new StatusCategory
+                    {
+                        Name = "Thành công"
+                    },
+                    new StatusCategory
+                    {
+                        Name = "Đã Hủy"
+                    });
                 _context.SaveChanges();
             }
             if (!_context.Supplier.Any())
@@ -156,8 +269,8 @@ namespace Jewelry.Data
                         Address = "135 Hàng Bạc, Hoàn Kiếm, Hà Nội",
                         Email = "cskh@htj.vn",
                         PhoneNumber = "0339264656",
-                    }
-                );
+                    });
+                _context.SaveChanges();
             }
 
             //if (!_context.PurchasePrice.Any())

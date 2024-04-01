@@ -1,0 +1,99 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<Status>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Trạng thái đơn hàng</h2>
+                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Danh sách trạng thái đơn hàng</h4>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="StatusTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Người cập nhật</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày cập nhật</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var status in Model)
+                                {
+                                    <tr asp-validation-summary="ModelOnly">
+                                        <td>@(status.Order.Id)</td>
+                                        <td>@(status.User.FirstName) @(status.User.LastName)</td>
+                                        <td>@(status.StatusCategory.Name)</td>
+                                        <td>@(status.UpdateDate)</td>
+                                        <td class="editable" contenteditable="false" data-field="note">@(status.Note ?? "")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Khởi tạo DataTables
+        var table = $('#StatusTable').DataTable({
+            dom: 'lsBfrtip',
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.0.1/i18n/vi.json',
+            },
+            "lengthMenu": [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "Tất cả"]
+            ],
+            buttons: [{
+                extend: 'collection',
+                text: 'Xuất ra',
+                buttons: [
+                    'excel',
+                    'csv',
+                    'pdfHtml5',
+                    'print',
+                    'copy'
+                ]
+            }],
+            initComplete: function () {
+                var dataTable = this.api();
+                $('#export-buttons').append(dataTable.buttons);
+            }
+        });
+    });
+
+</script>

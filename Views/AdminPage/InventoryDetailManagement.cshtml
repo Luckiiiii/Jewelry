@@ -46,6 +46,8 @@
                                     <th>Tên sản phẩm</th>
                                     <th>Chất liệu</th>
                                     <th>Size</th>
+                                    <th>Độ tinh khiết</th>
+                                    <th>Trọng lượng</th>
                                     <th>Đơn giá</th>
                                     <th>Số lượng</th>
                                     <th>Thành tiền</th>
@@ -59,6 +61,8 @@
                                         <td>@(inventory.ProductItem?.Product?.Name ?? "")</td>
                                         <td>@(inventory.ProductItem?.Materials?.Name ?? "")</td>
                                         <td>@(inventory.ProductItem?.Sizes?.Name ?? "")</td>
+                                        <td>@(inventory.ProductItem?.Purity?.Name ?? "")</td>
+                                        <td>@(inventory.ProductItem?.Weight ?? 0)</td>
                                         <td>
                                             @(inventory.ProductItem.PurchasePrice.FirstOrDefault(pp => pp.EffectiveDate.Year == inventory.InventoryReceipt.CreationDate.Year &&
                                                 pp.EffectiveDate.Month == inventory.InventoryReceipt.CreationDate.Month &&
@@ -72,6 +76,8 @@
                                 }
                                 <tr id="total-row">
                                     <td>Tổng:</td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -120,17 +126,17 @@
         var totalAmount = 0;
 
         $('#InventoryReceiptTable tbody tr').not('#total-row').each(function () {
-            var quantity = parseInt($(this).find('td:eq(4)').text());
+            var quantity = parseInt($(this).find('td:eq(6)').text());
             totalQuantity += quantity;
 
-            var priceString = $(this).find('td:eq(3)').text().replace(/,/g, '');
+            var priceString = $(this).find('td:eq(5)').text().replace(/,/g, '');
             var price = parseFloat(priceString);
             var amount = price * quantity;  // Tính thành tiền
 
             totalAmount += amount;  // Cộng dồn thành tiền vào tổng
 
             // Cập nhật thành tiền trong DataTables
-            table.cell(this, 5).data(amount.toLocaleString('it-IT') + ' VND');
+            table.cell(this, 7).data(amount.toLocaleString('it-IT') + ' VND');
         });
 
         // Cập nhật tổng số lượng và tổng thành tiền trong DataTables

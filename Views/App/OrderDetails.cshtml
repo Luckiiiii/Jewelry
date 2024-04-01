@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Jewelry.Data.Entities.OrderItem>
+
+<style>
+    .block-content a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .block-progress {
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+        border: 1px solid #3333;
+        border-radius: 3px;
+    }
+
+    .checkout-page {
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+        border: 1px solid #3333;
+        border-radius: 3px;
+    }
+
+    a.my_order_button {
+        color: #000;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    li.button-pading {
+        padding: 20px 38px;
+    }
+
+        li.button-pading a:hover {
+            color: red;
+        }
+
+    li:focus {
+        background-color: #a1a1ff;
+    }
+
+    li.button-pading a:hover {
+        cursor: pointer;
+    }
+
+    .sidebar-border {
+    }
+
+    .status1 {
+        background-color: lightblue;
+    }
+
+    .status2 {
+        background-color: lightgreen;
+    }
+
+    .status3 {
+        background-color: yellow;
+    }
+
+    .status4 {
+        background-color: lightgrey;
+    }
+
+    .status5 {
+        background-color: lightcoral;
+    }
+
+    .status6 {
+        background-color: lightpink;
+    }
+    /* CSS */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .data-table th, .data-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #ddd;
+        }
+
+        .product-img {
+            max-width: 100px;
+            height: auto;
+        }
+        .text-center {
+        text-align: center;
+        }
+        .css-container-p-100{
+        padding-bottom:100px;
+        }
+        .css-span-link{
+            text-decoration: none;
+            color: #000;
+        }
+</style>
+
+<div class="main-container col2-right-layout">
+    <div class="main container css-container-p-100">
+        <div class="row">
+            <aside class="col-left sidebar col-sm-3 sidebar-border">
+                <div class="block block-progress">
+                    <dl>
+                        <dt style="display:flex">
+                            <i class="fa fa-1x fa-user"
+                               style="color:#5f5fff;font-size: 20px;margin-right:6px"></i><a class="css-span-link" href="my_user">
+                                <span>Tài khoản của tôi </span>
+                            </a>
+                        </dt>
+                        <dt style="display:flex">
+                            <i class="fa fa-1x fa-edit"
+                               style="color:#5f5fff;font-size: 20px;margin-right:6px"></i><span style="color:red">
+                                Đơn mua hàng
+                            </span>
+                        </dt>
+                        <dt style="display:flex">
+                            <i class="fa fa-list-alt"
+                               style="color:#ffb93a;font-size: 20px;margin-right:6px"></i> <a class="css-span-link" asp-controller="App" asp-action="HistoryOrders"><span> Lịch sử mua hàng</span></a>
+                        </dt>
+                    </dl>
+                </div>
+            </aside>
+            <section class="col-main col-sm-9">
+                <div class="checkout-page">
+                    <div class="page-title new_page_title">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="my-order-filter">
+                                    <ul id="product-detail-tab" class="nav nav-tabs product-tabs">
+                                        <li class="button-pading"> <a class="my_order_button" data-toggle="tab" data-status="1">Chờ xác nhận </a> </li>
+                                        <li class="button-pading"><a class="my_order_button" data-toggle="tab" data-status="2">Chờ lấy hàng</a></li>
+                                        <li class="button-pading"> <a class="my_order_button" data-toggle="tab" data-status="3">Đang giao</a> </li>
+                                        <li class="button-pading"> <a class="my_order_button" data-toggle="tab" data-status="4">Đã giao hàng</a> </li>
+                                        <li class="button-pading"> <a class="my_order_button" data-toggle="tab" data-status="5">Thành công</a> </li>
+                                        <li class="button-pading"> <a class="my_order_button" data-toggle="tab" data-status="6">Đã Hủy</a> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table table-my-order ">
+                        <table class="data-table cart-table mbt10" id="">
+                            <thead>
+                                <tr class="first last">
+                                    <th rowspan="1">Ảnh sản phẩm</th>
+                                    <th rowspan="1"><span class="nobr">Thông tin sản phẩm</span></th>
+                                    <th class="" style="text-align: center;" rowspan="1">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img src="@item.Product.Product.Img.FirstOrDefault()?.UrlImage" alt="Product Image" class="product-img" />
+                                        </td>
+                                        <td>
+                                            <strong>@item.Product.Product.Name</strong><br />
+                                            Quantity: @item.Quantity<br />
+                                            Unit Price: @item.UnitPrice<br />
+                                        </td>
+                                        <td class="text-center">
+                                            <span id="status" data-value="@item.Order.Status.Last().StatusCategory.Id" class="my_order_button" style="font-weight:bold;">
+                                                @item.Order.Status.Last().StatusCategory.Name
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Lấy trạng thái hiện tại từ HTML
+        var currentStatus = $('#status').data('value');
+
+        // Tô màu cho tab tương ứng với trạng thái hiện tại
+        $('a[data-status="' + currentStatus + '"]').parent().css('background-color', '#ADD8E6');
+    });
+</script>

@@ -47,22 +47,22 @@ namespace Jewelry.Controllers
             }
 
         }
-        [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
-        {
-            try
-            {
-                var order = _repository.GetOrderById(User.Identity.Name, id);
-                if (order != null) return Ok(_mapper.Map<Order, OrderViewModel>(order));
-                else return NotFound();
+        //[HttpGet("{id:int}")]
+        //public IActionResult Get(int id)
+        //{
+        //    try
+        //    {
+        //        var order = _repository.GetOrderById(User.Identity.Name, id);
+        //        if (order != null) return Ok(_mapper.Map<Order, OrderViewModel>(order));
+        //        else return NotFound();
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"failed to get orders: {ex}");
-                return BadRequest("failed to get orders");
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($"failed to get orders: {ex}");
+        //        return BadRequest("failed to get orders");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]OrderViewModel model)

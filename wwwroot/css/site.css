@@ -20,3 +20,65 @@ html {
 body {
   margin-bottom: 60px;
 }
+.navbar {
+    border-radius: 0px 0px 4px 4px !important;
+}
+.footer-css {
+    height: 70px;
+    border-radius: 4px 4px 0 0;
+    background-color: #333;
+    color: #ffffff8c;
+    line-height: 70px;
+}
+
+/*TRANG CUA HANG*/
+input#searchBox{
+    padding: 8px 4px;
+}
+select#categorySelect {
+    margin: 8px 0;
+    padding: 4px 3px;
+    font-size: 16px;
+}
+.text-center-shop {
+    text-align: center;
+}
+.text-left{
+    text-align: left !important;
+}
+.btn-mt {
+    width: 50%;
+    margin-bottom: 4px;
+    padding: 10px 0;
+}
+.search-category {
+    font-size: 16px;
+    margin-right: 3px;
+}
+/*CHI TIET SAN PHAM GIO HANG*/
+p.card-text.ma-b-2 {
+    margin-bottom: 2px;
+}
+.card {
+    flex-direction: row;
+    margin-bottom: 4px;
+    padding: 1px;
+}
+.card-img, .card-img-top{
+    width:50%;
+}
+button.btn.mr-2 {
+    margin-right: 2px;
+}
+p.font-weight-bold {
+    font-weight: 700;
+    margin-top: 11px;
+    font-size: 16px
+}
+button.btn.btn-with {
+    margin-bottom: 9px;
+    width: 100%;
+}
+button.btn.decrease-quantity {
+    padding: 6px 14px;
+}

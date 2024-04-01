@@ -1,0 +1,428 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<Order>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Quản lý đơn hàng</h2>
+                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Danh sách đơn hàng</h4>
+                    <div class="add-supplier">
+                        <a title="Thêm đơn hàng" class="btn btn-primary" asp-controller="AdminPage" asp-action="AddOrder">Thêm đơn hàng</a>
+                    </div>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="InventoryTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Tên người nhận</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ nhận</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Hình thức thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ghi chú</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr data-order-id="@order.Id" asp-validation-summary="ModelOnly">
+                                        <td data-field="id">@order.Id</td>
+                                        <td>@(order.User?.FirstName ?? "") @(order.User?.LastName ?? "")</td>
+                                        <td>@(order.PhoneNumber)</td>
+                                        <td>@(order.DeliveryAddress)</td>
+                                        <td>@(order.OrderDate)</td>
+                                        <td>@(order.PaymentMethod.Name)</td>
+                                        <td>@(order.Status.OrderByDescending(pp => pp.UpdateDate).FirstOrDefault().StatusCategory.Name)</td>
+                                        <td class="editable" contenteditable="false" data-field="note">@(order.Note ?? "")</td>
+                                        <td>
+                                            <button title="Chuyển trạng thái" data-toggle="modal" data-target="#myModal" class="pd-setting-ed changeStatus-btn">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button title="Hủy" data-toggle="modal" data-target="#cancelModal" class="pd-setting-ed cancel-btn">
+                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                            </button>
+                                            <button title="Xem chi tiết" class="pd-setting-ed detail-btn" data-toggle="modal" data-target="#productModal">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
+                                            <button title="Xem trạng thái" class="pd-setting-ed status-btn" data-toggle="modal" data-target="#statusModal">
+                                                <i class="fa fa-list" aria-hidden="true"></i>
+                                            </button>
+                                            <button title="In hóa đơn" class="pd-setting-ed print-btn" onclick="window.location.href='@Url.Action("PrintOrder", "AdminPage", new { id = order.Id })'">
+                                                <i class="fa fa-print" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                     <div class="modal" id="myModal">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                              
+                                 <!-- Modal Header -->
+                                 <div class="modal-header">
+                                     <h4 class="modal-title">Thêm ghi chú</h4>
+                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                 </div>
+
+                                 <!-- Modal body -->
+                                 <div class="modal-body">
+
+                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                         <div class="review-content-section">
+                                             <div class="input-group mg-b-pro-edt">
+                                                 <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                 <input type="text" id="note" name="note" class="form-control" placeholder="ghi chú">
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <!-- Modal footer -->
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                 <button type="submit" class="btn btn-success" data-dismiss="modal" id="save">Lưu</button>
+                                 </div>
+                              
+                             </div>
+                         </div>
+                    </div>
+                    <div class="modal" id="cancelModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Thêm ghi chú</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="review-content-section">
+                                            <div class="input-group mg-b-pro-edt">
+                                                <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                <input type="text" id="noteCancel" name="note" class="form-control" placeholder="ghi chú">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-success" data-dismiss="modal" id="saveStatusCancel">Lưu</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" id="productModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chi tiết sản phẩm</h4>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <!-- Product details will be appended here by JavaScript -->
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" id="statusModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chi tiết trạng thái đơn hàng</h4>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <!-- Product details will be appended here by JavaScript -->
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).ready(function () {
+            $('tr').each(function () {
+                var status = $(this).find('td:nth-child(7)').text();
+                if (status === 'Thành công' || status === 'Đã Hủy') {
+                    $(this).find('.changeStatus-btn').hide();
+                    $(this).find('.cancel-btn').hide();
+                }
+            });
+        });
+
+        var orderId;
+
+        $(document).on('click', '#save', function (e) {
+            e.preventDefault(); 
+
+            var note = $('#note').val(); 
+
+            $.ajax({
+                url: '/AdminPage/ChangeStatus',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    orderId: orderId,
+                    note: note
+                },
+                success: function (response) {
+                    if (response.success) {
+                        var $row = $('tr[data-order-id="' + orderId + '"]');
+                        var $statusCell = $row.find('td:nth-child(7)');
+                        $statusCell.text(response.status);
+                        console.log('Dữ liệu được cập nhật thành công!');
+                    } else {
+                        alert('Lỗi khi chuyển trạng thái.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Lỗi khi chuyển trạng thái:', error);
+                }
+            });
+
+            $('#myModal').modal('hide');
+        });
+
+        $(document).on('click', '.changeStatus-btn', function () {
+            var $row = $(this).closest('tr');
+            orderId = $row.find('[data-field="id"]').text();
+        });
+
+
+        var orderIdCancel;
+
+        $(document).on('click', '#saveStatusCancel', function (e) {
+            e.preventDefault(); 
+
+            var note = $('#noteCancel').val(); 
+
+            $.ajax({
+                url: '/AdminPage/CancelOrder',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    orderId: orderIdCancel,
+                    note: note
+                },
+                success: function (response) {
+                    if (response.success) {
+                        var $row = $('tr[data-order-id="' + orderIdCancel + '"]');
+                        var $statusCell = $row.find('td:nth-child(7)');
+                        $statusCell.text(response.status);
+                        console.log('Đơn hàng đã được hủy thành công!');
+                    } else {
+                        alert('Lỗi khi hủy đơn hàng.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Lỗi khi hủy đơn hàng:', error);
+                }
+            });
+
+            $('#cancelModal').modal('hide'); 
+        });
+
+
+        $(document).on('click', '.cancel-btn', function () {
+            var $row = $(this).closest('tr');
+            orderIdCancel = $row.find('[data-field="id"]').text();
+        });
+
+
+        // $(document).on('click', '.cancel-btn', function () {
+        //     var $row = $(this).closest('tr');
+        //     var orderId = $row.find('[data-field="id"]').text();
+
+        //     $.ajax({
+        //         url: '/AdminPage/CancelOrder',
+        //         type: 'POST',
+        //         dataType: 'json',
+        //         data: { orderId: orderId },
+        //         success: function (response) {
+        //             if (response.success) {
+        //                 var $statusCell = $row.find('td:nth-child(7)');
+        //                 $statusCell.text(response.status);
+        //                 console.log('Order cancelled successfully!');
+        //             } else {
+        //                 alert('Failed to cancel order.');
+        //             }
+        //         },
+        //         error: function (error) {
+        //             console.error('Error cancelling order:', error);
+        //         }
+        //     });
+        // });
+
+        $(document).on('click', '.detail-btn', function () {
+            var $row = $(this).closest('tr');
+            var orderId = $row.find('[data-field="id"]').text();
+
+            $.ajax({
+                url: '/AdminPage/GetOrderDetails',
+                type: 'GET',
+                dataType: 'json',
+                data: { orderId: orderId },
+                success: function (response) {
+                    if (response.success) {
+                        var $modalBody = $('#productModal .modal-body');
+                        $modalBody.empty(); // Clear the modal body
+
+                        // Append product details to the modal body
+                        var tableHeader = '<table class="table table-striped">' +
+                            '<thead>' +
+                            '<tr>' +
+                            '<th>Hình ảnh</th>' +
+                            '<th>Tên sản phẩm</th>' +
+                            '<th>Danh mục</th>' +
+                            '<th>Chất liệu</th>' +
+                            '<th>Size</th>' +
+                            '<th>Độ tinh khiết</th>' +
+                            '<th>Trọng lượng</th>' +
+                            '<th>Số lượng</th>' +
+                            '<th>Thông tin bảo hành</th>' +
+                            '<th>Giá bán</th>' +
+                            '</tr>' +
+                            '</thead>' +
+                            '<tbody>';
+
+                        var tableFooter = '</tbody></table>';
+
+                        var tableBody = '';
+                        $.each(response.products, function (i, product) {
+                            var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.salesPrice);
+                            tableBody += '<tr>' +
+                                '<td><img src="' + product.imageUrl + '" width="50" height="50"></td>' +
+                                '<td>' + product.name + '</td>' +
+                                '<td>' + product.category + '</td>' +
+                                '<td>' + product.material + '</td>' +
+                                '<td>' + product.size + '</td>' +
+                                '<td>' + product.purity + '</td>' +
+                                '<td>' + product.weight + '</td>' +
+                                '<td>' + product.quantity + '</td>' +
+                                '<td>' + product.warrantyInformation + '</td>' +
+                                '<td>' + formattedPrice + '</td>' +
+                                '</tr>';
+                        });
+
+                        $modalBody.append(tableHeader + tableBody + tableFooter);
+                    } else {
+                        alert('Failed to get order details.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error getting order details:', error);
+                }
+            });
+
+
+        });
+        $(document).on('click', '.status-btn', function () {
+            var $row = $(this).closest('tr');
+            orderId = $row.find('[data-field="id"]').text();
+            $.ajax({
+                url: '/AdminPage/Status',
+                type: 'GET',
+                dataType: 'json',
+                data: { orderId: orderId },
+                success: function (response) {
+                    if (response.success) {
+                        var $modalBody = $('#statusModal .modal-body');
+                        $modalBody.empty();
+                        var tableHeader = '<table class="table table-striped">' +
+                            '<thead>' +
+                            '<tr>' +
+                            '<th>Mã đơn hàng</th>' +
+                            '<th>Người cập nhật</th>' +
+                            '<th>Trạng thái</th>' +
+                            '<th>Ngày cập nhật</th>' +
+                            '<th>Ghi chú</th>' +
+                            '</tr>' +
+                            '</thead>' +
+                            '<tbody>';
+
+                        var tableFooter = '</tbody></table>';
+                        var tableBody = '';
+                        $.each(response.status, function (i, status) {
+                            var updateDate = status.updateDate.slice(0, 19);
+                            var formattedDate = new Date(updateDate).toLocaleString('en-US', { hour12: true });
+                            tableBody += '<tr>' +
+                                '<td>' + status.order.id + '</td>' +
+                                '<td>' + status.user.firstName + status.user.lastName + '</td>' +
+                                '<td>' + status.statusCategory.name + '</td>' +
+                                '<td>' + formattedDate + '</td>' +
+                                '<td>' + status.note + '</td>' +
+                                '</tr>';
+                        });
+                        $modalBody.append(tableHeader + tableBody + tableFooter);
+
+                    } else {
+                        alert('Failed to get order details.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error getting order details:', error);
+                }
+            });
+        });
+    });
+</script>

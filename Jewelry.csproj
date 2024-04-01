@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="Jewelry.Tests\Controllers\" />
   </ItemGroup>
 
 </Project>
