@@ -8,14 +8,38 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 }
+<style>
+    .mb-307{
+        margin-bottom: 270px;
+    }
 
-<div class="container-fluid">
+    h2.text-center {
+        margin-top: 20px;
+    }
+    .btn.btn-success.btn-block.loginbtn{
+        margin-left: 140px;
+        margin-top: 30px;
+    }
+
+    .form-group {
+        margin-top: 16px;
+    }
+
+    input#Username, input#Password {
+        margin-top: 10px;
+    }
+
+    .checkbox.login-checkbox {
+        margin-top: 8px;
+    }
+</style>
+<div class="container-fluid mb-307">
     <div class="row">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"></div>
         <div class="col-md-4 col-md-4 col-sm-4 col-xs-12">
-            <div class="text-center m-b-md custom-login">
-                <h3>Hãy đăng nhập để vào mua hàng</h3>
-            </div>
+               @*<div class="text-center m-b-md custom-login">
+                   <h3>Hãy đăng nhập để vào mua hàng</h3>
+               </div>*@
             <div class="hpanel">
                 <div class="panel-body">
                     <form method="post" id="loginForm">
@@ -36,7 +60,7 @@
                             <span asp-validation-for="RememberMe" class="text-warning"></span>
                         </div>
                         <div class="btn btn-success btn-block loginbtn">
-                            <input type="submit" value="Đăng nhập" class="btn-success" />
+                            <input type="submit" value="Đăng nhập" class="btn-success css-btn-login" />
                         </div>
                     </form>
                 </div>

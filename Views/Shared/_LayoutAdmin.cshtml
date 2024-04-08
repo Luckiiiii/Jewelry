@@ -84,7 +84,7 @@
                     <ul class="metismenu" id="menu1">
                         <li class="active">
                             <a class="has-arrow" href="index.html">
-                                <i class="icon nalika-home icon-wrap"></i>
+                                <i class="icon nalika-user icon-wrap"></i>
                                 <span class="mini-click-non">Quản lý tài khoản</span>
                             </a>
                             <ul class="submenu-angle" aria-expanded="true">
@@ -95,13 +95,16 @@
                                         </span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a title="Thêm tài khoản" asp-controller="AdminPage" asp-action="AddUsers">
-                                        <span class="mini-sub-pro">
-                                            Thêm tài khoản
-                                        </span>
-                                    </a>
-                                </li>
+                                @if (User.IsInRole("admin"))
+                                {
+                                    <li>
+                                        <a title="Thêm tài khoản" asp-controller="AdminPage" asp-action="AddUsers">
+                                            <span class="mini-sub-pro">
+                                                Thêm tài khoản
+                                            </span>
+                                        </a>
+                                    </li>
+                                }
                             </ul>
                         </li>
                         <li class="active">
@@ -135,7 +138,8 @@
                         </li>
                         <li class="active">
                             <a class="has-arrow" href="index.html">
-                                <i class="icon nalika-home icon-wrap"></i>
+                                
+                                <i class="icon nalika-folder icon-wrap"></i>
                                 <span class="mini-click-non">Quản lý sản phẩm</span>
                             </a>
                             <ul class="submenu-angle" aria-expanded="false">
@@ -164,7 +168,7 @@
                         </li>
                         <li class="active">
                             <a class="has-arrow" href="index.html">
-                                <i class="icon nalika-home icon-wrap"></i>
+                                <i class="icon nalika-shopping-cart icon-wrap"></i>
                                 <span class="mini-click-non">Quản lý đơn hàng</span>
                             </a>
                             <ul class="submenu-angle" aria-expanded="false">
@@ -179,6 +183,36 @@
                                     <a title="Thêm đơn hàng" asp-controller="AdminPage" asp-action="AddOrder">
                                         <span class="mini-sub-pro">
                                             Thêm đơn hàng
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="active">
+                            <a class="has-arrow" href="index.html">
+                                <i class="icon nalika-inbox icon-wrap"></i>
+                                <span class="mini-click-non">Quản lý bảo hành</span>
+                            </a>
+                            <ul class="submenu-angle" aria-expanded="false">
+                                <li>
+                                    <a title="Quản lý bảo hành" asp-controller="AdminPage" asp-action="WarrantyManagement">
+                                        <span class="mini-sub-pro">
+                                            Quản lý bảo hành
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="active">
+                            <a class="has-arrow" href="index.html">
+                                <i class="icon nalika-inbox icon-wrap"></i>
+                                <span class="mini-click-non">Báo cáo thống kê</span>
+                            </a>
+                            <ul class="submenu-angle" aria-expanded="false">
+                                <li>
+                                    <a title="Báo cáo nhập hàng" asp-controller="AdminPage" asp-action="InventoryReport">
+                                        <span class="mini-sub-pro">
+                                            Báo cáo nhập hàng
                                         </span>
                                     </a>
                                 </li>
@@ -223,7 +257,6 @@
                                 <div class="header-top-wraper">
                                     <div class="row">
                                         <div class="col-lg-1 col-md-0 col-sm-1 col-xs-12">
-
                                             <div class="menu-switcher-pro">
                                                 <button type="button" id="sidebarCollapse"
                                                         class="btn bar-button-pro header-drl-controller-btn btn-info navbar-btn">
@@ -401,6 +434,7 @@
                         'copy'
                     ]
                 }],
+                order: [],
                 initComplete: function () {
                     var dataTable = this.api();
                     $('#export-buttons').append(dataTable.buttons);
@@ -413,6 +447,8 @@
         initDataTable('#CategoryTable');
         initDataTable('#InventoryTable');
         initDataTable('#ProductItemTable')
+        initDataTable('#OrderTable')
+        initDataTable('#WarrantyTable')
     </script>
 
     <script>

@@ -1,0 +1,132 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model InventoryReportViewModel
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Báo cáo nhập hàng</h2>
+                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Danh sách phiếu nhập</h4>
+                    <div class="add-supplier">
+                        <select id="productSelect" asp-items="@(new SelectList(Model.Products, "Id", "Name"))">
+                            <option value="">Select a product</option>
+                        </select>
+
+                        <select id="yearSelect">
+                            <option value="">Select a year</option>
+                            @for (int i = DateTime.Now.Year; i >= 2000; i--)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+
+                        <select id="monthSelect">
+                            <option value="">Select a month</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <button id="getReportButton" type="button">Get Report</button>
+                    </div>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="InventoryTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Chất liệu</th>
+                                    <th>Size</th>
+                                    <th>Độ tinh khiết</th>
+                                    <th>Trọng lượng</th>
+                                    <th>Giá nhập</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#getReportButton").click(function () {
+            var productId = $("#productSelect").val();
+            var year = $("#yearSelect").val();
+            var month = $("#monthSelect").val();
+
+            $.get("/AdminPage/GetInventoryReport", { productId: productId, year: year, month: month }, function (data) {
+                var tableBody = $('#InventoryTable tbody');
+                tableBody.empty(); // Clear the existing contents of the tbody
+
+                // Loop through the data and add each item as a new row in the table
+                $.each(data, function (index, item) {
+                    var row = $('<tr>');
+                    row.append($('<td>').text(item.productItem.product.name));
+                    row.append($('<td>').text(item.productItem.materials.name));
+                    row.append($('<td>').text(item.productItem.sizes.name));
+                    row.append($('<td>').text(item.productItem.purity.name));
+                    row.append($('<td>').text(item.productItem.weight));
+                    var purchasePrice = item.productItem.purchasePrice
+                        .filter(function (pp) {
+                            var effectiveDate = new Date(pp.effectiveDate);
+                            var creationDate = new Date(item.inventoryReceipt.creationDate);
+                            return effectiveDate.getFullYear() == creationDate.getFullYear() &&
+                                effectiveDate.getMonth() == creationDate.getMonth() &&
+                                effectiveDate.getDate() == creationDate.getDate() &&
+                                effectiveDate.getHours() == creationDate.getHours() &&
+                                effectiveDate.getMinutes() == creationDate.getMinutes();
+                        })[0];
+                    if (purchasePrice) {
+                        var price = purchasePrice.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                        var total = (purchasePrice.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                        row.append($('<td>').text(price));
+                        row.append($('<td>').text(item.quantity));
+                        row.append($('<td>').text(total));
+                    } else {
+                        row.append($('<td>').text('N/A'));
+                        row.append($('<td>').text(item.quantity));
+                        row.append($('<td>').text('N/A'));
+                    }
+                    tableBody.append(row);
+                });
+
+            });
+        });
+    });
+</script>

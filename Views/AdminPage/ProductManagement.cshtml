@@ -119,6 +119,7 @@
             var productId = $row.find('.hidden[data-field="idp"]').text();
             var salesPrice = $row.find('.editable[data-field="salesPrice"]').text().replace(/,/g, '');
             var warrantyInformation = $row.find('.editable[data-field="warrantyInformation"]').text();
+            var productName = $row.find('.editable[data-field="productName"]').text();
             // var sizeId = $row.find('[data-field="size"]').data('id');
             // var materialId = $row.find('[data-field="material"]').data('id');
             var errorMessage = "";
@@ -129,6 +130,8 @@
                 errorMessage = "Giá bán không hợp lệ.";
             } else if (!warrantyInformation.trim()) {
                 errorMessage = "Trường thông tin bảo hành không được trống.";
+            } else if (!productName.trim()) {
+                errorMessage = "Trường tên sản phẩm không được trống.";
             }
             if (errorMessage) {
                 alert(errorMessage);
@@ -142,7 +145,8 @@
                     productItemId: productItemId,
                     productId: productId,
                     salesPrice: salesPrice,
-                    warrantyInformation: warrantyInformation
+                    warrantyInformation: warrantyInformation,
+                    productName: productName
                 },
                 success: function (response) {
                     console.log('Data saved successfully!');

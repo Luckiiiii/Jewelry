@@ -1,0 +1,36 @@
+﻿@model Warranty
+<h2>Phiếu bảo hành sản phẩm</h2>
+<p>Ngày: @Model.ReturnDate?.ToString("dd/MM/yyyy")</p>
+<table>
+    <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Người xuất phiếu</th>
+            <th>Tên sản phẩm</th>
+            <th>Nội dung bảo hành</th>
+            <th>Ngày trả</th>
+            <th>Chi Phí (VND)</th>
+            <th>Ghi chú</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Order.Id</td>
+            <td>@Model.EmployeeName</td>
+            <td>
+                @foreach (var item in Model.Order.Items)
+                {
+
+                    @item.Product.Product.Name
+                    ;
+                    <br>
+                }
+            </td>
+            <td>@Model.WarrantyInformation</td>
+            <td>@Model.ReturnDate?.ToString("dd/MM/yyyy")</td>
+            <td>@string.Format("{0:N0}", Model.Price)</td>
+            <td>@Model.Note</td>
+        </tr>
+    </tbody>
+</table>
+<button onclick="window.print()">In hóa đơn</button>

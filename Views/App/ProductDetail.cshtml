@@ -1,56 +1,56 @@
-﻿@section Scripts{
-<!-- jQuery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+﻿@section Scripts {
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 
-<!-- jQuery Sticky -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <!-- jQuery Sticky -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
 
-<!-- Bootstrap JS -->
-<script src="~/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="~/js/bootstrap.min.js"></script>
 
-<!-- Other JS -->
-<script src="~/js/jquery.meanmenu.js"></script>
-<script src="~/js/main.js"></script>
+    <!-- Other JS -->
+    <script src="~/js/jquery.meanmenu.js"></script>
+    <script src="~/js/main.js"></script>
 
-<!-- Lightbox -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+    <!-- Lightbox -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
 
-<!-- Modernizr -->
-<script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+    <!-- Modernizr -->
+    <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
 
-<style>
-    .material-option.selected,
-    .size-option.selected,
-    .purity-option.selected {
-        color: #ff0000; /* Đổi màu chữ thành đỏ */
-        font-weight: bold; /* Làm đậm chữ */
-    }
+    <style>
+        .material-option.selected,
+        .size-option.selected,
+        .purity-option.selected {
+            color: #ff0000; /* Đổi màu chữ thành đỏ */
+            font-weight: bold; /* Làm đậm chữ */
+        }
 
-    ﻿.product-thumbnail {
-        max-height: 50px;
-    }
-</style>
+        ﻿.product-thumbnail {
+            max-height: 50px;
+        }
+    </style>
 }
 @section head {
-<!-- favicon -->
-<link rel="shortcut icon" type="~/image/x-icon" href="img/favicon.ico">
+    <!-- favicon -->
+    <link rel="shortcut icon" type="~/image/x-icon" href="img/favicon.ico">
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
 
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
 
-<!-- Other CSS -->
-<link rel="stylesheet" href="~/css/font-awesome.min.css">
-<link rel="stylesheet" href="~/css/nalika-icon.css">
-<link rel="stylesheet" href="~/css/main.css">
-<link rel="stylesheet" href="~/css/style.css">
-<link rel="stylesheet" href="~/css/custom.css">
+    <!-- Other CSS -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/nalika-icon.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/custom.css">
 
-<!-- Responsive CSS -->
-<link rel="stylesheet" href="~/css/responsive.css">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="~/css/responsive.css">
 }
 
 
@@ -58,144 +58,146 @@
 
 <div class="all-content-wrapper" style="margin-left: 0 !important;">
 
-<!-- Single pro tab start-->
-<div class="roew">
-<div class="single-product-tab-area mg-t-0 mg-b-30 col-lg-8 col-md-8 col-sm-8 col-xs-12">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12 padding-8">
-                <div class="single-product-pr">
+    <!-- Single pro tab start-->
+    <div class="roew">
+        <div class="single-product-tab-area mg-t-0 mg-b-30 col-lg-8 col-md-8 col-sm-8 col-xs-12">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 padding-8">
+                        <div class="single-product-pr">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div id="myTabContent1" class="tab-content">
+                                        @for (int i = 0; i < Model.Img.Count; i++)
+                                        {
+                                            var image = Model.Img.ElementAt(i);
+                                            <div class="product-tab-list tab-pane fade @(i == 0 ? "active in" : "")" id="single-tab@(i)">
+                                                <img src="@image.UrlImage" alt="@image.Name" />
+                                            </div>
+                                        }
+                                    </div>
+                                    <ul id="single-product-tab" class="nav nav-tabs" role="tablist">
+                                        @for (int i = 0; i < Model.Img.Count; i++)
+                                        {
+                                            var image = Model.Img.ElementAt(i);
+                                            <li class="nav-item @(i == 0 ? "active" : "")">
+                                                <a class="nav-link nav-img-border" href="#single-tab@(i)" role="tab" data-toggle="tab">
+                                                    <img class="img-product-small" src="@image.UrlImage" alt="@image.Name" />
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="single-product-details res-pro-tb">
+                                        <h1 id="productName" class=color-black>@Model.Name</h1>
+                                        <div class="single-pro-price">
+                                            <span class="single-regular"></span>
+                                            <div class="single-pro-weight" id="weightId">
+                                            </div>
+                                            <div class="single-pro-size">
+                                                <h6>Size</h6>
+                                                <div id="sizes"></div>
+                                            </div>
+                                            <div class="single-pro-size">
+                                                <h6>Độ tinh khiết</h6>
+                                                <div id="purity"></div>
+                                            </div>
+                                            <div class="color-quality-pro">
+                                                <div class="color-quality-details">
+                                                    <h6>Chất liệu</h6>
+                                                    @{
+                                                        var displayedMaterials = new HashSet<string>();
+                                                    }
+                                                    @foreach (var productItem in Model.Item)
+                                                    {
+                                                        if (!displayedMaterials.Contains(productItem.Materials.Name))
+                                                        {
+                                                            displayedMaterials.Add(productItem.Materials.Name);
+                                                            <span class="material-option" data-material-id="@productItem.Materials.Id">@productItem.Materials.Name</span>
+                                                        }
+                                                    }
+                                                </div>
+                                                <div class="color-quality">
+                                                    <h4>Số lượng</h4>
+                                                    <div class="quantity">
+                                                        <div class="pro-quantity-changer">
+                                                            <input type="text" value="1" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="clear"></div>
+                                                <div class="single-pro-button">
+                                                    <div class="pro-button" id="addToCart">
+                                                        <a>Thêm vào giỏ hàng</a>
+                                                    </div>
+                                                    <div class="pro-viwer">
+                                                        <a href="#"><i class="fa fa-heart"></i></a>
+                                                        <a href="#"><i class="fa fa-eye"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="clear"></div>
+                                                <div class="single-social-area">
+                                                    <h3>Chỉa sẻ</h3>
+                                                    <a href="#"><i class="fa fa-facebook"></i></a>
+                                                    <a href="#"><i class="fa fa-google-plus"></i></a>
+                                                    <a href="#"><i class="fa fa-feed"></i></a>
+                                                    <a href="#"><i class="fa fa-twitter"></i></a>
+                                                    <a href="#"><i class="fa fa-linkedin"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="single-pro-cn">
+                                                <h3>Tổng quan</h3>
+                                                <p>
+                                                    @Model.Description
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Single pro tab End-->
+            <!-- Single pro tab review Start-->
+            <div class="single-pro-review-area mt-t-30 mg-b-30">
+                <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                            <div id="myTabContent1" class="tab-content">
-                                @for (int i = 0; i < Model.Img.Count; i++)
-                                {
-                                    var image = Model.Img.ElementAt(i);
-                                    <div class="product-tab-list tab-pane fade @(i == 0 ? "active in" : "")" id="single-tab@(i)">
-                                        <img src="@image.UrlImage" alt="@image.Name" />
-                                    </div>
-                                }
-                            </div>
-                            <ul id="single-product-tab" class="nav nav-tabs" role="tablist">
-                                @for (int i = 0; i < Model.Img.Count; i++)
-                                {
-                                    var image = Model.Img.ElementAt(i);
-                                    <li class="nav-item @(i == 0 ? "active" : "")">
-                                        <a class="nav-link nav-img-border" href="#single-tab@(i)" role="tab" data-toggle="tab">
-                                            <img class="img-product-small" src="@image.UrlImage" alt="@image.Name" />
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                            <div class="single-product-details res-pro-tb">
-                                <h1 id="productName" class=color-black>@Model.Name</h1>
-                                <div class="single-pro-price">
-                                    <span class="single-regular"></span>
-                                    <div class="single-pro-weight" id="weightId">
-                                    </div>
-                                    <div class="single-pro-size">
-                                        <h6>Size</h6>
-                                        <div id="sizes"></div>
-                                    </div>
-                                    <div class="single-pro-size">
-                                        <h6>Độ tinh khiết</h6>
-                                        <div id="purity"></div>
-                                    </div>
-                                    <div class="color-quality-pro">
-                                        <div class="color-quality-details">
-                                            <h6>Chất liệu</h6>
-                                            @{
-                                                var displayedMaterials = new HashSet<string>();
-                                            }
-                                            @foreach (var productItem in Model.Item)
-                                            {
-                                                if (!displayedMaterials.Contains(productItem.Materials.Name))
-                                                {
-                                                    displayedMaterials.Add(productItem.Materials.Name);
-                                                    <span class="material-option" data-material-id="@productItem.Materials.Id">@productItem.Materials.Name</span>
-                                                }
-                                            }
-                                        </div>
-                                        <div class="color-quality">
-                                            <h4>Số lượng</h4>
-                                            <div class="quantity">
-                                                <div class="pro-quantity-changer">
-                                                    <input type="text" value="1" />
+                        <div class="col-lg-12 padding-8">
+                            <div class="single-tb-pr">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <ul id="myTab" class="tab-review-design">
+                                            <li class="active"><a href="#description">Mô tả</a><span><i class="fa fa-star"></i><i class="fa fa-star"></i></span></li>
+
+                                            <li><a href="#INFORMATION">Thông tin bảo hành</a></li>
+                                        </ul>
+                                        <div id="myTabContent" class="tab-content">
+                                            <div class="product-tab-list product-details-ect tab-pane fade active in" id="description">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="review-content-section">
+                                                            <p>
+                                                                @Model.Description
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                        <div class="single-pro-button">
-                                            <div class="pro-button" id="addToCart">
-                                                <a>Thêm vào giỏ hàng</a>
-                                            </div>
-                                            <div class="pro-viwer">
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                                <a href="#"><i class="fa fa-eye"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                        <div class="single-social-area">
-                                            <h3>Chỉa sẻ</h3>
-                                            <a href="#"><i class="fa fa-facebook"></i></a>
-                                            <a href="#"><i class="fa fa-google-plus"></i></a>
-                                            <a href="#"><i class="fa fa-feed"></i></a>
-                                            <a href="#"><i class="fa fa-twitter"></i></a>
-                                            <a href="#"><i class="fa fa-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="single-pro-cn">
-                                        <h3>Tổng quan</h3>
-                                        <p>
-                                            @Model.Description
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                                
-                        </div>
-                            
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Single pro tab End-->
-    <!-- Single pro tab review Start-->
-    <div class="single-pro-review-area mt-t-30 mg-b-30">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12 padding-8">
-                    <div class="single-tb-pr">
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <ul id="myTab" class="tab-review-design">
-                                    <li class="active"><a href="#description">Mô tả</a><span><i class="fa fa-star"></i><i class="fa fa-star"></i></span></li>
 
-                                    <li><a href="#INFORMATION">Thông tin bảo hành</a></li>
-                                </ul>
-                                <div id="myTabContent" class="tab-content">
-                                    <div class="product-tab-list product-details-ect tab-pane fade active in" id="description">
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="review-content-section">
-                                                    <p>
-                                                        @Model.Description
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="product-tab-list tab-pane fade" id="INFORMATION">
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="review-content-section">
-                                                    <p>
-                                                        @Model.WarrantyInformation
-                                                    </p>
+                                            <div class="product-tab-list tab-pane fade" id="INFORMATION">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="review-content-section">
+                                                            <p>
+                                                                @Model.WarrantyInformation
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -207,239 +209,253 @@
                 </div>
             </div>
         </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            <h2>Giỏ hàng</h2>
+            <div id="cart"></div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form id="checkout-form" method="post" action="/App/Checkout">
+                    <input type="hidden" id="cart-data" name="cartData" />
+                    <button type="submit" class="btn btn-success btn-with">Thanh toán</button>
+                </form>
+            }
+            else
+            {
+                <form method="post" action="/Account/Login">
+                    <input type="hidden" id="cart-data" name="cartData" />
+                    <input type="hidden" id="returnUrl" name="returnUrl" />
+                    <button type="submit" class="btn btn-success btn-with" onclick="rememberCurrentUrl()">Đăng nhập để thanh toán</button>
+                </form>
+            }
+        </div>
     </div>
-</div>
-<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-    <h2>Giỏ hàng</h2>
-    <div id="cart"></div>
-    <form id="checkout-form" method="post" action="/App/Checkout">
-        <input type="hidden" id="cart-data" name="cartData" />
-        <button type="submit" class="btn btn-success btn-with">Thanh toán</button>
-    </form>
-</div>
-</div>
 </div>
 
 <script>
-$(document).ready(function () {
-    $("#single-product-tab li a").click(function (e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
-        var imgSrc = $(this).find('img').attr('src');
-        $(href).find('img').attr('src', imgSrc);
-        $('.product-tab-list').removeClass('active in');
-        $(href).addClass('active in');
-    });
-
-    $('.material-option').click(function () {
-        $('.material-option').removeClass('selected');
-        $('.single-regular').empty();
-        $(this).addClass('selected');
-
-        var materialId = $(this).data('material-id');
-        var productId = @Model.Id;
-
-        $.ajax({
-            url: '/App/GetPurity',
-            type: 'GET',
-            data: { productId: productId, materialId: materialId },
-            success: function (response) {
-                $('#purity').empty();
-                $.each(response, function (index, purity) {
-                    $('#purity').append('<span class="purity-option" data-purity-id="' + purity.id + '">' + purity.name + '</span>');
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.purity-option', function () {
-        $('.purity-option').removeClass('selected');
-        $(this).addClass('selected');
-        var materialId = $('.material-option.selected').data('material-id');
-        var purityId = $(this).data('purity-id');
-        var productId = @Model.Id;
-
-        $.ajax({
-            url: '/App/GetSizes',
-            type: 'GET',
-            data: { productId: productId, materialId: materialId, purityId: purityId },
-            success: function (response) {
-                $('#sizes').empty();
-                $.each(response, function (index, size) {
-                    $('#sizes').append('<span class="size-option" data-size-id="' + size.id + '">' + size.name + '</span>');
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.size-option', function () {
-        $('.size-option').removeClass('selected');
-        $(this).addClass('selected');
-        var sizeId = $(this).data('size-id');
-        var materialId = $('.material-option.selected').data('material-id');
-        var purityId = $('.purity-option.selected').data('purity-id');
-        var productId = @Model.Id;
-
-        $.ajax({
-            url: '/App/GetPrice',
-            type: 'GET',
-            data: { productId: productId, sizeId: sizeId, materialId: materialId, purityId: purityId },
-            success: function (response) {
-                if (response.success) {
-                    var formattedPrice = Number(response.price).toLocaleString('vi-VN') + ' VND';
-                    $('.single-regular').text(formattedPrice);
-                            $('#weightId').append('<h6>Trọng lượng</h6>'+ '<div><span id="weight">' + response.weight + '</span></div>');
-                }
-            }
-        });
-    });
-        $(document).on('click', '#addToCart', function () {
-        event.preventDefault();
-        var sizeId = $('.size-option.selected').data('size-id');
-        var materialId = $('.material-option.selected').data('material-id');
-        var weight = $('#weight').val();
-        var productId = @Model.Id;
-        var quantity = parseInt($('.pro-quantity-changer input').val());
-        var productName = '@Html.Raw(Model.Name)';
-        var purityId = $('.purity-option.selected').data('purity-id');
-        if (!sizeId || !materialId || !purityId) {
-            alert('Vui lòng chọn size, độ tinh khiết và chất liệu trước khi thêm vào giỏ hàng.');
-            return;
-        }
-        if (quantity <= 0) {
-            alert('Số lượng thêm vào giỏ hàng phải lớn hơn 0.');
-            return;
-        }
-        $.ajax({
-            url: '/App/GetPrice',
-            type: 'GET',
-            data: { productId: productId, sizeId: sizeId, materialId: materialId, purityId: purityId },
-            success: function (response) {
-                if (response.success) {
-                    var formattedPrice = Number(response.price).toLocaleString('vi-VN') + ' VND';
-                    $('.single-regular').text(formattedPrice);
-
-                    var cart = JSON.parse(localStorage.getItem('cart')) || [];
-                    var existingProduct = cart.find(function (productItem) {
-                                return productItem.productId === productId && productItem.sizeId === sizeId && productItem.materialId === materialId && productItem.purityId === purityId ;
-                    });
-
-                    if (existingProduct) {
-                        existingProduct.quantity += quantity;
-                    } else {
-                        var productItem = {
-                            productItemId: response.productItemId,
-                            productId: productId,
-                            sizeId: sizeId,
-                            materialId: materialId,
-                            purityId: purityId,
-                            price: response.price,
-                            weight: response.weight,
-                            quantity: quantity,
-                            productName: productName,
-                            materialName: $('.material-option.selected').text(), 
-                            sizeName: $('.size-option.selected').text(),
-                            purityName: $('.purity-option.selected').text(),
-                            imageUrl: '@Url.Content(Model.Img.First().UrlImage)'
-                        };
-                        cart.push(productItem);
-                    }
-
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    updateCart();
-                }
-            }
-        });
-    });
-
-    function updateCart() {
-        var cart = JSON.parse(localStorage.getItem('cart')) || [];
-        $('#cart').empty();
-        var total = 0;
-
-        $.each(cart, function (index, productItem) {
-            var lineTotal = productItem.price * productItem.quantity;
-            total += lineTotal;
-            var cartItemHtml = '<div class="card" style="">' +
-                '<img class="card-img-top product-thumbnail" src="' + productItem.imageUrl + '" alt="' + productItem.productName + '">' +
-                '<div class="card-body">' +
-                '<h5 class="card-title">' + productItem.productName + '</h5>' +
-                '<p class="card-text ma-b-2">Chất liệu: ' + productItem.materialName + '</p>' +
-                '<p class="card-text ma-b-2">Size: ' + productItem.sizeName + '</p>' +
-                '<p class="card-text ma-b-2">Độ tinh khiết: ' + productItem.purityName + '</p>' +
-                '<p class="card-text ma-b-2">Trọng lượng: ' + productItem.weight + '</p>' +
-                '<p class="card-text ma-b-2">Số lượng: ' + productItem.quantity + '</p>' +
-                '<p class="card-text ma-b-2">Giá: ' + Number(lineTotal).toLocaleString('vi-VN') + ' VND</p>' +
-                '<button class="btn btn-danger remove-from-cart mr-2" data-index="' + index + '">Xóa</button>' +
-                '<button class="btn btn-primary decrease-quantity mr-2" data-index="' + index + '">-</button>' +
-                '<button class="btn btn-primary increase-quantity mr-2" data-index="' + index + '">+</button>' +
-                '</div></div>';
-            $('#cart').append(cartItemHtml);
-        });
-
-        $('#cart').append('<p class="font-weight-bold">Tổng tiền: ' + Number(total).toLocaleString('vi-VN') + ' VND</p>');
-
-        $('.remove-from-cart').click(function () {
-            var index = $(this).data('index');
-            cart.splice(index, 1);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCart();
-        });
-
-        $('.increase-quantity').click(function () {
-            var index = $(this).data('index');
-            cart[index].quantity += 1;
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCart();
-        });
-
-        $('.decrease-quantity').click(function () {
-            var index = $(this).data('index');
-            cart[index].quantity -= 1;
-            if (cart[index].quantity <= 0) {
-                cart.splice(index, 1);
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCart();
-        });
+    function rememberCurrentUrl() {
+        var currentUrl = window.location.href;
+        document.getElementById("ReturnUrl").value = currentUrl;
+        console.log("Set ReturnUrl to: " + currentUrl);
     }
-
-
     $(document).ready(function () {
-        updateCart();
+        $("#single-product-tab li a").click(function (e) {
+            e.preventDefault();
+            var href = $(this).attr('href');
+            var imgSrc = $(this).find('img').attr('src');
+            $(href).find('img').attr('src', imgSrc);
+            $('.product-tab-list').removeClass('active in');
+            $(href).addClass('active in');
+        });
+
+        $('.material-option').click(function () {
+            $('.material-option').removeClass('selected');
+            $('.single-regular').empty();
+            $(this).addClass('selected');
+
+            var materialId = $(this).data('material-id');
+            var productId = @Model.Id;
+
+            $.ajax({
+                url: '/App/GetPurity',
+                type: 'GET',
+                data: { productId: productId, materialId: materialId },
+                success: function (response) {
+                    $('#purity').empty();
+                    $.each(response, function (index, purity) {
+                        $('#purity').append('<span class="purity-option" data-purity-id="' + purity.id + '">' + purity.name + '</span>');
+                    });
+                }
+            });
+        });
+
+        $(document).on('click', '.purity-option', function () {
+            $('.purity-option').removeClass('selected');
+            $(this).addClass('selected');
+            var materialId = $('.material-option.selected').data('material-id');
+            var purityId = $(this).data('purity-id');
+            var productId = @Model.Id;
+
+            $.ajax({
+                url: '/App/GetSizes',
+                type: 'GET',
+                data: { productId: productId, materialId: materialId, purityId: purityId },
+                success: function (response) {
+                    $('#sizes').empty();
+                    $.each(response, function (index, size) {
+                        $('#sizes').append('<span class="size-option" data-size-id="' + size.id + '">' + size.name + '</span>');
+                    });
+                }
+            });
+        });
+
+        $(document).on('click', '.size-option', function () {
+            $('.size-option').removeClass('selected');
+            $(this).addClass('selected');
+            var sizeId = $(this).data('size-id');
+            var materialId = $('.material-option.selected').data('material-id');
+            var purityId = $('.purity-option.selected').data('purity-id');
+            var productId = @Model.Id;
+
+            $.ajax({
+                url: '/App/GetPrice',
+                type: 'GET',
+                data: { productId: productId, sizeId: sizeId, materialId: materialId, purityId: purityId },
+                success: function (response) {
+                    if (response.success) {
+                        var formattedPrice = Number(response.price).toLocaleString('vi-VN') + ' VND';
+                        $('.single-regular').text(formattedPrice);
+                        $('#weightId').append('<h6>Trọng lượng</h6>' + '<div><span id="weight">' + response.weight + '</span></div>');
+                    }
+                }
+            });
+        });
+        $(document).on('click', '#addToCart', function () {
+            event.preventDefault();
+            var sizeId = $('.size-option.selected').data('size-id');
+            var materialId = $('.material-option.selected').data('material-id');
+            var weight = $('#weight').val();
+            var productId = @Model.Id;
+            var quantity = parseInt($('.pro-quantity-changer input').val());
+            var productName = '@Html.Raw(Model.Name)';
+            var purityId = $('.purity-option.selected').data('purity-id');
+            if (!sizeId || !materialId || !purityId) {
+                alert('Vui lòng chọn size, độ tinh khiết và chất liệu trước khi thêm vào giỏ hàng.');
+                return;
+            }
+            if (quantity <= 0) {
+                alert('Số lượng thêm vào giỏ hàng phải lớn hơn 0.');
+                return;
+            }
+            $.ajax({
+                url: '/App/GetPrice',
+                type: 'GET',
+                data: { productId: productId, sizeId: sizeId, materialId: materialId, purityId: purityId },
+                success: function (response) {
+                    if (response.success) {
+                        var formattedPrice = Number(response.price).toLocaleString('vi-VN') + ' VND';
+                        $('.single-regular').text(formattedPrice);
+
+                        var cart = JSON.parse(localStorage.getItem('cart')) || [];
+                        var existingProduct = cart.find(function (productItem) {
+                            return productItem.productId === productId && productItem.sizeId === sizeId && productItem.materialId === materialId && productItem.purityId === purityId;
+                        });
+
+                        if (existingProduct) {
+                            existingProduct.quantity += quantity;
+                        } else {
+                            var productItem = {
+                                productItemId: response.productItemId,
+                                productId: productId,
+                                sizeId: sizeId,
+                                materialId: materialId,
+                                purityId: purityId,
+                                price: response.price,
+                                weight: response.weight,
+                                quantity: quantity,
+                                productName: productName,
+                                materialName: $('.material-option.selected').text(),
+                                sizeName: $('.size-option.selected').text(),
+                                purityName: $('.purity-option.selected').text(),
+                                imageUrl: '@Url.Content(Model.Img.First().UrlImage)'
+                            };
+                            cart.push(productItem);
+                        }
+
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        updateCart();
+                    }
+                }
+            });
+        });
+
+        function updateCart() {
+            var cart = JSON.parse(localStorage.getItem('cart')) || [];
+            $('#cart').empty();
+            var total = 0;
+
+            $.each(cart, function (index, productItem) {
+                var lineTotal = productItem.price * productItem.quantity;
+                total += lineTotal;
+                var cartItemHtml = '<div class="card" style="">' +
+                    '<img class="card-img-top product-thumbnail" src="' + productItem.imageUrl + '" alt="' + productItem.productName + '">' +
+                    '<div class="card-body">' +
+                    '<h5 class="card-title">' + productItem.productName + '</h5>' +
+                    '<p class="card-text ma-b-2">Chất liệu: ' + productItem.materialName + '</p>' +
+                    '<p class="card-text ma-b-2">Size: ' + productItem.sizeName + '</p>' +
+                    '<p class="card-text ma-b-2">Độ tinh khiết: ' + productItem.purityName + '</p>' +
+                    '<p class="card-text ma-b-2">Trọng lượng: ' + productItem.weight + '</p>' +
+                    '<p class="card-text ma-b-2">Số lượng: ' + productItem.quantity + '</p>' +
+                    '<p class="card-text ma-b-2">Giá: ' + Number(lineTotal).toLocaleString('vi-VN') + ' VND</p>' +
+                    '<button class="btn btn-danger remove-from-cart mr-2" data-index="' + index + '">Xóa</button>' +
+                    '<button class="btn btn-primary decrease-quantity mr-2" data-index="' + index + '">-</button>' +
+                    '<button class="btn btn-primary increase-quantity mr-2" data-index="' + index + '">+</button>' +
+                    '</div></div>';
+                $('#cart').append(cartItemHtml);
+            });
+
+            $('#cart').append('<p class="font-weight-bold">Tổng tiền: ' + Number(total).toLocaleString('vi-VN') + ' VND</p>');
+
+            $('.remove-from-cart').click(function () {
+                var index = $(this).data('index');
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+            });
+
+            $('.increase-quantity').click(function () {
+                var index = $(this).data('index');
+                cart[index].quantity += 1;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+            });
+
+            $('.decrease-quantity').click(function () {
+                var index = $(this).data('index');
+                cart[index].quantity -= 1;
+                if (cart[index].quantity <= 0) {
+                    cart.splice(index, 1);
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+            });
+        }
+
+
+        $(document).ready(function () {
+            updateCart();
+        });
+
+
+        $('#checkout-form').submit(function () {
+            var cart = JSON.parse(localStorage.getItem('cart')) || [];
+            $('#cart-data').val(JSON.stringify(cart));
+        });
+
+        // $('#checkout').click(function () {
+        //     var cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        //     $.ajax({
+        //         url: '/App/Checkout',
+        //         type: 'POST',
+        //         contentType: 'application/json',
+        //         data: JSON.stringify(cart),
+        //         success: function (response) {
+        //             alert('Đơn hàng của bạn đã được tạo thành công!');
+        //             localStorage.removeItem('cart');
+        //             updateCart();
+        //             window.location.href = response.redirectUrl;
+
+        //         },
+
+        //         error: function (error) {
+        //             console.error('Error saving data:', error);
+        //         }
+        //     });
+        // });
+
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true
+        });
     });
-
-
-    $('#checkout-form').submit(function () {
-        var cart = JSON.parse(localStorage.getItem('cart')) || [];
-        $('#cart-data').val(JSON.stringify(cart));
-    });
-
-    // $('#checkout').click(function () {
-    //     var cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    //     $.ajax({
-    //         url: '/App/Checkout',
-    //         type: 'POST',
-    //         contentType: 'application/json',
-    //         data: JSON.stringify(cart),
-    //         success: function (response) {
-    //             alert('Đơn hàng của bạn đã được tạo thành công!');
-    //             localStorage.removeItem('cart');
-    //             updateCart();
-    //             window.location.href = response.redirectUrl;
-                   
-    //         },
-
-    //         error: function (error) {
-    //             console.error('Error saving data:', error);
-    //         }
-    //     });
-    // });
-
-    lightbox.option({
-        'resizeDuration': 200,
-        'wrapAround': true
-    });
-});
 </script>

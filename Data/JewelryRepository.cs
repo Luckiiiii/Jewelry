@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Jewelry.Data
 {
@@ -565,7 +566,7 @@ namespace Jewelry.Data
                 return _context.InventoryReceipt
                     .Include(i => i.User)
                     .Include(i => i.Supplier)
-                   .OrderBy(p => p.Id)
+                   .OrderByDescending(p => p.CreationDate)
                    .ToList();
             }
             catch (Exception ex)
@@ -777,7 +778,7 @@ namespace Jewelry.Data
                     .Include(i => i.Items)
                     .Include(i => i.Status)
                     .ThenInclude(p => p.StatusCategory)
-                    .OrderBy(p => p.Id)
+                    .OrderByDescending(p => p.OrderDate)
                     .ToList();
             }
             catch (Exception ex)
@@ -982,6 +983,72 @@ namespace Jewelry.Data
                 _logger.LogError($"Failed to get Order: {ex}");
                 return null;
             }
+        }
+
+        public IEnumerable<Warranty> GetAllWarranty()
+        {
+            try
+            {
+                _logger.LogInformation("GetAllWarranty was called");
+                return _context.Warranties
+                    .Include(i => i.User)
+                    .Include(i => i.Order)
+                    .ThenInclude(i => i.Items)
+                    .ThenInclude(i=>i.Product)
+                    .ThenInclude(i=>i.Product)
+                    .ThenInclude(i=>i.Img)
+                   .OrderByDescending(p => p.CreationDate)
+                   .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all Warranty: {ex}");
+                return null;
+            }
+        }
+        public void DeleteWarranty(Warranty warranty)
+        {
+            _context.Warranties.Remove(warranty);
+        }
+
+        public Warranty GetWarrantyById(int warrantyId)
+        {
+            try
+            {
+                _logger.LogInformation("GetWarrantyById was called");
+                return _context.Warranties
+                    .Include(p => p.Order)
+                    .ThenInclude(p => p.Items)
+                    .ThenInclude(p => p.Product)
+                    .ThenInclude(p => p.Product)
+                    .FirstOrDefault(s => s.Id == warrantyId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get Warranty by ID: {ex}");
+                return null;
+            }
+        }
+
+        public IEnumerable<InventoryReceiptDetails> GetInventoryReport(int productId, int year, int month)
+        {
+            return _context.InventoryReceiptDetails
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Product)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Sizes)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Materials)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Purity)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.PurchasePrice)
+                .Include(ird => ird.InventoryReceipt)
+                .Where(ird => ird.ProductItem.Product.Id == productId &&
+                  ird.InventoryReceipt.ConfirmationDate != null &&
+                  ird.InventoryReceipt.ConfirmationDate.Value.Year == year &&
+                  ird.InventoryReceipt.ConfirmationDate.Value.Month == month)
+                .ToList();
         }
 
         public bool SaveAll()

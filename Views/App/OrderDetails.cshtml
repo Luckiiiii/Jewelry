@@ -168,8 +168,11 @@
                                         </td>
                                         <td>
                                             <strong>@item.Product.Product.Name</strong><br />
-                                            Quantity: @item.Quantity<br />
-                                            Unit Price: @item.UnitPrice<br />
+                                            Số lượng: @item.Quantity<br />
+                                            Giá: @String.Format("{0:N0}", item.UnitPrice) VND<br />
+                                            Chất liệu: @item.Product.Materials.Name<br />
+                                            Size: @item.Product.Sizes.Name<br />
+                                            Độ tinh khiết: @item.Product.Purity.Name<br />
                                         </td>
                                         <td class="text-center">
                                             <span id="status" data-value="@item.Order.Status.Last().StatusCategory.Id" class="my_order_button" style="font-weight:bold;">

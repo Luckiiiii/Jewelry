@@ -75,8 +75,17 @@ namespace Jewelry.Data
         IEnumerable<OrderItem> GetOrderItemByOrder(int orderId);
         public IEnumerable<Order> GetOrderByUser(StoreUser user);
         IEnumerable<Status> GetAllStatusByOrder(int orderId);
-         Purity GetPurityById(int purityId);
+        Purity GetPurityById(int purityId);
         IEnumerable<Purity> GetAllPurity();
+
+        //warranty
+        IEnumerable<Warranty> GetAllWarranty();
+        void DeleteWarranty(Warranty warranty);
+        Warranty GetWarrantyById(int warrantyId);
+
+        //Report
+        IEnumerable<InventoryReceiptDetails> GetInventoryReport(int productId, int year, int month);
+
         void UpdateEntity(object entity);
 
 

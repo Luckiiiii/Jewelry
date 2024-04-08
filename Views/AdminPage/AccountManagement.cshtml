@@ -33,10 +33,13 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Quản lý tài khoản</h4>
-                    <div class="add-supplier">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm tài khoản</button>
-                    </div>
+                    <h4>Danh sách tài khoản</h4>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <div class="add-supplier">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Thêm tài khoản</button>
+                        </div>
+                    }
                     <div class="table-responsive">
                         <!--nanui-->
                         <div class="btn-group">
@@ -72,15 +75,18 @@
                                         <td class="editable" contenteditable="false" data-field="phoneNumber">@p.PhoneNumber</td>
                                         <td class="editable" contenteditable="false" data-field="address">@p.Address</td>
                                         <td>
-                                            <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
-                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                            </button>
-                                            <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
-                                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                            </button>
-                                            <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
-                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                            </button>
+                                            @if (User.IsInRole("admin"))
+                                            {
+                                                <button data-toggle="tooltip" title="Edit" class="pd-setting-ed edit-btn">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                </button>
+                                                <button data-toggle="tooltip" title="Save" class="pd-setting-ed save-btn" style="display:none;">
+                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                                </button>
+                                                <button data-toggle="tooltip" title="Trash" class="pd-setting-ed trash-btn">
+                                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                </button>
+                                            }
                                         </td>
                                     </tr>
                             }

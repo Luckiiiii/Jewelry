@@ -26,6 +26,10 @@
     .btn-search-css{
         padding: 8px 10px;
     }
+
+    .css-mb-16{
+        margin-bottom: 16px;
+    }
 </style>
 <h1>Cửa hàng vàng bạc Tuấn Thành</h1>
 <p>Count: @Model.Count()</p>
@@ -45,7 +49,7 @@
     @foreach (var product in Model)
     {
         var priceRange = ViewBag.PriceRanges[product.Id];
-        <div class="col-md-3">
+        <div class="col-md-3 css-mb-16">
             <div class="border bg-light rounded p-1 text-center-shop">
                 @if (product.Img.Any())
                 {

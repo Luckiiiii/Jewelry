@@ -202,7 +202,7 @@ namespace Jewelry.Controllers
                 if (user == null)
                 {
                     ModelState.AddModelError("", "Người dùng không tồn tại.");
-                    return RedirectToAction("Login", "App");
+                    return RedirectToAction("Login", "Account");
                 }
                 if(model.Note == null)
                 {
@@ -261,7 +261,7 @@ namespace Jewelry.Controllers
             if(user == null)
             {
                 ModelState.AddModelError("", "Vui lòng đăng nhập vào hệ thống.");
-                return RedirectToAction("Login", "App");
+                return RedirectToAction("Login", "Account");
             }
             var order = _repository.GetOrderByUser(user);
 

@@ -16,10 +16,6 @@ html {
   position: relative;
   min-height: 100%;
 }
-
-body {
-  margin-bottom: 60px;
-}
 .navbar {
     border-radius: 0px 0px 4px 4px !important;
 }

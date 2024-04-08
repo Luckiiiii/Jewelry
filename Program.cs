@@ -91,7 +91,7 @@ app.UseEndpoints(endpoints =>
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=App}/{action=Index}/{id?}");
+    pattern: "{controller=App}/{action=Shop}/{id?}");
 
 app.Run();
 

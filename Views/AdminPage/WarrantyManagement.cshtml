@@ -1,0 +1,343 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<Warranty>
+<div class="breadcome-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="breadcome-list">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                            <div class="breadcomb-wp">
+                                <div class="breadcomb-icon">
+                                    <i class="icon nalika-home"></i>
+                                </div>
+                                <div class="breadcomb-ctn">
+                                    <h2>Quản lý bảo hành</h2>
+                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Danh sách phiếu bảo hành</h4>
+                    <div class="add-supplier">
+                        <button type="button" class="btn btn-primary ml-12" data-toggle="modal" data-target="#myModal">Thêm phiếu bảo hành</button>
+                    </div>
+                    <div class="table-responsive">
+                        <!--nanui-->
+                        <div class="btn-group">
+                            <ul id="export-buttons"></ul>
+                        </div>
+                        <!--btuun excel pdf-->
+                        <table id="WarrantyTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Người lập</th>
+                                    <th>Người trả</th>
+                                    <th>Chi phí</th>
+                                    <th>ND bảo hành</th>
+                                    <th>Ngày lập</th>
+                                    <th>Ngày hẹn</th>
+                                    <th>Ngày trả</th>
+                                    <th>Ghi chú</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var warranty in Model)
+                                {
+                                    <tr data-warranty-id="@warranty.Id" asp-validation-summary="ModelOnly">
+                                        <td data-field="id">@warranty.Id</td>
+                                        <td data-field="orderId">@(warranty.Order.Id)</td>
+                                        <td data-field="userName">@(warranty.User?.FirstName ?? "") @(warranty.User?.LastName ?? "")</td>
+                                        <td data-field="employee">@(warranty.EmployeeName)</td>
+                                        <td data-field="price">@(warranty.Price.ToString("N0") ?? "0")</td>
+                                        <td data-field="warrantyInfomation">@(warranty.WarrantyInformation)</td>
+                                        <td data-field="createDate">@(warranty.CreationDate)</td>
+                                        <td data-field="appointmentDate">@(warranty.AppointmentDate)</td>
+                                        <td data-field="ReturnDate">@(warranty.ReturnDate)</td>
+                                        <td data-field="note">@(warranty.Note ?? "")</td>
+                                        <td>
+                                            @if (warranty.ReturnDate == null)
+                                            {
+                                                <button title="Xác nhận" class="pd-setting-ed check-btn">
+                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                </button>
+                                                <button data-toggle="tooltip" title="Xóa" class="pd-setting-ed trash-btn">
+                                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                </button>
+                                            }
+                                            <button title="Xem chi tiết" class="pd-setting-ed detail-btn" data-toggle="modal" data-target="#productModal">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
+                                            <button title="In hóa đơn" class="pd-setting-ed print-btn" onclick="window.location.href='@Url.Action("PrintWarranty", "AdminPage", new { id = warranty.Id })'">
+                                                <i class="fa fa-print" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Thêm phiếu bảo hành</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <form class="product-tab-list tab-pane active in" id="myForm" method="post">
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <div asp-for="Order">
+                                                        @Html.DropDownList("orderId", (IEnumerable<SelectListItem>)ViewBag.orders, new { @class = "form-controller selectpicker order-dropdown", data_live_search = "true", title = "Chọn đơn hàng" })
+                                                    </div>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-user account" aria-hidden="true"></i></span>
+                                                    <input name="price" type="text" class="form-control" placeholder="Chi phí">
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <input name="warrantyInformation" type="text" class="form-control" placeholder="Nội dung bảo hành">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <input name="appointmentDate" type="date" class="form-control" placeholder="Ngày hẹn">
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <input name="note" type="text" class="form-control" placeholder="Ghi chú">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-success" data-dismiss="modal" id="saveWarranty">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" id="productModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chi tiết sản phẩm</h4>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <!-- Product details will be appended here by JavaScript -->
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var today = new Date().toISOString().split('T')[0];
+        $('input[name="appointmentDate"]').attr('min', today);
+        $("#saveWarranty").click(function (event) {
+            event.preventDefault();
+
+            var formData = new FormData();
+            formData.append('orderId', $('select[name="orderId"]').val());
+            formData.append('price', $('input[name="price"]').val());
+            formData.append('warrantyInformation', $('input[name="warrantyInformation"]').val());
+            formData.append('appointmentDate', $('input[name="appointmentDate"]').val());
+            formData.append('note', $('input[name="note"]').val());
+            $.ajax({
+                url: '/AdminPage/AddWarrantyModal',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $("#myModal").modal('hide');
+                    var creationDate = new Date(response.creationDate);
+                    var formattedDate = creationDate.toLocaleString('en-US');
+                    var appointmentDate = new Date(response.appointmentDate)
+                    var formattedAppointmentDate = appointmentDate.toLocaleString('en-US');
+                    var formattedPrice = response.price.toLocaleString('en-US');
+                    // Add new row to the table
+                    var newRow = `<tr data-warranty-id="${response.warrantyId}">
+                            <td data-field="id">${response.warrantyId}</td>
+                            <td data-field="orderId">${response.orderId}</td>
+                            <td data-field="userName">${response.firstName} ${response.lastName}</td>
+                            <td data-field="employee"></td>
+                            <td data-field="price">${formattedPrice ?? "0"}</td>
+                            <td data-field="warrantyInfomation">${response.warrantyInformation}</td>
+                            <td data-field="createDate">${formattedDate}</td>
+                            <td data-field="appointmentDate">${formattedAppointmentDate}</td>
+                            <td data-field="ReturnDate"></td>
+                            <td data-field="note">${response.note}</td>
+                            <td>
+                                <button title="Xác nhận" class="pd-setting-ed check-btn">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </button>
+                                <button title="Chỉnh sửa" class="pd-setting-ed edit-btn">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </button>
+                                <button title="Lưu" class="pd-setting-ed save-btn" style="display:none;">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                </button>
+                                <button title="Xem chi tiết" class="pd-setting-ed detail-btn">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                    $('#WarrantyTable tbody').append(newRow);
+                },
+                error: function (error) {
+                    console.error('Error saving data:', error);
+                }
+            });
+        });
+        
+        $(document).on('click', '.trash-btn', function () {
+            var $row = $(this).closest('tr');
+            var warrantyId = $row.find('[data-field="id"]').text();
+
+            $.ajax({
+                url: '/AdminPage/DeleteWarranty',
+                type: 'POST',
+                dataType: 'json',
+                data: { warrantyId: warrantyId },
+                success: function (response) {
+                    if (response.success) {
+                        $row.remove();
+                    } else {
+                        alert('Lỗi không thể xóa phiếu bảo hành.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Lỗi xóa phiếu bảo hành:', error);
+                }
+            });
+        });
+
+        $(document).on('click', '.check-btn', function () {
+            var $row = $(this).closest('tr');
+            var warrantyId = $row.find('[data-field="id"]').text();
+
+            $.ajax({
+                url: '/AdminPage/ConfirmationWarranty',
+                type: 'POST',
+                dataType: 'json',
+                data: { warrantyId: warrantyId },
+                success: function (response) {
+                    if (response.success) {
+                        var $returnDateCell = $row.find('td:nth-child(9)');
+                        $returnDateCell.text(response.returnDate);
+                        var $employeeName = $row.find('td:nth-child(4)')
+                        $employeeName.text(response.firstName + " " + response.lastName)
+                        $row.find('.check-btn').hide();
+                        console.log('Data updated successfully!');
+                    } else {
+                        alert('Failed to confirmation warranty.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error confirmation warranty:', error);
+                }
+            });
+        });
+
+        $(document).on('click', '.detail-btn', function () {
+            var $row = $(this).closest('tr');
+            var orderId = $row.find('[data-field="orderId"]').text();
+
+            $.ajax({
+                url: '/AdminPage/GetOrderDetails',
+                type: 'GET',
+                dataType: 'json',
+                data: { orderId: orderId },
+                success: function (response) {
+                    if (response.success) {
+                        var $modalBody = $('#productModal .modal-body');
+                        $modalBody.empty(); // Clear the modal body
+
+                        // Append product details to the modal body
+                        var tableHeader = '<table class="table table-striped">' +
+                            '<thead>' +
+                            '<tr>' +
+                            '<th>Hình ảnh</th>' +
+                            '<th>Tên sản phẩm</th>' +
+                            '<th>Danh mục</th>' +
+                            '<th>Chất liệu</th>' +
+                            '<th>Size</th>' +
+                            '<th>Độ tinh khiết</th>' +
+                            '<th>Trọng lượng</th>' +
+                            '<th>Số lượng</th>' +
+                            '<th>Thông tin bảo hành</th>' +
+                            '<th>Giá bán</th>' +
+                            '</tr>' +
+                            '</thead>' +
+                            '<tbody>';
+
+                        var tableFooter = '</tbody></table>';
+
+                        var tableBody = '';
+                        $.each(response.products, function (i, product) {
+                            var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.salesPrice);
+                            tableBody += '<tr>' +
+                                '<td><img src="' + product.imageUrl + '" width="50" height="50"></td>' +
+                                '<td>' + product.name + '</td>' +
+                                '<td>' + product.category + '</td>' +
+                                '<td>' + product.material + '</td>' +
+                                '<td>' + product.size + '</td>' +
+                                '<td>' + product.purity + '</td>' +
+                                '<td>' + product.weight + '</td>' +
+                                '<td>' + product.quantity + '</td>' +
+                                '<td>' + product.warrantyInformation + '</td>' +
+                                '<td>' + formattedPrice + '</td>' +
+                                '</tr>';
+                        });
+
+                        $modalBody.append(tableHeader + tableBody + tableFooter);
+                    } else {
+                        alert('Failed to get order details.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error getting order details:', error);
+                }
+            });
+        });
+    });
+</script>

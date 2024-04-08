@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Suppliers List</h4>
+                    <h4>Danh sách phiếu nhập</h4>
                     <div class="add-supplier">
                         <a title="Thêm phiếu nhập" class="btn btn-primary" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
                     </div>
@@ -69,12 +69,16 @@
                                             <button title="Lưu" class="pd-setting-ed save-btn" style="display:none;">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
                                             </button>
-                                            @if (!inventory.Confirmation)
+                                            @if (User.IsInRole("admin"))
                                             {
-                                                <button title="Xác nhận" class="pd-setting-ed check-btn">
-                                                    <i class="fa fa-check" aria-hidden="true"></i>
-                                                </button>
+                                                @if (!inventory.Confirmation)
+                                                {
+                                                    <button title="Xác nhận" class="pd-setting-ed check-btn">
+                                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                                    </button>
+                                                }
                                             }
+                                            
                                             <button title="Xem chi tiết" class="pd-setting-ed detail-btn">
                                                 <i class="fa fa-search" aria-hidden="true"></i>
                                             </button>
@@ -135,12 +139,11 @@
                         var $confirmationDateCell = $row.find('td:nth-child(5)');
                         $confirmationDateCell.text(response.confirmationDate);
 
-                        // Ẩn nút "Check"
                         $row.find('.check-btn').hide();
 
                         console.log('Data updated successfully!');
                     } else {
-                        alert('Failed to confirmation inventory.'); // Hiển thị thông báo nếu xóa không thành công
+                        alert('Failed to confirmation inventory.');
                     }
                 },
                 error: function (error) {
