@@ -1,4 +1,5 @@
 ﻿using Jewelry.Data.Entities;
+using Jewelry.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -1050,6 +1051,54 @@ namespace Jewelry.Data
                   ird.InventoryReceipt.ConfirmationDate.Value.Month == month)
                 .ToList();
         }
+
+
+        public IEnumerable<SalesReportViewModel> GetMonthlySalesReport(int year, int month)
+        {
+            // Bước 1: Lấy tất cả OrderItem
+            var orderItems = _context.OrderItem;
+
+            // Bước 2: Thêm các liên kết cần thiết
+            var orderItemsWithIncludes = orderItems
+                .Include(oi => oi.Product)
+                .ThenInclude(oi => oi.Product)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Sizes)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Materials)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Purity)
+                .Include(oi => oi.Order)
+                .ThenInclude(oi => oi.Status)
+                .ThenInclude(oi => oi.StatusCategory);
+
+            // Bước 3: Lọc dữ liệu theo tháng, năm và trạng thái
+            var filteredOrderItems = orderItemsWithIncludes
+                .Where(oi => oi.Order.OrderDate.Month == month && oi.Order.OrderDate.Year == year && oi.Order.Status.Any(s => s.StatusCategory.Id == 5));
+
+            // Bước 4: Nhóm dữ liệu theo ProductId và UnitPrice
+            var groupedOrderItems = filteredOrderItems
+                .GroupBy(oi => new { oi.ProductId, oi.UnitPrice });
+
+            // Bước 5: Chuyển đổi dữ liệu thành SalesReportViewModel
+            var salesReport = groupedOrderItems
+                .Select(g => new SalesReportViewModel
+                {
+                    ProductName = g.First().Product.Product.Name,
+                    Size = g.First().Product.Sizes.Name,
+                    Material = g.First().Product.Materials.Name,
+                    Purity = g.First().Product.Purity.Name,
+                    Weight = g.First().Product.Weight,
+                    Quantity = g.Sum(oi => oi.Quantity),
+                    SaleDate = g.First().Order.OrderDate,
+                    UnitPrice = g.Key.UnitPrice,
+                    TotalPrice = g.Sum(oi => oi.Quantity) * g.Key.UnitPrice
+                })
+                .ToList();
+
+            return salesReport;
+        }
+
 
         public bool SaveAll()
         {

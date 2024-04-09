@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_LayoutAdmin";
 }
-@model InventoryReportViewModel
+@model SalesReportViewModel
 <div class="breadcome-area">
     <div class="container-fluid">
         <div class="row">
@@ -25,18 +25,13 @@
         </div>
     </div>
 </div>
-
 <div class="product-status mg-b-30">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Danh sách phiếu nhập</h4>
+                    <h4>Danh sách đơn hàng</h4>
                     <div class="add-supplier">
-                        <select id="productSelect" asp-items="@(new SelectList(Model.Products, "Id", "Name"))">
-                            <option value="">Select a product</option>
-                        </select>
-
                         <select id="yearSelect">
                             <option value="">Select a year</option>
                             @for (int i = DateTime.Now.Year; i >= 2000; i--)
@@ -54,27 +49,28 @@
                         </select>
                         <button id="getReportButton" type="button">Get Report</button>
                     </div>
+
                     <div class="table-responsive">
                         <!--nanui-->
                         <div class="btn-group">
                             <ul id="export-buttons"></ul>
                         </div>
                         <!--btuun excel pdf-->
-                        <table id="InventoryTable" class="table">
+                        <table id="SalesTable" class="table">
                             <thead>
                                 <tr>
                                     <th>Tên sản phẩm</th>
-                                    <th>Chất liệu</th>
                                     <th>Size</th>
+                                    <th>Chất liệu</th>
                                     <th>Độ tinh khiết</th>
                                     <th>Trọng lượng</th>
-                                    <th>Giá nhập</th>
                                     <th>Số lượng</th>
+                                    <th>Ngày bán</th>
+                                    <th>Giá bán</th>
                                     <th>Thành tiền</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
                             </tbody>
                         </table>
                     </div>
@@ -85,44 +81,47 @@
 </div>
 <script>
     $(document).ready(function () {
-        var table = $('#InventoryTable').DataTable(); // Khởi tạo DataTable
+        var table = $('#SalesTable').DataTable(); // Khởi tạo DataTable
 
         $("#getReportButton").click(function () {
-            var productId = $("#productSelect").val();
             var year = $("#yearSelect").val();
             var month = $("#monthSelect").val();
 
-            $.get("/AdminPage/GetInventoryReport", { productId: productId, year: year, month: month }, function (data) {
+            $.get("/AdminPage/GetSalesReport", { year: year, month: month }, function (data) {
                 table.clear(); // Xóa dữ liệu hiện tại khỏi DataTable
 
                 // Loop through the data and add each item as a new row in the table
+                var totalSales = 0;
                 $.each(data, function (index, item) {
+                    // Convert the date to dd/mm/yyyy format
+                    var saleDate = new Date(item.saleDate);
+                    var formattedDate = saleDate.toLocaleDateString('vi-VN');
+
                     // Convert the unit price and total price to Vietnamese currency format
-                    var price = item.productItem.purchasePrice
-                        .filter(function (pp) {
-                            var effectiveDate = new Date(pp.effectiveDate);
-                            var creationDate = new Date(item.inventoryReceipt.creationDate);
-                            return effectiveDate.getFullYear() == creationDate.getFullYear() &&
-                                effectiveDate.getMonth() == creationDate.getMonth() &&
-                                effectiveDate.getDate() == creationDate.getDate() &&
-                                effectiveDate.getHours() == creationDate.getHours() &&
-                                effectiveDate.getMinutes() == creationDate.getMinutes();
-                        })[0];
-                    var formattedPrice = price ? price.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'N/A';
-                    var total = price ? (price.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'N/A';
+                    var formattedUnitPrice = item.unitPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                    var formattedTotalPrice = item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
                     // Thêm hàng mới vào DataTable
                     table.row.add([
-                        item.productItem.product.name,
-                        item.productItem.materials.name,
-                        item.productItem.sizes.name,
-                        item.productItem.purity.name,
-                        item.productItem.weight,
-                        formattedPrice,
+                        item.productName,
+                        item.size,
+                        item.material,
+                        item.purity,
+                        item.weight,
                         item.quantity,
-                        total
+                        formattedDate,
+                        formattedUnitPrice,
+                        formattedTotalPrice
                     ]);
+
+                    totalSales += item.totalPrice;
                 });
+
+                // Add a row for the total sales
+                var formattedTotalSales = totalSales.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                table.row.add([
+                    'Tổng tiền', '', '', '', '', '', '', '', formattedTotalSales
+                ]);
 
                 table.draw(); // Vẽ lại DataTable với dữ liệu mới
             });

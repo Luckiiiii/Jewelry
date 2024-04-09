@@ -205,7 +205,7 @@
                         </li>
                         <li class="active">
                             <a class="has-arrow" href="index.html">
-                                <i class="icon nalika-inbox icon-wrap"></i>
+                                <i class="icon nalika-bar-chart icon-wrap"></i>
                                 <span class="mini-click-non">Báo cáo thống kê</span>
                             </a>
                             <ul class="submenu-angle" aria-expanded="false">
@@ -213,6 +213,13 @@
                                     <a title="Báo cáo nhập hàng" asp-controller="AdminPage" asp-action="InventoryReport">
                                         <span class="mini-sub-pro">
                                             Báo cáo nhập hàng
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a title="Báo cáo doanh thu" asp-controller="AdminPage" asp-action="MonthlySalesReport">
+                                        <span class="mini-sub-pro">
+                                            Báo cáo doanh thu
                                         </span>
                                     </a>
                                 </li>
@@ -446,9 +453,10 @@
         initDataTable('#SupplierTable');
         initDataTable('#CategoryTable');
         initDataTable('#InventoryTable');
-        initDataTable('#ProductItemTable')
-        initDataTable('#OrderTable')
-        initDataTable('#WarrantyTable')
+        initDataTable('#ProductItemTable');
+        initDataTable('#OrderTable');
+        initDataTable('#WarrantyTable');
+        initDataTable('#SalesTable');
     </script>
 
     <script>

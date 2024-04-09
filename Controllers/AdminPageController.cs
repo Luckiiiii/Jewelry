@@ -1174,5 +1174,17 @@ namespace Jewelry.Controllers
             return Json(inventoryReport);
         }
 
+        public IActionResult MonthlySalesReport()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetSalesReport(int year, int month)
+        {
+            var salesReport = _repository.GetMonthlySalesReport(year, month);
+            return Json(salesReport);
+        }
+
     }
 }

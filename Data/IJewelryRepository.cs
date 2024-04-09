@@ -1,4 +1,5 @@
 ﻿using Jewelry.Data.Entities;
+using Jewelry.Models;
 
 namespace Jewelry.Data
 {
@@ -86,6 +87,7 @@ namespace Jewelry.Data
         //Report
         IEnumerable<InventoryReceiptDetails> GetInventoryReport(int productId, int year, int month);
 
+        IEnumerable<SalesReportViewModel> GetMonthlySalesReport(int month, int year);
         void UpdateEntity(object entity);
 
 
