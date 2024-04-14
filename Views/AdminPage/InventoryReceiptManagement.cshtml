@@ -15,7 +15,7 @@
                                 </div>
                                 <div class="breadcomb-ctn">
                                     <h2>Quản lý phiếu nhập</h2>
-                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                    <p>Cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
                             </div>
                         </div>
@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Danh sách phiếu nhập</h4>
+                    <!--<h4>Danh sách phiếu nhập</h4>-->
                     <div class="add-supplier">
                         <a title="Thêm phiếu nhập" class="btn btn-primary" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
                     </div>
@@ -69,6 +69,14 @@
                                             <button title="Lưu" class="pd-setting-ed save-btn" style="display:none;">
                                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
                                             </button>
+                                            @*
+                                        @if (!inventory.Confirmation)
+                                        {
+                                        <button title="Xóa" class="pd-setting-ed trash-btn">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                        }
+                                        *@
                                             @if (User.IsInRole("admin"))
                                             {
                                                 @if (!inventory.Confirmation)
@@ -78,7 +86,6 @@
                                                     </button>
                                                 }
                                             }
-                                            
                                             <button title="Xem chi tiết" class="pd-setting-ed detail-btn">
                                                 <i class="fa fa-search" aria-hidden="true"></i>
                                             </button>
@@ -95,7 +102,7 @@
 </div>
 <script>
     $(document).ready(function () {
-         $(document).on('click', '.edit-btn', function () {
+        $(document).on('click', '.edit-btn', function () {
             var $row = $(this).closest('tr');
             $row.find('.editable').prop('contenteditable', true).addClass('editing');
             $row.find('.edit-btn').hide();
@@ -106,8 +113,8 @@
             var $row = $(this).closest('tr');
             var inventoryId = $row.find('[data-field="id"]').text();
             var note = $row.find('.editable[data-field="note"]').text();
-            
-            
+
+
             $.ajax({
                 url: '/AdminPage/SaveInventoryReceipt',
                 type: 'POST',
@@ -157,4 +164,21 @@
             window.location.href = '/AdminPage/InventoryDetailManagement?id=' + inventoryId;
         });
     });
+    // $(document).on('click', '.trash-btn', function () {
+    //     var inventoryId = $(this).closest('tr').data('inventory-id');
+    //     $.ajax({
+    //         url: '/AdminPage/DeleteInventoryReceipt',
+    //         type: 'POST',
+    //         data: { inventoryId: inventoryId },
+    //         success: function (result) {
+    //             if (result.success) {
+    //                 alert('Phiếu nhập kho đã được xóa thành công.');
+    //                 location.reload();
+    //             } else {
+    //                 alert('Có lỗi xảy ra khi xóa phiếu nhập kho.');
+    //             }
+    //         }
+    //     });
+    // });
+
 </script>

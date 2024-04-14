@@ -94,6 +94,44 @@ namespace Jewelry.Data
             }
         }
 
+        public IEnumerable<Product> GetAllProductsByInventory()
+        {
+            try
+            {
+                var productItemIds = _context.InventoryReceiptDetails
+                    .Where(ird => ird.InventoryReceipt.Confirmation == true)
+                    .Select(ird => ird.ProductItem.Id)
+                    .ToList();
+                var productItems = _context.ProductItems
+                    .Where(p => productItemIds.Contains(p.Id) && p.Quantity > 0)
+                    .Include(p => p.Product).ThenInclude(i => i.Img)
+                    .Include(p => p.Product).ThenInclude(i => i.Category)
+                    .Include(p => p.Materials)
+                    .Include(p => p.Sizes)
+                    .Include(p => p.PurchasePrice)
+                    .Include(p => p.SalesPrice)
+                    .Include(p => p.Purity)
+                    .OrderBy(p => p.Product)
+                    .Select(p => p.Product.Id)
+                    .ToList();
+
+                _logger.LogInformation("GetAllProductsByInventory was called");
+                var product = _context.Products
+                    .Where(p=>productItems.Contains(p.Id))
+                    .Include(i => i.Category)
+                    .Include(i => i.Img)
+                    .Include(i => i.Item)
+                    .OrderBy(p => p.Name)
+                    .ToList();
+                return product;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all products: {ex}");
+                return null;
+            }
+        }
+
         public IEnumerable<ProductItem> GetAllProductItems()
         {
             try
@@ -177,6 +215,7 @@ namespace Jewelry.Data
                     .Include(i => i.Materials)
                     .Include(i => i.SalesPrice)
                     .Include(i => i.PurchasePrice)
+                    .Include(i => i.InventoryReceiptDetails)
                     .Include(i => i.Product)
                     .ThenInclude(p => p.Img)
                     .FirstOrDefault(s => s.Id == productId);
@@ -550,7 +589,14 @@ namespace Jewelry.Data
             try
             {
                 _logger.LogInformation("GetInventoryReceiptById was called");
-                return _context.InventoryReceipt.FirstOrDefault(s => s.Id == inventoryId);
+                return _context.InventoryReceipt
+                    .Include(i => i.Details)
+                    .ThenInclude(i => i.ProductItem)
+                    .ThenInclude(i=> i.SalesPrice)
+                    .Include(i => i.Details)
+                    .ThenInclude(i => i.ProductItem)
+                    .ThenInclude(i => i.PurchasePrice)
+                    .FirstOrDefault(s => s.Id == inventoryId);
             }
             catch (Exception ex)
             {
@@ -660,18 +706,28 @@ namespace Jewelry.Data
 
 		public List<ProductItem> GetProductItemsByProductPuritySize(int productId, int materialId, int purityId)
 		{
-			return _context.ProductItems
+            var productItemIds = _context.InventoryReceiptDetails
+                .Where(ird => ird.InventoryReceipt.Confirmation == true)
+                .Select(ird => ird.ProductItem.Id)
+                .ToList();
+
+            return _context.ProductItems
 				.Include(pi => pi.Product)
 				.Include(pi => pi.Sizes)
 				.Include(pi => pi.Materials)
                 .Include(pi => pi.Purity)
 				.Include(p => p.PurchasePrice)
 				.Include(p => p.SalesPrice)
-				.Where(pi => pi.Product.Id == productId && pi.Materials.Id == materialId && pi.Purity.Id == purityId)
+				.Where(pi => pi.Product.Id == productId && pi.Materials.Id == materialId && pi.Purity.Id == purityId && productItemIds.Contains(pi.Id))
 				.ToList();
         }
+
         public List<ProductItem> GetProductItemsByProductPurity(int productId, int materialId)
         {
+            var productItemIds = _context.InventoryReceiptDetails
+                .Where(ird => ird.InventoryReceipt.Confirmation == true)
+                .Select(ird => ird.ProductItem.Id)
+                .ToList();
             return _context.ProductItems
                 .Include(pi => pi.Product)
                 .Include(pi => pi.Sizes)
@@ -679,12 +735,16 @@ namespace Jewelry.Data
                 .Include(p => p.PurchasePrice)
                 .Include(p => p.SalesPrice)
                 .Include(pi => pi.Purity)
-                .Where(pi => pi.Product.Id == productId && pi.Materials.Id == materialId)
+                .Where(pi => pi.Product.Id == productId && pi.Materials.Id == materialId && productItemIds.Contains(pi.Id))
                 .ToList();
         }
 
         public List<ProductItem> GeMaterialsByProduct(int productId)
         {
+            var productItemIds = _context.InventoryReceiptDetails
+                .Where(ird => ird.InventoryReceipt.Confirmation == true)
+                .Select(ird => ird.ProductItem.Id)
+                .ToList();
             return _context.ProductItems
                 .Include(pi => pi.Product)
                 .Include(pi => pi.Sizes)
@@ -692,7 +752,7 @@ namespace Jewelry.Data
                 .Include(p => p.PurchasePrice)
                 .Include(p => p.SalesPrice)
                 .Include(pi => pi.Purity)
-                .Where(pi => pi.Product.Id == productId)
+                .Where(pi => pi.Product.Id == productId && productItemIds.Contains(pi.Id))
                 .ToList();
         }
 
@@ -1098,6 +1158,21 @@ namespace Jewelry.Data
 
             return salesReport;
         }
+
+        //public void DeleteInventoryReceipt(int inventoryId)
+        //{
+        //    var inventoryReceipt = _context.InventoryReceipt.Include(i => i.Details).FirstOrDefault(i => i.Id == inventoryId);
+        //    if (inventoryReceipt != null)
+        //    {
+ 
+        //        _context.InventoryReceiptDetails.RemoveRange(inventoryReceipt.Details);
+
+
+        //        _context.InventoryReceipt.Remove(inventoryReceipt);
+
+        //        _context.SaveChanges();
+        //    }
+        //}
 
 
         public bool SaveAll()

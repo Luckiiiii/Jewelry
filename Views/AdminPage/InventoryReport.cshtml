@@ -1,6 +1,23 @@
 ﻿@{
     Layout = "_LayoutAdmin";
 }
+<style>
+    select#productSelect {
+        padding: 10px 0px;
+    }
+
+    select#yearSelect {
+        padding: 10px 0px;
+    }
+
+    select#monthSelect {
+        padding: 10px 0px;
+    }
+
+    button#getReportButton {
+        padding: 8px 18px;
+    }
+</style>
 @model InventoryReportViewModel
 <div class="breadcome-area">
     <div class="container-fluid">
@@ -15,7 +32,7 @@
                                 </div>
                                 <div class="breadcomb-ctn">
                                     <h2>Báo cáo nhập hàng</h2>
-                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                    <p>Cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
                             </div>
                         </div>
@@ -31,14 +48,14 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Danh sách phiếu nhập</h4>
+                    <!--<h4>Danh sách phiếu nhập</h4>-->
                     <div class="add-supplier">
                         <select id="productSelect" asp-items="@(new SelectList(Model.Products, "Id", "Name"))">
-                            <option value="">Select a product</option>
+                            <option value="">Chọn sản phẩm</option>
                         </select>
 
                         <select id="yearSelect">
-                            <option value="">Select a year</option>
+                            <option value="">Chọn năm</option>
                             @for (int i = DateTime.Now.Year; i >= 2000; i--)
                             {
                                 <option value="@i">@i</option>
@@ -46,13 +63,13 @@
                         </select>
 
                         <select id="monthSelect">
-                            <option value="">Select a month</option>
+                            <option value="">Chọn tháng</option>
                             @for (int i = 1; i <= 12; i++)
                             {
                                 <option value="@i">@i</option>
                             }
                         </select>
-                        <button id="getReportButton" type="button">Get Report</button>
+                        <button id="getReportButton" type="button">Báo cáo</button>
                     </div>
                     <div class="table-responsive">
                         <!--nanui-->
@@ -85,7 +102,7 @@
 </div>
 <script>
     $(document).ready(function () {
-        var table = $('#InventoryTable').DataTable(); // Khởi tạo DataTable
+        var table = $('#InventoryTable').DataTable(); 
 
         $("#getReportButton").click(function () {
             var productId = $("#productSelect").val();
@@ -93,11 +110,11 @@
             var month = $("#monthSelect").val();
 
             $.get("/AdminPage/GetInventoryReport", { productId: productId, year: year, month: month }, function (data) {
-                table.clear(); // Xóa dữ liệu hiện tại khỏi DataTable
+                table.clear();
 
-                // Loop through the data and add each item as a new row in the table
+
                 $.each(data, function (index, item) {
-                    // Convert the unit price and total price to Vietnamese currency format
+
                     var price = item.productItem.purchasePrice
                         .filter(function (pp) {
                             var effectiveDate = new Date(pp.effectiveDate);
@@ -111,7 +128,7 @@
                     var formattedPrice = price ? price.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'N/A';
                     var total = price ? (price.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'N/A';
 
-                    // Thêm hàng mới vào DataTable
+                   
                     table.row.add([
                         item.productItem.product.name,
                         item.productItem.materials.name,
@@ -124,9 +141,8 @@
                     ]);
                 });
 
-                table.draw(); // Vẽ lại DataTable với dữ liệu mới
+                table.draw(); 
             });
         });
     });
-
 </script>

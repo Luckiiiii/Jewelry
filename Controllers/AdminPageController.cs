@@ -728,26 +728,12 @@ namespace Jewelry.Controllers
                         Price = item.PurchasePrice,
                         EffectiveDate = DateTime.Now
                     };
-
+                    
                     ProductItem productItem;
                     var existingProductItem = _repository.GetProductItemByProductIdSizeIdMaterialPurityId(item.ProductId, item.SizeId, item.MaterialId, item.PurityId);
 
                     if (existingProductItem != null)
                     {
-                        existingProductItem.Quantity += item.Quantity;
-
-                        if (existingProductItem.PurchasePrice == null)
-                        {
-                            existingProductItem.PurchasePrice = new List<PurchasePrice>();
-                        }
-                        existingProductItem.PurchasePrice.Add(purchasePrice);
-
-                        if (existingProductItem.SalesPrice == null)
-                        {
-                            existingProductItem.SalesPrice = new List<SalesPrice>();
-                        }
-                        existingProductItem.SalesPrice.Add(salesPrice);
-
                         productItem = existingProductItem;
                     }
                     else
@@ -772,14 +758,13 @@ namespace Jewelry.Controllers
 
                         _repository.AddEntity(productItem);
                     }
-
-
                     // Tạo mới InventoryReceiptDetails
                     var inventoryReceiptDetails = new InventoryReceiptDetails
                     {
                         ProductItem = productItem,
                         InventoryReceipt = inventoryReceipt,
-                        Quantity = item.Quantity
+                        Quantity = item.Quantity,
+                        PurchasePrice = item.PurchasePrice
                     };
                     _repository.AddEntity(inventoryReceiptDetails);
                 }
@@ -814,6 +799,37 @@ namespace Jewelry.Controllers
             {
                 inventory.ConfirmationDate = DateTime.Now;
                 inventory.Confirmation = true;
+                foreach (var detail in inventory.Details)
+                {
+                    var productItem = _repository.GetProductItemById(detail.ProductItem.Id);
+                    if (productItem != null)
+                    {
+                        productItem.Quantity += detail.Quantity;
+                        var purchasePrice = new PurchasePrice
+                        {
+                            Price = detail.PurchasePrice,
+                            EffectiveDate = DateTime.Now
+                        };
+                        //var salesPrice = new SalesPrice
+                        //{
+                        //    Price = detail.PurchasePrice,
+                        //    EffectiveDate = DateTime.Now
+                        //};
+
+                        if (productItem.PurchasePrice == null)
+                        {
+                            productItem.PurchasePrice = new List<PurchasePrice>();
+                        }
+                        productItem.PurchasePrice.Add(purchasePrice);
+
+                        if (productItem.SalesPrice == null)
+                        {
+                            productItem.SalesPrice = new List<SalesPrice>();
+                        }
+                        //productItem.SalesPrice.Add(salesPrice);
+                        _repository.UpdateEntity(productItem);
+                    }
+                }
                 if (_repository.SaveAll())
                 {
                     return Json(new { success = true, confirmationDate = inventory.ConfirmationDate?.ToString("M/d/yyyy h:mm:ss tt") });
@@ -830,7 +846,7 @@ namespace Jewelry.Controllers
 
         public IActionResult AddOrder()
         {
-            var products = _repository.GetAllProducts();
+            var products = _repository.GetAllProductsByInventory();
             ViewBag.products = products.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name });
             ViewBag.materials = new List<SelectListItem>();
             ViewBag.purity = new List<SelectListItem>();
@@ -860,32 +876,38 @@ namespace Jewelry.Controllers
                         Note = model.FirstOrDefault().Note,
                         PaymentMethod = paymentId,
                         Status = new List<Status>
-                    {
-                        new Status
                         {
-                            StatusCategory = statusCategory,
-                            UpdateDate = DateTime.Now,
-                            User = user,
-                            Note = model.FirstOrDefault().Note
+                            new Status
+                            {
+                                StatusCategory = statusCategory,
+                                UpdateDate = DateTime.Now,
+                                User = user,
+                                Note = model.FirstOrDefault().Note
+                            }
                         }
-                    }
                     };
                     _repository.AddEntity(order);
                     foreach (var item in model)
                     {
+                        
+                        var productItem = _repository.GetProductItemByProductIdSizeIdMaterialPurityId(item.ProductId, item.SizeId, item.MaterialId, item.PurityId);
+                        if (productItem.Quantity < item.Quantity)
+                        {
+                            return Json(new { success = false, errorMessage = $"Số lượng sản phẩm trong kho chỉ còn {productItem.Quantity}" });
+                        }
                         var orderItem = new OrderItem
                         {
                             Order = order,
-                            ProductId = item.ProductId,
+                            Product = productItem,
                             Quantity = item.Quantity,
-                            UnitPrice = item.UnitPrice
+                            UnitPrice = item.Price
                         };
                         _repository.AddEntity(orderItem);
                     }
                     await _repository.SaveChangesAsync();
                 }
             }
-            return Json(new { redirectUrl = Url.Action("OrderManagement", "AdminPage") });
+            return Json(new { success = true, errorMessage = "", redirectUrl = Url.Action("OrderManagement", "AdminPage") });
         }
 
         public IActionResult GetPrice(int productId, int sizeId, int materialId, int purityId)
@@ -934,32 +956,21 @@ namespace Jewelry.Controllers
                 var order = _repository.GetOrderById(orderId);
                 if (order != null)
                 {
-                    // Get the next status
                     var status = _repository.GetStatusByOrder(orderId);
                     if (status.StatusCategory.Id == 1)
                     {
-                        // Lấy danh sách các OrderItem trong Order
                         var orderItems = order.Items;
-
-                        // Duyệt qua từng OrderItem
                         foreach (var item in orderItems)
                         {
-                            // Lấy ProductItem tương ứng
                             var productItem = item.Product;
-
-                            // Giảm số lượng ProductItem
                             productItem.Quantity -= item.Quantity;
-
-                            // Cập nhật ProductItem
                             _repository.UpdateEntity(productItem);
                         }
-
-                        // Lưu thay đổi
                         await _repository.SaveChangesAsync();
                     }
 
                     var nextStatusId = status.StatusCategory.Id + 1;
-                    if (nextStatusId > 5) // If the status is "Thành công", don't change it
+                    if (nextStatusId > 5)
                     {
                         return Json(new { success = false });
                     }
@@ -1007,6 +1018,15 @@ namespace Jewelry.Controllers
                             Note = note
                         };
                         _repository.AddEntity(newStatus);
+                        foreach (var item in order.Items)
+                        {
+                            var productItem = _repository.GetProductItemById(item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem.Quantity += item.Quantity;
+                                _repository.UpdateEntity(productItem);
+                            }
+                        }
                         await _repository.SaveChangesAsync();
                         return Json(new { success = true, status = cancelledStatus.Name });
                     }
@@ -1185,6 +1205,33 @@ namespace Jewelry.Controllers
             var salesReport = _repository.GetMonthlySalesReport(year, month);
             return Json(salesReport);
         }
+
+        //public void DeleteInventoryReceipt(int inventoryId)
+        //{
+        //    var inventoryReceipt = _context.InventoryReceipts.Include(i => i.Details).FirstOrDefault(i => i.Id == inventoryId);
+        //    if (inventoryReceipt != null)
+        //    {
+        //        // Xóa tất cả InventoryReceiptDetails liên quan
+        //        _context.InventoryReceiptDetails.RemoveRange(inventoryReceipt.Details);
+
+        //        // Xóa InventoryReceipt
+        //        _context.InventoryReceipts.Remove(inventoryReceipt);
+
+        //        // Xóa ProductItem nếu không còn liên kết với InventoryReceipt nào khác
+        //        foreach (var detail in inventoryReceipt.Details)
+        //        {
+        //            var productItem = _repository.GetProductItemById(detail.ProductItem.Id);
+        //            var relatedReceipts = _context.InventoryReceiptDetails.Where(d => d.ProductItem.Id == productItem.Id && d.InventoryReceipt.Id != inventoryId);
+        //            if (!relatedReceipts.Any())
+        //            {
+        //                _context.ProductItems.Remove(productItem);
+        //            }
+        //        }
+
+        //        _context.SaveChanges();
+        //    }
+        //}
+
 
     }
 }

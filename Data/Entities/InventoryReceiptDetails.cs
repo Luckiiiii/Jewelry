@@ -8,6 +8,6 @@ namespace Jewelry.Data.Entities
         public ProductItem ProductItem { get; set; }
         public InventoryReceipt InventoryReceipt { get; set; }
         public int Quantity { get; set; }
-
+        public decimal PurchasePrice { get; set; }
     }
 }

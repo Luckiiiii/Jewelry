@@ -26,6 +26,12 @@ var builder = WebApplication.CreateBuilder(args);
         .AddErrorDescriber<CustomIdentityErrorDescriber>()
         .AddEntityFrameworkStores<JewelryContext>()
         .AddSignInManager<SignInManager<StoreUser>>();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Th?i gian timeout c?a session
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddAuthentication().AddCookie().AddJwtBearer(cfg =>
 {
     cfg.TokenValidationParameters = new TokenValidationParameters()
@@ -35,7 +41,7 @@ builder.Services.AddAuthentication().AddCookie().AddJwtBearer(cfg =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:Key"]))
     };
 });
-
+builder.Services.AddSingleton<IVnPayService, VnPayService>();
 builder.Services.AddTransient<JewelrySeeder>();
 builder.Services.AddDbContext<JewelryContext>();
 builder.Services.AddControllersWithViews()
@@ -73,7 +79,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
+app.UseSession();
 app.UseStatusCodePages();
 app.UseHttpsRedirection();
 app.UseStaticFiles();

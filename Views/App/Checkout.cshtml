@@ -1,15 +1,82 @@
 ﻿@model IEnumerable<CartViewModel>
 <style>
-    .btn-confirm{
-        margin: 4px 0 0 30px;
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+    .row{
+        padding: 0 10px;
     }
 
-    .btn-css-cancel{
-        margin-bottom: 8px;
+    h3.css-h3-checkout {
+        color: #444;
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 10px;
     }
+
+    .table {
+        width: 100%;
+        margin: 20px 0;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #d5d5d5;
+            color: #333;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+    .btn-confirm {
+        padding: 9px 23px; 
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        background-color: #5cb85c;
+        cursor: pointer;
+        margin-bottom: 5px;
+    }
+
+        .btn-confirm:hover {
+            background-color: #449d44;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        select{
+            padding: 10px 1px;
+            margin-bottom: 30px;
+        }
 </style>
 <div class="row">
-    <h3>Xác nhận đơn hàng</h3>
+    <h3 class="css-h3-checkout">XÁC NHẬN ĐƠN HÀNG</h3>
     <table class="table table-bordered table-hover">
         <thead>
             <th>Tên sản phẩm</th>
@@ -40,7 +107,7 @@
     <div class="col-md-4 col-md-offset-8 text-right">
         <table class="table table-condensed">
             <tr>
-                <td class="text-right">Tổng:</td>
+                <td class="text-right">Tổng cộng:</td>
                 <td class="text-right">@String.Format("{0:N0}", Model.Sum(item => item.price * item.quantity)) VND</td>
             </tr>
         </table>
@@ -60,16 +127,15 @@
             </div>
             <div class="form-group">
                 <label for="note">Ghi chú:</label>
-                <textarea id="note" name="note" class="form-control"></textarea>
+                <textarea id="note" name="note" class="form-control" required></textarea>
             </div>
             <select name="paymentMethodId">
-                @foreach (var paymentMethod in ViewBag.PaymentMethods)
+                @foreach (var paymentMethod in ViewBag.PaymentMethods)   
                 {
                     <option value="@paymentMethod.Id">@paymentMethod.Name</option>
                 }
             </select>
             <button type="submit" class="btn btn-success btn-confirm">Xác nhận thanh toán</button>
         </form>
-        <a href="/App/Shop" class="btn btn-info btn-css-cancel">Hủy</a>
     </div>
 </div>

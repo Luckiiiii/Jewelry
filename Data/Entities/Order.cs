@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Jewelry.Data.Entities
 {
@@ -14,7 +15,9 @@ namespace Jewelry.Data.Entities
         public DateTime OrderDate { get; set; }
         public string OrderNumber { get; set; }
         public ICollection<OrderItem> Items { get; set; }
+        public string UserId { get; set; }
         public StoreUser User { get; set; }
+        public int PaymentMethodId { get; set; }
         public Payments PaymentMethod { get; set; }
         public string DeliveryAddress { get; set; }
         public string? Note { get; set; }

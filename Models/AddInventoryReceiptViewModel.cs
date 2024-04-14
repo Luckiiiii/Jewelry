@@ -11,9 +11,8 @@ namespace Jewelry.Models
         public int MaterialId { get; set; }
         public int PurityId { get; set; }
         public double Weight { get; set; }
-        public int PurchasePrice { get; set; }
+        public decimal PurchasePrice { get; set; }
         public int Quantity { get; set; }
-        
     }
 
 }

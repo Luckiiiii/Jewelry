@@ -28,7 +28,7 @@ namespace Jewelry.Controllers
         {
             if (this.User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "App");
+                return RedirectToAction("Shop", "App");
             }
             return View();
         }

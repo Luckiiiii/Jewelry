@@ -20,12 +20,14 @@ namespace Jewelry.Controllers
         private readonly IMailService _mailService;
         private readonly IJewelryRepository _repository;
         private readonly UserManager<StoreUser> _userManager;
+        private readonly IVnPayService _vnPayService;
 
-        public AppController(IMailService mailService, JewelryContext context, IJewelryRepository repository, UserManager<StoreUser> userManager)
+        public AppController(IMailService mailService, JewelryContext context, IJewelryRepository repository, UserManager<StoreUser> userManager, IVnPayService vnPayService)
         {
             _mailService = mailService;
             _repository = repository;
             _userManager = userManager;
+            _vnPayService = vnPayService;
         }
         //[Authorize(Roles = "admin")]
         public IActionResult Index()
@@ -204,7 +206,8 @@ namespace Jewelry.Controllers
                     ModelState.AddModelError("", "Người dùng không tồn tại.");
                     return RedirectToAction("Login", "Account");
                 }
-                if(model.Note == null)
+
+                if (model.Note == null)
                 {
                     model.Note = "";
                 }
@@ -212,12 +215,12 @@ namespace Jewelry.Controllers
                 {
                     OrderDate = DateTime.Now,
                     OrderNumber = Guid.NewGuid().ToString(),
-                    User = user,
+                    UserId = user.Id,
                     DeliveryAddress = model.DeliveryAddress,
                     PhoneNumber = model.PhoneNumber,
                     ConsigneeName = $"{user.FirstName} {user.LastName}",
                     Note = model.Note,
-                    PaymentMethod = paymentId,
+                    PaymentMethodId = paymentId.Id,
                     Items = cart.Select(item => new OrderItem
                     {
                         ProductId = item.productItemId,
@@ -228,31 +231,68 @@ namespace Jewelry.Controllers
                     {
                         new Status
                         {
-                            StatusCategory = statusCategory,
+                            StatusCategoryId = statusCategory.Id,
                             UpdateDate = DateTime.Now,
-                            User = user,
+                            UserId = user.Id,
                             Note = model.Note
                         }
                     }
                 };
+                // Không thực hiện lưu đơn hàng ở đây, chỉ chuyển hướng đến VNPay nếu là thanh toán VNPay
+                if (paymentId.Id == 1)
+                {
+                    var vnPayModel = new VnPaymentRequestModel()
+                    {
+                        Amount = (double)cart.Sum(p => p.price * p.quantity),
+                        CreatedDate = DateTime.Now,
+                        Description = $"{model.ConsigneeName} {model.PhoneNumber}",
+                        FullName = model.ConsigneeName,
+                        OrderId = new Random().Next(1000, 100000).ToString(),
+                    };
+                    // Lưu thông tin đơn hàng vào TempData hoặc Session để sử dụng trong phương thức PaymentCallBack
+                    TempData["OrderData"] = JsonConvert.SerializeObject(order);
+                    return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, vnPayModel));
+                }
 
+                // Nếu không phải thanh toán VNPay, lưu đơn hàng vào cơ sở dữ liệu và chuyển hướng đến trang xác nhận đơn hàng
                 _repository.AddEntity(order);
                 await _repository.SaveChangesAsync();
-
-                return RedirectToAction("OrderConfirmation", new { order.OrderNumber });
+                return RedirectToAction("OrderConfirmation");
             }
 
             return View(model);
         }
 
-        public IActionResult OrderConfirmation(string orderNumber)
+        [Authorize]
+        public IActionResult PaymentCallBack()
         {
-            var order = _repository.OrderConfirmation(orderNumber);
-            if (order == null)
+            var response = _vnPayService.PaymentExecute(Request.Query);
+            if (response == null || response.VnPayResponseCode != "00")
             {
-                return NotFound();
+                TempData["Message"] = $"Error Payments: {response.VnPayResponseCode}";
+                return RedirectToAction("Error");
             }
-            return View(order);
+
+            // Lấy thông tin đơn hàng từ TempData
+            var orderJson = TempData["OrderData"] as string;
+            if (string.IsNullOrEmpty(orderJson))
+            {
+                TempData["Message"] = "Không tìm thấy thông tin đơn hàng.";
+                return RedirectToAction("Error");
+            }
+
+            var order = JsonConvert.DeserializeObject<Order>(orderJson);
+
+            // Lưu đơn hàng vào cơ sở dữ liệu
+            _repository.AddEntity(order);
+            _repository.SaveAll();
+
+            return RedirectToAction("OrderConfirmation");
+        }
+
+        public IActionResult OrderConfirmation()
+        {
+            return View();
         }
 
         public async Task<IActionResult> HistoryOrders()
@@ -293,5 +333,7 @@ namespace Jewelry.Controllers
         {
             return View();
         }
+
+        
     }
 }

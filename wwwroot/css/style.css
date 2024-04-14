@@ -430,6 +430,7 @@ ul.dtl-social {
     background: #1b2a47;
     padding: 20px 0px;
     text-align: center;
+
 }
 
 .footer-copy-right p {
@@ -2116,7 +2117,7 @@ ul.tab-custon-design li a, ul.tab-custon-design li a:hover, ul.tab-custon-design
 }
 
 ul.tab-custon-design li.active a, ul.tab-review-design li.active a {
-    color: #000 !important;
+    color: #fff !important;
 }
 
 .hpanel .panel-body {

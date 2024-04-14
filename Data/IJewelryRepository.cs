@@ -8,6 +8,7 @@ namespace Jewelry.Data
        
         IEnumerable<Product> GetAllProducts();
         IEnumerable<ProductItem> GetConfirmedProductItems();
+        IEnumerable<Product> GetAllProductsByInventory();
         IEnumerable<Product> GetProductsWithAllItemsZeroQuantity();
         List<ProductItem> GetProductItemsByProductPuritySize(int productId, int materialId, int purityId);
         List<ProductItem> GetProductItemsByProductPurity(int productId, int materialId);
@@ -88,6 +89,8 @@ namespace Jewelry.Data
         IEnumerable<InventoryReceiptDetails> GetInventoryReport(int productId, int year, int month);
 
         IEnumerable<SalesReportViewModel> GetMonthlySalesReport(int month, int year);
+
+        //void DeleteInventoryReceipt(int inventoryId);
         void UpdateEntity(object entity);
 
 

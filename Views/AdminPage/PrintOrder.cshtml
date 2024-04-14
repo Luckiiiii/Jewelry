@@ -1,7 +1,62 @@
-﻿@model Order
-<h2>Hóa đơn</h2>
-    <p>Ngày: @Model.OrderDate.ToString("dd/MM/yyyy")</p>
-    <p>Số hóa đơn: @Model.OrderNumber</p>
+﻿
+@model Order
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        font-size: 2em;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 1.5em;
+        text-align: center;
+    }
+
+    h3 {
+        font-size: 1.2em;
+        text-align: center;
+    }
+
+    p {
+        font-size: 1em;
+    }
+
+    .css-btn-print-order {
+        border: none;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 20px; /* Adjust as needed */
+        margin-bottom: 20px; /* Adjust as needed */
+        cursor: pointer;
+        border-radius: 3px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        padding: 15px;
+        text-align: left;
+    }
+</style>
+
+<h2>DOANH NGHIỆP VÀNG BẠC 9999</h2>
+<h1>TUẤN THÀNH</h1>
+<h3>DC: Đa Phúc - Sài Sơn - Quốc Oai - Hà Nội</h3>
+<h3>Điện thoại: 037.616.9182 - 0982.668.676</h3>
+<h2>GIẤY ĐẢM BẢO VÀNG</h2>
+<p>Ngày tạo đơn: @Model.OrderDate.ToString("dd/MM/yyyy")</p>
+<p>Số hóa đơn: @Model.OrderNumber</p>
+<p>Nhận bán cho Ông, Bà: </p>
+<p>Địa chỉ: </p>
     <table>
         <thead>
             <tr>
@@ -31,9 +86,9 @@
                 </tr>
             }
             <tr>
-                <td colspan="5" style="text-align:right">Tổng cộng:</td>
+                <td colspan="5" style="text-align:right">Tổng tiền:</td>
                 <td>@string.Format("{0:N0}", total)</td>
             </tr>
         </tbody>
     </table>
-    <button onclick="window.print()">In hóa đơn</button>
+    <button class="css-btn-print-order" onclick="window.print()">In hóa đơn</button>

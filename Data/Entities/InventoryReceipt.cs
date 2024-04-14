@@ -9,5 +9,6 @@
         public DateTime CreationDate { get; set; }
         public bool Confirmation { get; set; }
         public DateTime? ConfirmationDate { get; set; }
+        public ICollection<InventoryReceiptDetails> Details { get; set; }
     }
 }

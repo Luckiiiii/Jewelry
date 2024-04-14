@@ -9,7 +9,7 @@ namespace Jewelry.Models
         public int MaterialId { get; set; }
         public int PurityId { get; set; }
         public int Quantity { get; set; }
-        public int UnitPrice { get; set; }
+        public decimal Price { get; set; }
         [Required(ErrorMessage = "Tên người mua là trường bắt buộc.")]
         public string Customer { get; set; }
         [Required(ErrorMessage = "địa chỉ là trường bắt buộc.")]

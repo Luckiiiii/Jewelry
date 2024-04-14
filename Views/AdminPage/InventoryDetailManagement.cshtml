@@ -14,8 +14,8 @@
                                     <i class="icon nalika-home"></i>
                                 </div>
                                 <div class="breadcomb-ctn">
-                                    <h2>Quản lý phiếu nhập</h2>
-                                    <p>Welcome cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
+                                    <h2>Xuất phiếu nhập kho</h2>
+                                    <p>Cửa hàng vàng bạc <span class="bread-ntd">Tuấn Thành</span></p>
                                 </div>
                             </div>
                         </div>
@@ -30,9 +30,9 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="product-status-wrap">
-                    <h4>Suppliers List</h4>
+                    <!---<h4>Suppliers List</h4>->
                     <div class="add-supplier">
-                        <a title="Thêm phiếu nhập" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
+                        <a title="Thêm phiếu nhập" class="btn btn-primary" asp-controller="AdminPage" asp-action="AddInventoryReceipt">Thêm phiếu nhập</a>
                     </div>
                     <div class="table-responsive">
                         <!--nanui-->
@@ -63,13 +63,15 @@
                                         <td>@(inventory.ProductItem?.Sizes?.Name ?? "")</td>
                                         <td>@(inventory.ProductItem?.Purity?.Name ?? "")</td>
                                         <td>@(inventory.ProductItem?.Weight ?? 0)</td>
+                                        @*
                                         <td>
                                             @(inventory.ProductItem.PurchasePrice.FirstOrDefault(pp => pp.EffectiveDate.Year == inventory.InventoryReceipt.CreationDate.Year &&
                                                 pp.EffectiveDate.Month == inventory.InventoryReceipt.CreationDate.Month &&
                                                 pp.EffectiveDate.Day == inventory.InventoryReceipt.CreationDate.Day &&
                                                 pp.EffectiveDate.Hour == inventory.InventoryReceipt.CreationDate.Hour &&
                                                 pp.EffectiveDate.Minute == inventory.InventoryReceipt.CreationDate.Minute)?.Price.ToString("N0") ?? "0")
-                                        </td>
+                                        </td>*@
+                                        <td>@inventory.PurchasePrice</td>
                                         <td>@(inventory.Quantity)</td>
                                         <td></td>
                                     </tr>

@@ -188,6 +188,15 @@
                 hasError = true;
                 errorMessages.push("Vui lòng nhập ghi chú.");
             }
+            if (hasError) {
+                // Hiển thị tất cả thông báo lỗi
+                for (var i = 0; i < errorMessages.length; i++) {
+                    alert(errorMessages[i]);
+                }
+                // Dừng hàm tại đây nếu có lỗi
+                return;
+            }
+
             $("#order TBODY TR").each(function () {
                 var row = $(this);
                 var order = {};
@@ -196,6 +205,9 @@
                 order.PurityId = row.find("TD").eq(2).find("input").val();
                 order.SizeId = row.find("TD").eq(3).find("input").val(); 
                 order.Quantity = row.find("TD").eq(4).text();
+                var unitPriceStr = row.find("TD").eq(5).text();
+                unitPriceStr = unitPriceStr.replace(/\./g, "").replace("VND", "").trim();
+                order.Price = parseFloat(unitPriceStr).toFixed(2);
                 order.Customer = $("#CustomerId").val();
                 order.Address = $("#AddressId").val();
                 order.PhoneNumber = $("#PhoneNumberId").val();
@@ -203,6 +215,10 @@
                 orders.push(order);
             });
             console.log(orders);
+            if (orders.length === 0) {
+                alert("Bạn chưa nhập sản phẩm.");
+                return;
+            }
 
             $.ajax({
                 async: true,
@@ -212,6 +228,10 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "JSON",
                 success: function (response) {
+                    if (!response.success) {
+                        alert(response.errorMessage);
+                        return
+                    }
                     window.location.href = response.redirectUrl;
                 },
                 error: function (xhr, status, error) {
@@ -234,12 +254,12 @@
 
             if (!productNames) {
                 errorMessage = "Bạn chưa nhập tên sản phẩm.";
-            } else if (!sizeNames) {
-                errorMessage = "Bạn chưa nhập size.";
             } else if (!materialNames) {
                 errorMessage = "Bạn chưa nhập chất liệu.";
             } else if (!purityNames) {
                 errorMessage = "Bạn chưa nhập độ tinh khiết.";
+            } else if (!sizeNames) {
+                errorMessage = "Bạn chưa nhập size.";
             } else if (!quantity) {
                 errorMessage = "Bạn chưa nhâp số lượng.";
             } else if (quantity < 0) {
@@ -268,13 +288,6 @@
             cell = $(row.insertCell(-1));
             cell.html(quantity);
 
-            cell = $(row.insertCell(-1));
-            var btnRemove = $("<input />");
-            btnRemove.attr("type", "button");
-            btnRemove.attr("onclick", "Remove(this);");
-            btnRemove.val("Remove");
-            cell.append(btnRemove);
-            reset_btnadd();
             $.ajax({
                 url: '/AdminPage/GetPrice',
                 type: 'GET',
@@ -285,11 +298,18 @@
                         var formattedtotalPrice = Number(totalPrice).toLocaleString('vi-VN') + ' VND';
                         var total = Number(response.price * quantity).toLocaleString('vi-VN') + ' VND';
                         var formattedPrice = Number(response.price).toLocaleString('vi-VN') + ' VND';
+                        cell = $(row.insertCell(-1));
                         cell.html(formattedPrice);
                         cell = $(row.insertCell(-1));
                         cell.html(total)
                         cell = $(row.insertCell(-1));
                         $('#totalPrice').text(formattedtotalPrice);
+                        var btnRemove = $("<input />");
+                        btnRemove.attr("type", "button");
+                        btnRemove.attr("onclick", "Remove(this);");
+                        btnRemove.val("Remove");
+                        cell.append(btnRemove);
+                        reset_btnadd();
                     }
                 }
             });

@@ -313,7 +313,9 @@
                 var weightString = row.find("TD").eq(4).text().replace(",", "."); // Chuỗi từ dữ liệu gửi đến
                 inventoryReceipt.Weight = parseFloat(weightString);
                 inventoryReceipt.Quantity = row.find("TD").eq(5).text(); 
-                inventoryReceipt.PurchasePrice = row.find("TD").eq(6).text();
+                var priceStr = row.find("TD").eq(6).text();
+                priceStr = priceStr.replace(/\D/g, ""); // Loại bỏ các ký tự không phải số
+                inventoryReceipt.PurchasePrice = parseFloat(priceStr);
                 inventoryReceipts.push(inventoryReceipt);   
                 
             });
@@ -348,6 +350,10 @@
             var weight = $('#WeightId').val();
             var quantity = $("#QuantityId").val();
             var purchasePrice = $("#PurchasePriceId").val();
+            // Loại bỏ các ký tự không phải số từ chuỗi
+            purchasePrice = purchasePrice.replace(/\D/g, "");
+            // Chuyển đổi chuỗi thành số
+            purchasePrice = parseFloat(purchasePrice);
             var errorMessage = "";
 
             if (!productNames) {
@@ -401,7 +407,9 @@
             cell.html(quantity);
 
             cell = $(row.insertCell(-1));
-            cell.html(purchasePrice);
+            var formattedPrice = purchasePrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            cell.html(formattedPrice);
+
 
             cell = $(row.insertCell(-1));
             var btnRemove = $("<input />");
