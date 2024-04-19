@@ -115,19 +115,19 @@
             <input type="hidden" name="cartData" value='@Html.Raw(Json.Serialize(Model))' />
             <div class="form-group">
                 <label for="consigneeName">Tên người nhận:</label>
-                <input type="text" id="consigneeName" name="consigneeName" class="form-control" required />
+                <input type="text" id="consigneeName" name="consigneeName" class="form-control" required oninvalid="this.setCustomValidity('Vui lòng điền vào trường này!')" oninput="this.setCustomValidity('')" />
             </div>
             <div class="form-group">
                 <label for="deliveryAddress">Địa chỉ giao hàng:</label>
-                <input type="text" id="deliveryAddress" name="deliveryAddress" class="form-control" required />
+                <input type="text" id="deliveryAddress" name="deliveryAddress" class="form-control" required oninvalid="this.setCustomValidity('Vui lòng điền vào trường này!')" oninput="this.setCustomValidity('')" />
             </div>
             <div class="form-group">
                 <label for="phoneNumber">Số điện thoại:</label>
-                <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" required />
+                <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" required oninvalid="this.setCustomValidity('Vui lòng điền vào trường này!')" oninput="this.setCustomValidity('')" />
             </div>
             <div class="form-group">
                 <label for="note">Ghi chú:</label>
-                <textarea id="note" name="note" class="form-control" required></textarea>
+                <textarea id="note" name="note" class="form-control" required oninvalid="this.setCustomValidity('Vui lòng điền vào trường này!')" oninput="this.setCustomValidity('')"></textarea>
             </div>
             <select name="paymentMethodId">
                 @foreach (var paymentMethod in ViewBag.PaymentMethods)   

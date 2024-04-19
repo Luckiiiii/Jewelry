@@ -140,15 +140,15 @@
 
             // Kiểm tra các trường thông tin có hợp lệ không
             if (!name) {
-                errorMessage = "Tên là bắt buộc.";
+                errorMessage = "Tên nhà cung cấp là trường bắt buộc.";
             } else if (!email) {
-                errorMessage = "Địa chỉ email là bắt buộc.";
+                errorMessage = "Địa chỉ email là trường bắt buộc.";
             } else if (!phoneNumber) {
-                errorMessage = "Số điện thoại là bắt buộc.";
+                errorMessage = "Số điện thoại là trường bắt buộc.";
             } else if (!isValidPhoneNumber(phoneNumber)) {
                 errorMessage = "Số điện thoại không hợp lệ. Vui lòng nhập một số có 10 chữ số bắt đầu bằng số 0.";
             } else if (!address) {
-                errorMessage = "Địa chỉ là bắt buộc.";
+                errorMessage = "Địa chỉ là trường bắt buộc.";
             }
 
             return errorMessage;

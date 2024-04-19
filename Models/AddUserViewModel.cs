@@ -18,8 +18,9 @@ namespace Jewelry.Models
         public string PhoneNumber { get; set; }
         [Required(ErrorMessage = "Mật khẩu là trường bắt buộc.")]
         [DataType(DataType.Password)]
+        [PasswordContainsDigit]
         public string Password { get; set; }
-        [Required(ErrorMessage = "Xấc nhận mật khẩu là trường bắt buộc.")]
+        [Required(ErrorMessage = "Xác nhận mật khẩu là trường bắt buộc.")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "Mật khẩu không khớp.")]

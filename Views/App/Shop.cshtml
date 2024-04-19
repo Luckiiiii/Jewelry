@@ -17,74 +17,172 @@
     <!-- Responsive CSS -->
     <link rel="stylesheet" href="~/css/responsive.css">
 }
-@model IEnumerable<Product>
 <style>
+    h1 {
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    /* Style for the product list */
     div#productList {
         margin-bottom: 60px;
     }
+    /* Style for the search form */
+    #searchForm {
+        margin: 20px 0;
+    }
 
-    .btn-search-css{
+    .nav-pills .nav-link {
+        color: #333;
+        font-size: 16px;
+    }
+
+        .nav-pills .nav-link.active {
+            color: #fff;
+            background-color: #ff7f00;
+        }
+    /* Style for the search box */
+    .search-shop {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        width: 70%;
+        background-color: white;
+        transition: width 0.4s ease-in-out;
+    }
+
+    /* Style for the search button */
+    .btn-search-css {
         padding: 8px 10px;
+        background-color: #ff7f00;
+        border: none;
+        color: white;
+        margin-left: 10px;
     }
 
-    .css-mb-16{
-        margin-bottom: 16px;
+    /* Style for the search box when it gets focus */
+    .search-shop:focus {
+        width: 80%;
     }
+
+    /* Style for the product cards */
+    .css-mb-16 {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        transition: 0.3s;
+    }
+
+        /* On mouse-over, add a deeper shadow */
+        .css-mb-16:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+
+    /* Style for the product images */
+    .img-fluid {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Style for the product names */
+    .text-center-shop h3 {
+        font-size: 1.5em; /* Tăng kích thước font chữ */
+        color: #333; /* Thay đổi màu sắc để nổi bật */
+        font-weight: bold; /* Làm đậm chữ */
+        margin-bottom: 10px;
+    }
+
+    /* Style for the product prices */
+    .text-center-shop p {
+        font-size: 1.2em; /* Tăng kích thước font chữ */
+        color: #ff7f00; /* Thay đổi màu sắc để dễ nhìn hơn */
+        margin-bottom: 15px;
+    }
+
+    /* Style for the purchase button */
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+
 </style>
-<h1>Cửa hàng vàng bạc Tuấn Thành</h1>
-<p>Count: @Model.Count()</p>
-<form id="searchForm">
-    <input type="text" id="searchBox" class="search-shop" placeholder="Tìm kiếm sản phẩm...">
-    <button type="submit" class="btn-search-css">Tìm kiếm</button>
-</form>
-<span class="search-category">Lọc theo</span>
-<select id="categorySelect">
-    <option value="">Tất cả</option>
-    @foreach (var category in ViewBag.Categories)
-    {
-        <option value="@category.Id">@category.Name</option>
-    }
-</select>
-<div class="row" id="productList">
-    @foreach (var product in Model)
-    {
-        var priceRange = ViewBag.PriceRanges[product.Id];
-        <div class="col-md-3 css-mb-16">
-            <div class="border bg-light rounded p-1 text-center-shop">
-                @if (product.Img.Any())
+@model IEnumerable<Product>
+<h1 class="text-center">Cửa hàng vàng bạc Tuấn Thành</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <ul class="nav nav-pills justify-content-center" id="categorySelect">
+                <li class="nav-item">
+                    <a class="nav-link" data-category-id="" href="#">Tất cả</a>
+                </li>
+                @foreach (var category in ViewBag.Categories)
                 {
-                    <img src="@product.Img.First().UrlImage" class="img-fluid" alt="@product.Name" />
+                    <li class="nav-item">
+                        <a class="nav-link" data-category-id="@category.Id" href="#">@category.Name</a>
+                    </li>
                 }
-                <h3 class="text-left">@product.Name</h3>
-                <p class="text-left">
-                    @if (priceRange.Item1 == 0 && priceRange.Item2 == 0)
-                    {
-                        <text>Liên hệ</text>
-                    }
-                    else if (priceRange.Item1 == priceRange.Item2)
-                    {
-                        <text>Giá: @string.Format("{0:N0}", priceRange.Item1) VND</text>
-                    }
-                    else
-                    {
-                        <text>Giá: @string.Format("{0:N0}", priceRange.Item1) - @string.Format("{0:N0}", priceRange.Item2) VND</text>
-                    }
-                </p>
-                <button class="btn btn-success detail-btn btn-mt" data-product-id="@product.Id">Mua Ngay</button>
-            </div>
+            </ul>
+            <form id="searchForm" class="d-flex justify-content-center my-3">
+                <input type="text" id="searchBox" class="search-shop form-control" placeholder="Tìm kiếm sản phẩm...">
+                <button type="submit" class="btn-search-css ml-2">Tìm kiếm</button>
+            </form>
         </div>
-    }
+    </div>
 </div>
+
+<div class="container">
+    <div class="row" id="productList">
+        @foreach (var product in Model)
+        {
+            var priceRange = ViewBag.PriceRanges[product.Id];
+            <div class="col-md-3 css-mb-16">
+                <div class="border bg-light rounded p-1 text-center-shop">
+                    @if (product.Img.Any())
+                    {
+                        <img src="@product.Img.First().UrlImage" class="img-fluid" alt="@product.Name" />
+                    }
+                    <h3 class="text-left">@product.Name</h3>
+                    <p class="text-left">
+                        @if (priceRange.Item1 == 0 && priceRange.Item2 == 0)
+                        {
+                            <text>Liên hệ</text>
+                        }
+                        else if (priceRange.Item1 == priceRange.Item2)
+                        {
+                            <text>Giá: @string.Format("{0:N0}", priceRange.Item1) VND</text>
+                        }
+                        else
+                        {
+                            <text>Giá: @string.Format("{0:N0}", priceRange.Item1) - @string.Format("{0:N0}", priceRange.Item2) VND</text>
+                        }
+                    </p>
+                    <button class="btn btn-success detail-btn btn-mt" data-product-id="@product.Id">Mua Ngay</button>
+                </div>
+            </div>
+        }
+        }
+    </div>
+
 <script>
     $(document).ready(function () {
         $(document).on('click', '.detail-btn', function () {
             var productId = $(this).data('product-id');
             window.location.href = '/App/ProductDetail?id=' + productId;
         });
-        $('#categorySelect').change(function () {
-            var categoryId = $(this).val();
-            $.get('/App/GetProductsByCategory', { categoryId: categoryId }, function (data) {
-                $('#productList').html(data);
+        $(document).ready(function () {
+            $('#categorySelect .nav-link').click(function (event) {
+                event.preventDefault();
+                var categoryId = $(this).data('category-id');
+                $.get('/App/GetProductsByCategory', { categoryId: categoryId }, function (data) {
+                    $('#productList').html(data);
+                });
             });
         });
         $('#searchForm').submit(function (event) {

@@ -171,22 +171,22 @@
 
             if (!customer) {
                 hasError = true;
-                errorMessages.push("Vui lòng nhập tên khách hàng.");
+                errorMessages.push("Tên người mua là trường bắt buộc.");
             }
 
             if (!address) {
                 hasError = true;
-                errorMessages.push("Vui lòng nhập địa chỉ giao hàng.");
+                errorMessages.push("Địa chỉ là trường bắt buộc.");
             }
 
             if (!phoneNumber) {
                 hasError = true;
-                errorMessages.push("Vui lòng nhập số điện thoại.");
+                errorMessages.push("Số điện thoại là trường bắt buộc.");
             }
 
             if (!note) {
                 hasError = true;
-                errorMessages.push("Vui lòng nhập ghi chú.");
+                errorMessages.push("Ghi chú là trường bắt buộc.");
             }
             if (hasError) {
                 // Hiển thị tất cả thông báo lỗi
@@ -253,15 +253,15 @@
             var errorMessage = "";
 
             if (!productNames) {
-                errorMessage = "Bạn chưa nhập tên sản phẩm.";
+                errorMessage = "Sản phẩm là trường bắt buộc.";
             } else if (!materialNames) {
-                errorMessage = "Bạn chưa nhập chất liệu.";
+                errorMessage = "Chất liệu là trường bắt buộc.";
             } else if (!purityNames) {
-                errorMessage = "Bạn chưa nhập độ tinh khiết.";
+                errorMessage = "Độ tinh khiết là trường bắt buộc.";
             } else if (!sizeNames) {
-                errorMessage = "Bạn chưa nhập size.";
+                errorMessage = "Size là trường bắt buộc.";
             } else if (!quantity) {
-                errorMessage = "Bạn chưa nhâp số lượng.";
+                errorMessage = "Số lượng là trường bắtt buộc.";
             } else if (quantity < 0) {
                 errorMessage = "Số lượng phải lớn hơn 0.";
             }

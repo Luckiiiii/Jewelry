@@ -131,7 +131,7 @@ namespace Jewelry.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
 
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                ModelState.AddModelError(string.Empty, "Lỗi đăng ký");
 
             }
             return View(model);
