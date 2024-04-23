@@ -12,5 +12,6 @@
         public Decimal Price { get; set; }
         public DateTime? ReturnDate { get; set; }
         public string? EmployeeName { get; set; }
+        public string NameProduct { get; set; }
     }
 }

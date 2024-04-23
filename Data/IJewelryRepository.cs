@@ -14,6 +14,7 @@ namespace Jewelry.Data
         List<ProductItem> GetProductItemsByProductPurity(int productId, int materialId);
         List<ProductItem> GeMaterialsByProduct(int productId);
         IEnumerable<ProductItem> GetAllProductItems();
+        IEnumerable<ProductItem> GetAllProductItemsByOrder(int orderId);
         ProductItem GetProductItemById(int productId);
         IEnumerable<Product> GetProductsByCategory(int categoryId);
         IEnumerable<Product> GetProductsByName(string name);
@@ -86,9 +87,13 @@ namespace Jewelry.Data
         Warranty GetWarrantyById(int warrantyId);
 
         //Report
-        IEnumerable<InventoryReceiptDetails> GetInventoryReport(int productId, int year, int month);
+        IEnumerable<InventoryReceiptDetails> GetInventoryReportDay(int productId, int year, int month);
+        IEnumerable<InventoryReceiptDetails> GetInventoryReportMonth(int year, int month);
+        IEnumerable<InventoryReceiptDetails> GetInventoryReportYear(int year);
 
-        IEnumerable<SalesReportViewModel> GetMonthlySalesReport(int month, int year);
+        IEnumerable<SalesReportViewModel> GetDaySalesReport(int year, int month, int day);
+        IEnumerable<SalesReportViewModel> GetMonthSalesReport(int year, int month);
+        IEnumerable<SalesReportViewModel> GetYearSalesReport(int year);
 
         //void DeleteInventoryReceipt(int inventoryId);
         void UpdateEntity(object entity);

@@ -45,6 +45,7 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Mã đơn hàng</th>
+                                    <th>Sản phẩm bảo hành</th>
                                     <th>Người lập</th>
                                     <th>Người trả</th>
                                     <th>Chi phí</th>
@@ -62,6 +63,7 @@
                                     <tr data-warranty-id="@warranty.Id" asp-validation-summary="ModelOnly">
                                         <td data-field="id">@warranty.Id</td>
                                         <td data-field="orderId">@(warranty.Order.Id)</td>
+                                        <td data-field="nameProduct">@(warranty.NameProduct)</td>
                                         <td data-field="userName">@(warranty.User?.FirstName ?? "") @(warranty.User?.LastName ?? "")</td>
                                         <td data-field="employee">@(warranty.EmployeeName)</td>
                                         <td data-field="price">@(warranty.Price.ToString("N0") ?? "0")</td>
@@ -124,6 +126,10 @@
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                 <div class="input-group mg-b-pro-edt">
                                                     <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
+                                                    <select id="productItems" name="productItems" class="form-controller selectpicker product-dropdown" data-live-search="true" title="Chọn sản phẩm"></select>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon position"><i class="icon nalika-edit account" aria-hidden="true"></i></span>
                                                     <input name="appointmentDate" type="date" class="form-control" placeholder="Ngày hẹn">
                                                 </div>
                                                 <div class="input-group mg-b-pro-edt">
@@ -180,6 +186,7 @@
             var warrantyInformation = $('input[name="warrantyInformation"]').val();
             var appointmentDate = $('input[name="appointmentDate"]').val();
             var note = $('input[name="note"]').val();
+            var nameProduct = $('select[name="productItems"]').text();
 
             // Kiểm tra xem các trường dữ liệu có trống không
             if (!orderId) {
@@ -201,14 +208,17 @@
             if (!note) {
                 alert("Ghi chú là trường bắt buộc.");
                 return;
+            } if (!nameProduct) {
+                alert("Sản phẩm là trưởng bắt buộc.");
+                return;
             }
-
             var formData = new FormData();
             formData.append('orderId', orderId);
             formData.append('price', price);
             formData.append('warrantyInformation', warrantyInformation);
             formData.append('appointmentDate', appointmentDate);
             formData.append('note', note);
+            formData.append('nameProduct', nameProduct);
             $.ajax({
                 url: '/AdminPage/AddWarrantyModal',
                 type: 'POST',
@@ -226,6 +236,7 @@
                     var newRow = `<tr data-warranty-id="${response.warrantyId}">
                             <td data-field="id">${response.warrantyId}</td>
                             <td data-field="orderId">${response.orderId}</td>
+                            <td data-field="nameProduct">${response.nameProduct}</td>
                             <td data-field="userName">${response.firstName} ${response.lastName}</td>
                             <td data-field="employee"></td>
                             <td data-field="price">${formattedPrice ?? "0"}</td>
@@ -256,7 +267,26 @@
                 }
             });
         });
-        
+        $("#orderId").change(function () {
+            var orderId = $(this).val();
+            $.ajax({
+                url: "/AdminPage/GetProductItemsByOrder?orderId=" + orderId,
+                type: 'GET',
+                success: function (data) {
+                    var $dropdown = $("#productItems");
+                    $dropdown.empty();
+                    $.each(data, function () {
+                        var newRow = `<option value=${this.id}>${this.name}</option>`;
+                        $dropdown.append(newRow);
+                    });
+                    $dropdown.selectpicker('refresh');
+                },
+                error: function (error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+
         $(document).on('click', '.trash-btn', function () {
             var $row = $(this).closest('tr');
             var warrantyId = $row.find('[data-field="id"]').text();

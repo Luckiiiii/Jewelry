@@ -74,11 +74,18 @@
             padding: 10px 1px;
             margin-bottom: 30px;
         }
+
+    .product-image {
+        width: 100px; /* Điều chỉnh chiều rộng theo ý muốn */
+        height: 100px; /* Điều chỉnh chiều cao theo ý muốn */
+        object-fit: cover;
+    }
 </style>
 <div class="row">
     <h3 class="css-h3-checkout">XÁC NHẬN ĐƠN HÀNG</h3>
     <table class="table table-bordered table-hover">
         <thead>
+            <th>Ảnh sản phẩm</th>
             <th>Tên sản phẩm</th>
             <th>Chất liệu</th>
             <th>Size</th>
@@ -88,10 +95,12 @@
             <th>Đơn giá</th>
             <th>Thành tiền</th>
         </thead>
+        </thead>
         <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td><img class="product-image" src="@Url.Content("~" + item.imageUrl)" /></td>
                 <td>@item.productName</td>
                 <td>@item.materialName</td>
                 <td>@item.sizeName</td>

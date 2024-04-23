@@ -1,5 +1,4 @@
-﻿
-@model Order
+﻿@model Order
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -24,6 +23,10 @@
         font-size: 1em;
     }
 
+    .css-sign {
+        text-align: right;
+    }
+
     .css-btn-print-order {
         border: none;
         padding: 15px 32px;
@@ -36,6 +39,7 @@
         cursor: pointer;
         border-radius: 3px;
     }
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -53,42 +57,46 @@
 <h3>DC: Đa Phúc - Sài Sơn - Quốc Oai - Hà Nội</h3>
 <h3>Điện thoại: 037.616.9182 - 0982.668.676</h3>
 <h2>GIẤY ĐẢM BẢO VÀNG</h2>
-<p>Ngày tạo đơn: @Model.OrderDate.ToString("dd/MM/yyyy")</p>
-<p>Số hóa đơn: @Model.OrderNumber</p>
+<p>Quốc Oai, Ngày tạo đơn: @Model.OrderDate.ToString("dd/MM/yyyy")</p>
+<p>Số hóa đơn: @Model.Id</p>
 <p>Nhận bán cho Ông, Bà: @Model.ConsigneeName</p>
 <p>Địa chỉ: @Model.DeliveryAddress </p>
-    <table>
-        <thead>
+<table>
+    <thead>
+        <tr>
+            <th>Tên hàng</th>
+            <th>Tuổi vàng</th>
+            <th>Cân Nặng</th>
+            <th>Số lượng</th>
+            <th>Đơn giá (VND)</th>
+            <th>Thành Tiền (VND)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            decimal total = 0;
+        }
+        @foreach (var item in Model.Items)
+        {
+            decimal subTotal = item.UnitPrice * item.Quantity;
+            total += subTotal;
             <tr>
-                <th>Tên hàng</th>
-                <th>Tuổi vàng</th>
-                <th>Cân Nặng</th>
-                <th>Số lượng</th>
-                <th>Đơn giá (VND)</th>
-                <th>Thành Tiền (VND)</th>
+                <td>@item.Product.Product.Name</td>
+                <td>@item.Product.Purity.Name</td>
+                <td>@item.Product.Weight</td>
+                <td>@item.Quantity</td>
+                <td>@string.Format("{0:N0}", item.UnitPrice)</td>
+                <td>@string.Format("{0:N0}", subTotal)</td>
             </tr>
-        </thead>
-        <tbody>
-            @{
-                decimal total = 0;
-            }
-            @foreach (var item in Model.Items)
-            {
-                decimal subTotal = item.UnitPrice * item.Quantity;
-                total += subTotal;
-                <tr>
-                    <td>@item.Product.Product.Name</td>
-                    <td>@item.Product.Purity.Name</td>
-                    <td>@item.Product.Weight</td>
-                    <td>@item.Quantity</td>
-                    <td>@string.Format("{0:N0}", item.UnitPrice)</td>
-                    <td>@string.Format("{0:N0}", subTotal)</td>
-                </tr>
-            }
-            <tr>
-                <td colspan="5" style="text-align:right">Tổng tiền:</td>
-                <td>@string.Format("{0:N0}", total)</td>
-            </tr>
-        </tbody>
-    </table>
-    <button class="css-btn-print-order" onclick="window.print()">In hóa đơn</button>
+        }
+        <tr>
+            <td colspan="5" style="text-align:right">Tổng tiền:</td>
+            <td>@string.Format("{0:N0}", total)</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<p class="css-sign">Chủ hiệu</p>
+<br />
+<p class="css-sign">Nguyễn Trí Thành</p>
+<button class="css-btn-print-order" onclick="window.print()">In hóa đơn</button>

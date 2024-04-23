@@ -30,6 +30,17 @@
         ﻿.product-thumbnail {
             max-height: 50px;
         }
+
+        #cart img {
+            width: 150px; /* Điều chỉnh chiều rộng theo ý muốn */
+            height: 150px; /* Điều chỉnh chiều cao theo ý muốn */
+            object-fit: cover;
+        }
+
+        #cart td {
+            display: flex;
+            align-items: center;
+        }
     </style>
 }
 @section head {
@@ -59,8 +70,8 @@
 <div class="all-content-wrapper" style="margin-left: 0 !important;">
 
     <!-- Single pro tab start-->
-    <div class="roew">
-        <div class="single-product-tab-area mg-t-0 mg-b-30 col-lg-8 col-md-8 col-sm-8 col-xs-12">
+    <div class="row">
+        <div class="single-product-tab-area mg-t-0 mg-b-30 col-lg-7 col-md-7 col-sm-7 col-xs-12">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12 padding-8">
@@ -132,18 +143,12 @@
                                                         <a>Thêm vào giỏ hàng</a>
                                                     </div>
                                                     <div class="pro-viwer">
-                                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                                        <a href="#"><i class="fa fa-eye"></i></a>
+                                                     
                                                     </div>
                                                 </div>
                                                 <div class="clear"></div>
                                                 <div class="single-social-area">
-                                                    <h3>Chỉa sẻ</h3>
-                                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                                    <a href="#"><i class="fa fa-google-plus"></i></a>
-                                                    <a href="#"><i class="fa fa-feed"></i></a>
-                                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                                    <a href="#"><i class="fa fa-linkedin"></i></a>
+                                                   
                                                 </div>
                                             </div>
                                             <div class="single-pro-cn">
@@ -209,7 +214,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
             <h2>Giỏ hàng</h2>
             <div id="cart"></div>
             @if (User.Identity.IsAuthenticated)
@@ -380,12 +385,12 @@
                     '<img class="card-img-top product-thumbnail" src="' + productItem.imageUrl + '" alt="' + productItem.productName + '">' +
                     '<div class="card-body">' +
                     '<h5 class="card-title">' + productItem.productName + '</h5>' +
-                    '<p class="card-text ma-b-2">Chất liệu: ' + productItem.materialName + '</p>' +
-                    '<p class="card-text ma-b-2">Size: ' + productItem.sizeName + '</p>' +
-                    '<p class="card-text ma-b-2">Độ tinh khiết: ' + productItem.purityName + '</p>' +
-                    '<p class="card-text ma-b-2">Trọng lượng: ' + productItem.weight + '</p>' +
-                    '<p class="card-text ma-b-2">Số lượng: ' + productItem.quantity + '</p>' +
-                    '<p class="card-text ma-b-2">Giá: ' + Number(lineTotal).toLocaleString('vi-VN') + ' VND</p>' +
+                    '<p class="card-text ma-b-2 inline">Chất liệu: ' + productItem.materialName + '</p>' +
+                    '<p class="card-text ma-b-2 inline-left">Size: ' + productItem.sizeName + '</p>' +
+                    '<p class="card-text ma-b-2 inline">Độ tinh khiết: ' + productItem.purityName + '</p>' +
+                    '<p class="card-text ma-b-2 inline-left">Trọng lượng: ' + productItem.weight + '</p>' +
+                    '<p class="card-text ma-b-2 inline">Số lượng: ' + productItem.quantity + '</p>' +
+                    '<p class="card-text ma-b-2 inline-left">Giá: ' + Number(lineTotal).toLocaleString('vi-VN') + ' VND</p>' +
                     '<button class="btn btn-danger remove-from-cart mr-2" data-index="' + index + '">Xóa</button>' +
                     '<button class="btn btn-primary decrease-quantity mr-2" data-index="' + index + '">-</button>' +
                     '<button class="btn btn-primary increase-quantity mr-2" data-index="' + index + '">+</button>' +

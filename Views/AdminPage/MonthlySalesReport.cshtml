@@ -10,6 +10,10 @@
         padding: 10px 0px;
     }
 
+    select#daySelect{
+        padding: 10px 0px;
+    }
+
     button#getReportButton {
         padding: 8px 18px;
     }
@@ -52,10 +56,16 @@
                                 <option value="@i">@i</option>
                             }
                         </select>
-
                         <select id="monthSelect">
                             <option value="">Chọn tháng</option>
                             @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <select id="daySelect">
+                            <option value="">Chọn ngày</option>
+                            @for (int i = 1; i <= 31; i++)
                             {
                                 <option value="@i">@i</option>
                             }
@@ -94,13 +104,42 @@
 </div>
 <script>
     $(document).ready(function () {
+        function updateNumberOfDays() {
+            $('#daySelect').html('<option value="">Chọn ngày</option>');
+            var month = $('#monthSelect').val();
+            var year = $('#yearSelect').val();
+            var days = new Date(year, month, 0).getDate();
+
+            for (var i = 1; i <= days; i++) {
+                $('#daySelect').append($('<option />').val(i).html(i));
+            }
+        }
+
+        $('#yearSelect, #monthSelect').change(function () {
+            updateNumberOfDays();
+        });
+
         var table = $('#SalesTable').DataTable(); // Khởi tạo DataTable
 
         $("#getReportButton").click(function () {
             var year = $("#yearSelect").val();
             var month = $("#monthSelect").val();
+            var day = $("#daySelect").val();
 
-            $.get("/AdminPage/GetSalesReport", { year: year, month: month }, function (data) {
+            var url = "/AdminPage/GetSalesReportYear";
+            var data = { year: year };
+
+            if (month) {
+                url = "/AdminPage/GetSalesReportMonth";
+                data.month = month;
+            }
+
+            if (day) {
+                url = "/AdminPage/GetSalesReportDay";
+                data.day = day;
+            }
+
+            $.get(url, data, function (data) {
                 table.clear(); // Xóa dữ liệu hiện tại khỏi DataTable
 
                 // Loop through the data and add each item as a new row in the table
@@ -140,5 +179,6 @@
             });
         });
     });
+
 
 </script>

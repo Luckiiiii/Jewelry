@@ -14,6 +14,10 @@
         padding: 10px 0px;
     }
 
+    select#daySelect {
+        padding: 10px 0px;
+    }
+
     button#getReportButton {
         padding: 8px 18px;
     }
@@ -50,10 +54,6 @@
                 <div class="product-status-wrap">
                     <!--<h4>Danh sách phiếu nhập</h4>-->
                     <div class="add-supplier">
-                        <select id="productSelect" asp-items="@(new SelectList(Model.Products, "Id", "Name"))">
-                            <option value="">Chọn sản phẩm</option>
-                        </select>
-
                         <select id="yearSelect">
                             <option value="">Chọn năm</option>
                             @for (int i = DateTime.Now.Year; i >= 2000; i--)
@@ -61,10 +61,16 @@
                                 <option value="@i">@i</option>
                             }
                         </select>
-
                         <select id="monthSelect">
                             <option value="">Chọn tháng</option>
                             @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <select id="daySelect">
+                            <option value="">Chọn ngày</option>
+                            @for (int i = 1; i <= 31; i++)
                             {
                                 <option value="@i">@i</option>
                             }
@@ -102,14 +108,39 @@
 </div>
 <script>
     $(document).ready(function () {
+        function updateNumberOfDays() {
+            $('#daySelect').html('<option value="">Chọn ngày</option>');
+            var month = $('#monthSelect').val();
+            var year = $('#yearSelect').val();
+            var days = new Date(year, month, 0).getDate();
+
+            for (var i = 1; i <= days; i++) {
+                $('#daySelect').append($('<option />').val(i).html(i));
+            }
+        }
+
+        $('#yearSelect, #monthSelect').change(function () {
+            updateNumberOfDays();
+        });
         var table = $('#InventoryTable').DataTable(); 
 
         $("#getReportButton").click(function () {
-            var productId = $("#productSelect").val();
             var year = $("#yearSelect").val();
             var month = $("#monthSelect").val();
+            var day = $("#daySelect").val();
+            var url = "/AdminPage/GetInventoryReportYear";
+            var data = { year: year };
 
-            $.get("/AdminPage/GetInventoryReport", { productId: productId, year: year, month: month }, function (data) {
+            if (month) {
+                url = "/AdminPage/GetInventoryReportMonth";
+                data.month = month;
+            }
+
+            if (day) {
+                url = "/AdminPage/GetInventoryReportDay";
+                data.day = day;
+            }
+            $.get(url, data, function (data) {
                 table.clear();
 
 

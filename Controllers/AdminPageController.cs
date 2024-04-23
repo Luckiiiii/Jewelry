@@ -1083,9 +1083,16 @@ namespace Jewelry.Controllers
             var warranty = _repository.GetAllWarranty();
             return View(warranty);
         }
+        [HttpGet]
+        public IActionResult GetProductItemsByOrder(int orderId)
+        {
+            var productItems = _repository.GetAllProductItemsByOrder(orderId);
+            return Json(productItems.Select(p => new { p.Id, p.Product.Name }));
+        }
+
 
         [HttpPost]
-        public async Task<IActionResult> AddWarrantyModal(int orderId, decimal price, string warrantyInformation, DateTime appointmentDate, string note)
+        public async Task<IActionResult> AddWarrantyModal(int orderId, decimal price, string warrantyInformation, DateTime appointmentDate, string note, string nameproduct)
         {
             if (ModelState.IsValid)
             {
@@ -1101,7 +1108,8 @@ namespace Jewelry.Controllers
                         CreationDate = DateTime.Now,
                         AppointmentDate = appointmentDate,
                         Note = note,
-                        User = user
+                        User = user,
+                        NameProduct = nameproduct
                     };
                     _repository.AddEntity(warranty);
 
@@ -1112,6 +1120,7 @@ namespace Jewelry.Controllers
                             success = true,
                             warrantyId = warranty.Id,
                             orderId = warranty.Order.Id,
+                            nameProduct = warranty.NameProduct,
                             warrantyInformation = warranty.WarrantyInformation,
                             price = warranty.Price,
                             creationDate = warranty.CreationDate,
@@ -1188,9 +1197,23 @@ namespace Jewelry.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetInventoryReport(int productId, int year, int month)
+        public IActionResult GetInventoryReportDay(int year, int month, int day)
         {
-            var inventoryReport =  _repository.GetInventoryReport(productId, year, month);
+            var inventoryReport =  _repository.GetInventoryReportDay(year, month, day);
+            return Json(inventoryReport);
+        }
+
+        [HttpGet]
+        public IActionResult GetInventoryReportMonth(int year, int month)
+        {
+            var inventoryReport = _repository.GetInventoryReportMonth(year, month);
+            return Json(inventoryReport);
+        }
+
+        [HttpGet]
+        public IActionResult GetInventoryReportYear(int year)
+        {
+            var inventoryReport = _repository.GetInventoryReportYear(year);
             return Json(inventoryReport);
         }
 
@@ -1200,12 +1223,25 @@ namespace Jewelry.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSalesReport(int year, int month)
+        public IActionResult GetSalesReportDay(int year, int month, int day)
         {
-            var salesReport = _repository.GetMonthlySalesReport(year, month);
+            var salesReport = _repository.GetDaySalesReport(year, month, day);
             return Json(salesReport);
         }
 
+        [HttpGet]
+        public IActionResult GetSalesReportMonth(int year, int month)
+        {
+            var salesReport = _repository.GetMonthSalesReport(year, month);
+            return Json(salesReport);
+        }
+
+        [HttpGet]
+        public IActionResult GetSalesReportYear(int year)
+        {
+            var salesReport = _repository.GetYearSalesReport(year);
+            return Json(salesReport);
+        }
         //public void DeleteInventoryReceipt(int inventoryId)
         //{
         //    var inventoryReceipt = _context.InventoryReceipts.Include(i => i.Details).FirstOrDefault(i => i.Id == inventoryId);

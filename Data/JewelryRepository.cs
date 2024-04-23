@@ -2,6 +2,7 @@
 using Jewelry.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -153,6 +154,33 @@ namespace Jewelry.Data
                 return null;
             }
         }
+
+        public IEnumerable<ProductItem> GetAllProductItemsByOrder(int orderId)
+        {
+            try
+            {
+                _logger.LogInformation("GetAllProductItemsByOrder was called");
+
+                return _context.ProductItems
+                    .Include(p => p.Product).ThenInclude(i => i.Img)
+                    .Include(p => p.Product).ThenInclude(i => i.Category)
+                    .Include(p => p.Materials)
+                    .Include(p => p.Sizes)
+                    .Include(p => p.PurchasePrice)
+                    .Include(p => p.SalesPrice)
+                    .Include(p => p.OrderItems)
+                    .ThenInclude(p => p.Order)
+                    .Where(p => p.OrderItems.Any(o => o.Order.Id == orderId))
+                    .OrderBy(p => p.Product)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all product items: {ex}");
+                return null;
+            }
+        }
+
 
         public IEnumerable<ProductItem> GetConfirmedProductItems()
         {
@@ -1091,7 +1119,7 @@ namespace Jewelry.Data
             }
         }
 
-        public IEnumerable<InventoryReceiptDetails> GetInventoryReport(int productId, int year, int month)
+        public IEnumerable<InventoryReceiptDetails> GetInventoryReportDay(int year, int month, int day)
         {
             return _context.InventoryReceiptDetails
                 .Include(ird => ird.ProductItem)
@@ -1105,20 +1133,54 @@ namespace Jewelry.Data
                 .Include(ird => ird.ProductItem)
                     .ThenInclude(ird => ird.PurchasePrice)
                 .Include(ird => ird.InventoryReceipt)
-                .Where(ird => ird.ProductItem.Product.Id == productId &&
-                  ird.InventoryReceipt.ConfirmationDate != null &&
+                .Where(ird => ird.InventoryReceipt.ConfirmationDate != null &&
+                  ird.InventoryReceipt.ConfirmationDate.Value.Year == year &&
+                  ird.InventoryReceipt.ConfirmationDate.Value.Month == month &&
+                  ird.InventoryReceipt.ConfirmationDate.Value.Day == day)
+                .ToList();
+        }
+        public IEnumerable<InventoryReceiptDetails> GetInventoryReportMonth(int year, int month)
+        {
+            return _context.InventoryReceiptDetails
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Product)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Sizes)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Materials)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Purity)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.PurchasePrice)
+                .Include(ird => ird.InventoryReceipt)
+                .Where(ird => ird.InventoryReceipt.ConfirmationDate != null &&
                   ird.InventoryReceipt.ConfirmationDate.Value.Year == year &&
                   ird.InventoryReceipt.ConfirmationDate.Value.Month == month)
                 .ToList();
         }
 
-
-        public IEnumerable<SalesReportViewModel> GetMonthlySalesReport(int year, int month)
+        public IEnumerable<InventoryReceiptDetails> GetInventoryReportYear(int year)
         {
-            // Bước 1: Lấy tất cả OrderItem
-            var orderItems = _context.OrderItem;
+            return _context.InventoryReceiptDetails
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Product)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Sizes)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Materials)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.Purity)
+                .Include(ird => ird.ProductItem)
+                    .ThenInclude(ird => ird.PurchasePrice)
+                .Include(ird => ird.InventoryReceipt)
+                .Where(ird => ird.InventoryReceipt.ConfirmationDate != null &&
+                  ird.InventoryReceipt.ConfirmationDate.Value.Year == year)
+                .ToList();
+        }
 
-            // Bước 2: Thêm các liên kết cần thiết
+        public IEnumerable<SalesReportViewModel> GetDaySalesReport(int year, int month, int day)
+        {
+            var orderItems = _context.OrderItem;
             var orderItemsWithIncludes = orderItems
                 .Include(oi => oi.Product)
                 .ThenInclude(oi => oi.Product)
@@ -1131,16 +1193,12 @@ namespace Jewelry.Data
                 .Include(oi => oi.Order)
                 .ThenInclude(oi => oi.Status)
                 .ThenInclude(oi => oi.StatusCategory);
-
-            // Bước 3: Lọc dữ liệu theo tháng, năm và trạng thái
             var filteredOrderItems = orderItemsWithIncludes
-                .Where(oi => oi.Order.OrderDate.Month == month && oi.Order.OrderDate.Year == year && oi.Order.Status.Any(s => s.StatusCategory.Id == 5));
+                .Where(oi => oi.Order.OrderDate.Day == day && oi.Order.OrderDate.Month == month && oi.Order.OrderDate.Year == year && oi.Order.Status.Any(s => s.StatusCategory.Id == 5));
 
-            // Bước 4: Nhóm dữ liệu theo ProductId và UnitPrice
             var groupedOrderItems = filteredOrderItems
                 .GroupBy(oi => new { oi.ProductId, oi.UnitPrice });
 
-            // Bước 5: Chuyển đổi dữ liệu thành SalesReportViewModel
             var salesReport = groupedOrderItems
                 .Select(g => new SalesReportViewModel
                 {
@@ -1159,12 +1217,89 @@ namespace Jewelry.Data
             return salesReport;
         }
 
+        public IEnumerable<SalesReportViewModel> GetMonthSalesReport(int year, int month)
+        {
+            var orderItems = _context.OrderItem;
+            var orderItemsWithIncludes = orderItems
+                .Include(oi => oi.Product)
+                .ThenInclude(oi => oi.Product)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Sizes)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Materials)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Purity)
+                .Include(oi => oi.Order)
+                .ThenInclude(oi => oi.Status)
+                .ThenInclude(oi => oi.StatusCategory);
+            var filteredOrderItems = orderItemsWithIncludes
+                .Where(oi => oi.Order.OrderDate.Month == month && oi.Order.OrderDate.Year == year && oi.Order.Status.Any(s => s.StatusCategory.Id == 5));
+
+            var groupedOrderItems = filteredOrderItems
+                .GroupBy(oi => new { oi.ProductId, oi.UnitPrice });
+
+            var salesReport = groupedOrderItems
+                .Select(g => new SalesReportViewModel
+                {
+                    ProductName = g.First().Product.Product.Name,
+                    Size = g.First().Product.Sizes.Name,
+                    Material = g.First().Product.Materials.Name,
+                    Purity = g.First().Product.Purity.Name,
+                    Weight = g.First().Product.Weight,
+                    Quantity = g.Sum(oi => oi.Quantity),
+                    SaleDate = g.First().Order.OrderDate,
+                    UnitPrice = g.Key.UnitPrice,
+                    TotalPrice = g.Sum(oi => oi.Quantity) * g.Key.UnitPrice
+                })
+                .ToList();
+
+            return salesReport;
+        }
+
+        public IEnumerable<SalesReportViewModel> GetYearSalesReport(int year)
+        {
+            var orderItems = _context.OrderItem;
+            var orderItemsWithIncludes = orderItems
+                .Include(oi => oi.Product)
+                .ThenInclude(oi => oi.Product)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Sizes)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Materials)
+                .Include(oi => oi.Product)
+                .ThenInclude(p => p.Purity)
+                .Include(oi => oi.Order)
+                .ThenInclude(oi => oi.Status)
+                .ThenInclude(oi => oi.StatusCategory);
+            var filteredOrderItems = orderItemsWithIncludes
+                .Where(oi => oi.Order.OrderDate.Year == year && oi.Order.Status.Any(s => s.StatusCategory.Id == 5));
+
+            var groupedOrderItems = filteredOrderItems
+                .GroupBy(oi => new { oi.ProductId, oi.UnitPrice });
+
+            var salesReport = groupedOrderItems
+                .Select(g => new SalesReportViewModel
+                {
+                    ProductName = g.First().Product.Product.Name,
+                    Size = g.First().Product.Sizes.Name,
+                    Material = g.First().Product.Materials.Name,
+                    Purity = g.First().Product.Purity.Name,
+                    Weight = g.First().Product.Weight,
+                    Quantity = g.Sum(oi => oi.Quantity),
+                    SaleDate = g.First().Order.OrderDate,
+                    UnitPrice = g.Key.UnitPrice,
+                    TotalPrice = g.Sum(oi => oi.Quantity) * g.Key.UnitPrice
+                })
+                .ToList();
+
+            return salesReport;
+        }
         //public void DeleteInventoryReceipt(int inventoryId)
         //{
         //    var inventoryReceipt = _context.InventoryReceipt.Include(i => i.Details).FirstOrDefault(i => i.Id == inventoryId);
         //    if (inventoryReceipt != null)
         //    {
- 
+
         //        _context.InventoryReceiptDetails.RemoveRange(inventoryReceipt.Details);
 
 

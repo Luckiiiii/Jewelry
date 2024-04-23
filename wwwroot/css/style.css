@@ -1923,9 +1923,9 @@ ul#single-product-tab {
 
 .color-quality {
     float: left;
-    margin: 0px 90px;
+    padding-left: 130px;
+    /* margin: 0px 90px; */
 }
-
 .pro-quantity-changer a {
     border: 1px solid #ececec;
     display: inline-block;
