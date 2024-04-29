@@ -186,7 +186,7 @@
             var warrantyInformation = $('input[name="warrantyInformation"]').val();
             var appointmentDate = $('input[name="appointmentDate"]').val();
             var note = $('input[name="note"]').val();
-            var nameProduct = $('select[name="productItems"]').text();
+            var nameProduct = $('select[name="productItems"]').find(':selected').text();
 
             // Kiểm tra xem các trường dữ liệu có trống không
             if (!orderId) {

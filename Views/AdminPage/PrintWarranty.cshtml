@@ -47,9 +47,6 @@
         margin-bottom: 159px;
     }
 </style>
-
-
-
 <h2>DOANH NGHIỆP VÀNG BẠC 9999</h2>
 <h1>TUẤN THÀNH</h1>
 <h3>DC: Đa Phúc - Sài Sơn - Quốc Oai - Hà Nội</h3>
@@ -72,15 +69,7 @@
         <tr>
             <td>@Model.Order.Id</td>
             <td>@Model.EmployeeName</td>
-            <td>
-                @foreach (var item in Model.Order.Items)
-                {
-
-                    @item.Product.Product.Name
-                    ;
-                    <br>
-                }
-            </td>
+            <td>@Model.NameProduct</td>
             <td>@Model.WarrantyInformation</td>
             <td>@Model.ReturnDate?.ToString("dd/MM/yyyy")</td>
             <td>@string.Format("{0:N0}", Model.Price)</td>

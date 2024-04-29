@@ -93,6 +93,7 @@
                                     <th>Trọng lượng</th>
                                     <th>Giá nhập</th>
                                     <th>Số lượng</th>
+                                    <th>Ngày nhập</th>
                                     <th>Thành tiền</th>
                                 </tr>
                             </thead>
@@ -158,7 +159,8 @@
                         })[0];
                     var formattedPrice = price ? price.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'N/A';
                     var total = price ? (price.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'N/A';
-
+                    var confirmDate = new Date(item.inventoryReceipt.confirmationDate);
+                    var formattedDate = confirmDate.toLocaleDateString('vi-VN');
                    
                     table.row.add([
                         item.productItem.product.name,
@@ -168,6 +170,7 @@
                         item.productItem.weight,
                         formattedPrice,
                         item.quantity,
+                        formattedDate,
                         total
                     ]);
                 });
